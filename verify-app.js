@@ -92,7 +92,7 @@ function waitForServer(port, timeoutMs = 15000) {
   await page.click('[data-tab="europe"]');
   await page.waitForTimeout(1000);
   const europeText = await page.$eval('#section-europe', el => el.innerText.substring(0, 120));
-  console.log(`Europe tab excerpt: "${europaeText.substring(0, 80)}..."`);
+  console.log(`Europe tab excerpt: "${europeText.substring(0, 80)}..."`);
 
   // Verify world tab
   await page.click('[data-tab="world"]');

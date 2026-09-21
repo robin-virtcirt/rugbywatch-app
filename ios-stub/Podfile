@@ -1,0 +1,14 @@
+# Rugby Watch — Android Podfile stub
+# Installed at ios/App/App/Podfile
+# Run: cd ios/App && pod install
+#
+# Use this if you need to add native iOS plugins later (e.g., a push
+# notification plugin, a different ad plugin, etc.). For now the base
+# Capacitor install handles StatusBar, Share, Clipboard, and App.
+
+platform :ios, '15.0'
+
+target 'App' do
+  use_frameworks!
+  use_frameworks! :linkage => :static
+  pod 'Cap...[truncated]

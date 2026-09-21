@@ -1,0 +1,536 @@
+{
+  "teams": {
+    "ireland-mens": {
+      "name": "Ireland Men's Senior",
+      "short": "Ireland Men",
+      "group": "Ireland National Teams",
+      "union": "IRFU",
+      "competitions": ["Six Nations", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "homeStadium": "Aviva Stadium, Dublin",
+      "jersey": "Green",
+      "captainNote": "Caelan Doris (2026).",
+      "coachNote": "Andy Farrell (as of 2026).",
+      "pubNote": "Ireland home games at Aviva are pub-friendly. Away Six Nations games kick off midday–evening Irish time — pub-friendly. Autumn internationals depend on the opponent's timezone.",
+      "featured": true
+    },
+    "ireland-womens": {
+      "name": "Ireland Women's Senior",
+      "short": "Ireland Women",
+      "group": "Ireland National Teams",
+      "union": "IRFU",
+      "competitions": ["Women's Six Nations", "Women's Rugby World Cup", "Autumn Series", "Summer Tour"],
+      "homeStadium": "Various (Aviva, UCD, etc.)",
+      "jersey": "Green",
+      "pubNote": "Women's Six Nations fixtures kick off midday–evening Irish time — pub-friendly. Women's RWC in Australia (2027) likely morning Irish time.",
+      "featured": true
+    },
+    "ireland-u20-mens": {
+      "name": "Ireland U20 Men",
+      "short": "Ireland U20 Men",
+      "group": "Ireland National Teams",
+      "union": "IRFU",
+      "competitions": ["U20 Six Nations", "U20 World Cup"],
+      "homeStadium": "Various",
+      "jersey": "Green",
+      "pubNote": "U20 Six Nations kick off midday–evening Irish time. U20 World Cup in Argentina (2026) — afternoon Irish time, pub-watchable.",
+      "featured": true
+    },
+    "ireland-u20-womens": {
+      "name": "Ireland U20 Women",
+      "short": "Ireland U20 Women",
+      "group": "Ireland National Teams",
+      "union": "IRFU",
+      "competitions": ["U20 Women's Six Nations", "U20 Women's Rugby World Cup"],
+      "homeStadium": "Various",
+      "jersey": "Green",
+      "pubNote": "U20 Women's Six Nations kick off midday–evening Irish time.",
+      "featured": true
+    },
+    "ireland-sevens": {
+      "name": "Ireland Sevens",
+      "short": "Ireland Sevens",
+      "group": "Ireland National Teams",
+      "union": "IRFU",
+      "competitions": ["Sevens World Series", "Sevens World Cup", "European Sevens", "Rugby World Cup Sevens"],
+      "homeStadium": "Various (Dublin Sevens, etc.)",
+      "jersey": "Green",
+      "pubNote": "Sevens World Series stop in Dublin is pub-friendly. Sevens World Cup in 2025/2026 — depends on host.",
+      "featured": true
+    },
+    "south-africa-mens": {
+      "name": "South Africa Men's Senior",
+      "short": "South Africa",
+      "group": "World National Teams",
+      "union": "SARU",
+      "competitions": ["Rugby Championship", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "homeStadium": "various (Cape Town, Johannesburg, Durban)",
+      "jersey": "Green and Gold",
+      "pubNote": "Springboks play in the Rugby Championship (Southern Hemisphere) — evening local kick-offs are morning Irish time. World Cup pool games in Southern Hemisphere = morning Irish time."
+    },
+    "new-zealand-mens": {
+      "name": "New Zealand Men's Senior",
+      "short": "New Zealand",
+      "group": "World National Teams",
+      "union": "NZR",
+      "competitions": ["Rugby Championship", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "homeStadium": "various (Eden Park, etc.)",
+      "jersey": "All Blacks (Black)",
+      "pubNote": "All Blacks play in the Rugby Championship — evening local kick-offs are morning Irish time. Northern Hemisphere tours fall in Irish afternoon/evening — pub-friendly."
+    },
+    "australia-mens": {
+      "name": "Australia Men's Senior",
+      "short": "Australia",
+      "group": "World National Teams",
+      "union": "ARU",
+      "competitions": ["Rugby Championship", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "homeStadium": "various (Sydney, Melbourne, Brisbane)",
+      "jersey": "Green and Gold",
+      "pubNote": "Wallabies play in the Rugby Championship — evening local (east coast) = morning Irish time. 2027 RWC home games = morning Irish time (final 13 Nov 2027 ~9am Irish)."
+    },
+    "argentina-mens": {
+      "name": "Argentina Men's Senior",
+      "short": "Argentina",
+      "group": "World National Teams",
+      "union": "UAR",
+      "competitions": ["Rugby Championship", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "homeStadium": "various (Buenos Aires, etc.)",
+      "jersey": "White with blue (Los Pumas)",
+      "pubNote": "Los Pumas play in the Rugby Championship — evening local = early morning Irish time. 2026 U20 World Cup in Argentina — afternoon Irish time, pub-watchable."
+    },
+    "france-mens": {
+      "name": "France Men's Senior",
+      "short": "France",
+      "group": "World National Teams",
+      "union": "FFR",
+      "competitions": ["Six Nations", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "homeStadium": "various (Stade de France, etc.)",
+      "jersey": "Blue, white, red",
+      "pubNote": "France in Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly). France home games = morning Irish time (1–2 hours ahead) — pub-friendly if up early."
+    },
+    "england-mens": {
+      "name": "England Men's Senior",
+      "short": "England",
+      "group": "World National Teams",
+      "union": "RFU",
+      "competitions": ["Six Nations", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "homeStadium": "various (Twickenham, etc.)",
+      "jersey": "White",
+      "pubNote": "England in Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly). England home games = morning Irish time (1 hour ahead) — pub-friendly if up early."
+    },
+    "scotland-mens": {
+      "name": "Scotland Men's Senior",
+      "short": "Scotland",
+      "group": "World National Teams",
+      "union": "SRU",
+      "competitions": ["Six Nations", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "homeStadium": "various (Murrayfield, etc.)",
+      "jersey": "Blue",
+      "pubNote": "Scotland in Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly). Scotland home games = morning Irish time (same timezone in winter, 1 hour ahead in summer) — pub-friendly."
+    },
+    "wales-mens": {
+      "name": "Wales Men's Senior",
+      "short": "Wales",
+      "group": "World National Teams",
+      "union": "WRU",
+      "competitions": ["Six Nations", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "homeStadium": "various (Principality Stadium, etc.)",
+      "jersey": "Red",
+      "pubNote": "Wales in Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly). Wales home games = morning Irish time (1 hour ahead in summer, same in winter) — pub-friendly."
+    },
+    "italy-mens": {
+      "name": "Italy Men's Senior",
+      "short": "Italy",
+      "group": "World National Teams",
+      "union": "FIR",
+      "competitions": ["Six Nations", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "homeStadium": "various (Stadio Olimpico, etc.)",
+      "jersey": "Blue (Azzurri)",
+      "pubNote": "Italy in Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly). Italy home games = morning Irish time (1 hour ahead) — pub-friendly if up early."
+    },
+    "japan-mens": {
+      "name": "Japan Men's Senior",
+      "short": "Japan",
+      "group": "World National Teams",
+      "union": "Japan rugby-football union",
+      "competitions": ["Japan rugby league", "Autumn Internationals", "Rugby World Cup"],
+      "homeStadium": "various (Tokyo, etc.)",
+      "jersey": "Red",
+      "pubNote": "Japan is 8–9 hours ahead of Ireland — morning Irish time for evening local kick-offs. 2019 RWC host. Watch at home, meet later."
+    },
+    "georgia-mens": {
+      "name": "Georgia Men's Senior",
+      "short": "Georgia",
+      "group": "World National Teams",
+      "union": "Georgia rugby union",
+      "competitions": ["Rugby Europe Championship", "Autumn Internationals", "Rugby World Cup"],
+      "homeStadium": "various (Tbilisi, etc.)",
+      "jersey": "White with red (QarTli Sulakhli)",
+      "pubNote": "Georgia is 2–3 hours ahead of Ireland — morning Irish time for evening local kick-offs. Rugby Europe Championship. Watch at home, meet later."
+    },
+    "fiji-mens": {
+      "name": "Fiji Men's Senior",
+      "short": "Fiji",
+      "group": "World National Teams",
+      "union": "RFC",
+      "competitions": ["Pacific Nations Cup", "Autumn Internationals", "Rugby World Cup", "Sevens World Series"],
+      "homeStadium": "various (Suva, etc.)",
+      "jersey": "White with black (Bula Buddhas)",
+      "pubNote": "Fiji is 10–12 hours ahead of Ireland — early morning Irish time for evening local kick-offs. Pacific Nations Cup. Watch at home, meet later."
+    },
+    "samoa-mens": {
+      "name": "Samoa Men's Senior",
+      "short": "Samoa",
+      "group": "World National Teams",
+      "union": "SRU",
+      "competitions": ["Pacific Nations Cup", "Autumn Internationals", "Rugby World Cup", "Sevens World Series"],
+      "homeStadium": "various",
+      "jersey": "Red with blue (Sea Warriors)",
+      "pubNote": "Samoa is 10–12 hours ahead of Ireland — early morning Irish time for evening local kick-offs. Watch at home, meet later."
+    },
+    "tonga-mens": {
+      "name": "Tonga Men's Senior",
+      "short": "Tonga",
+      "group": "World National Teams",
+      "union": "Tonga rugby union",
+      "competitions": ["Pacific Nations Cup", "Autumn Internationals", "Rugby World Cup", "Sevens World Series"],
+      "homeStadium": "various",
+      "jersey": "Red with white (Ikale Tahi)",
+      "pubNote": "Tonga is 10–12 hours ahead of Ireland — early morning Irish time for evening local kick-offs. Watch at home, meet later."
+    },
+    "england-womens": {
+      "name": "England Women's Senior",
+      "short": "England Women",
+      "group": "World Women's Teams",
+      "union": "RFU",
+      "competitions": ["Women's Six Nations", "Women's Rugby World Cup"],
+      "homeStadium": "various (Twickenham, etc.)",
+      "jersey": "White",
+      "pubNote": "England Women in Women's Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly)."
+    },
+    "france-womens": {
+      "name": "France Women's Senior",
+      "short": "France Women",
+      "group": "World Women's Teams",
+      "union": "FFR",
+      "competitions": ["Women's Six Nations", "Women's Rugby World Cup"],
+      "homeStadium": "various",
+      "jersey": "Blue",
+      "pubNote": "France Women in Women's Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly)."
+    },
+    "scotland-womens": {
+      "name": "Scotland Women's Senior",
+      "short": "Scotland Women",
+      "group": "World Women's Teams",
+      "union": "SRU",
+      "competitions": ["Women's Six Nations", "Women's Rugby World Cup"],
+      "homeStadium": "various",
+      "jersey": "Blue",
+      "pubNote": "Scotland Women in Women's Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly)."
+    },
+    "wales-womens": {
+      "name": "Wales Women's Senior",
+      "short": "Wales Women",
+      "group": "World Women's Teams",
+      "union": "WRU",
+      "competitions": ["Women's Six Nations", "Women's Rugby World Cup"],
+      "homeStadium": "various",
+      "jersey": "Red",
+      "pubNote": "Wales Women in Women's Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly)."
+    },
+    "italy-womens": {
+      "name": "Italy Women's Senior",
+      "short": "Italy Women",
+      "group": "World Women's Teams",
+      "union": "FIR",
+      "competitions": ["Women's Six Nations", "Women's Rugby World Cup"],
+      "homeStadium": "various",
+      "jersey": "Blue",
+      "pubNote": "Italy Women in Women's Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly)."
+    },
+    "new-zealand-womens": {
+      "name": "New Zealand Women's Senior",
+      "short": "New Zealand Women",
+      "group": "World Women's Teams",
+      "union": "NZR",
+      "competitions": ["Women's Rugby World Cup", "Women's Pacific Nations Cup"],
+      "homeStadium": "various",
+      "jersey": "Black (Black Ferns)",
+      "pubNote": "Black Ferns — evening local kick-offs are morning Irish time. 2027 RWC in Australia likely morning Irish time."
+    },
+    "australia-womens": {
+      "name": "Australia Women's Senior",
+      "short": "Australia Women",
+      "group": "World Women's Teams",
+      "union": "ARU",
+      "competitions": ["Women's Rugby World Cup", "Women's Pacific Nations Cup"],
+      "homeStadium": "various",
+      "jersey": "Green and Gold (Wallaroos)",
+      "pubNote": "Wallaroos — evening local (east coast) = morning Irish time. 2027 RWC in Australia likely morning Irish time."
+    },
+    "south-africa-womens": {
+      "name": "South Africa Women's Senior",
+      "short": "South Africa Women",
+      "group": "World Women's Teams",
+      "union": "SARU",
+      "competitions": ["Women's Rugby World Cup", "Women's Pacific Nations Cup"],
+      "homeStadium": "various",
+      "jersey": "Green and Gold (Springbok Women)",
+      "pubNote": "Springbok Women — evening local kick-offs are morning Irish time."
+    },
+    "argentina-womens": {
+      "name": "Argentina Women's Senior",
+      "short": "Argentina Women",
+      "group": "World Women's Teams",
+      "union": "UAR",
+      "competitions": ["Women's Rugby World Cup", "Women's South American Championship"],
+      "homeStadium": "various",
+      "jersey": "White with blue (Las Pumas)",
+      "pubNote": "Las Pumas — evening local kick-offs are early morning Irish time."
+    }
+  },
+  "provinces": {
+    "leinster": {
+      "name": "Leinster",
+      "short": "Leinster",
+      "group": "Provinces",
+      "union": "Leinster Rugby",
+      "competitions": ["United Rugby Championship", "European Champions Cup", "European Challenge Cup", "Leinster Senior Cup"],
+      "homeStadium": "Aviva Stadium, Dublin",
+      "pubNote": "Leinster home games at Aviva are pub-friendly. European away games in France/England/Italy/Scotland/Wales kick off in Irish afternoon — pub-friendly. URC away games in South Africa/Argentina are early morning Irish time."
+    },
+    "munster": {
+      "name": "Munster",
+      "short": "Munster",
+      "group": "Provinces",
+      "union": "Munster Rugby",
+      "competitions": ["United Rugby Championship", "European Champions Cup", "European Challenge Cup", "Munster Senior Cup"],
+      "homeStadium": "Thomond Park, Limerick (Lngarlach)",
+      "pubNote": "Munster home games at Thomond Park are pub-friendly (Limerick pubs). European away games kick off in Irish afternoon — pub-friendly in Dublin if you're watching remotely."
+    },
+    "ulster": {
+      "name": "Ulster",
+      "short": "Ulster",
+      "group": "Provinces",
+      "union": "Ulster Rugby",
+      "competitions": ["United Rugby Championship", "European Champions Cup", "European Challenge Cup", "Ulster Senior Cup"],
+      "homeStadium": "Kingspan Stadium (Ravenhill), Belfast",
+      "jersey": "Red",
+      "pubNote": "Ulster home games at Ravenhill are pub-friendly. Away European games in France/England/Italy/Scotland/Wales kick off in Irish afternoon — pub-friendly in Dublin."
+    },
+    "connacht": {
+      "name": "Connacht",
+      "short": "Connacht",
+      "group": "Provinces",
+      "union": "Connacht Rugby",
+      "competitions": ["United Rugby Championship", "European Champions Cup", "European Challenge Cup", "Connacht Senior Cup"],
+      "homeStadium": "Atlantic Park, Galway",
+      "pubNote": "Connacht home games at Atlantic Park are pub-friendly. Away European games in France/England/Italy/Scotland/Wales kick off in Irish afternoon — pub-friendly in Dublin."
+    }
+  },
+  "clubs": [
+    { "name": "St Mary's College RFC", "province": "Leinster", "tier": "AIL Tier 1" },
+    { "name": "Blackrock College RFC", "province": "Leinster", "tier": "AIL Tier 1" },
+    { "name": "Terenure College RFC", "province": "Leinster", "tier": "AIL Tier 1" },
+    { "name": "UCD RFC", "province": "Leinster", "tier": "AIL Tier 1" },
+    { "name": "Old Belvedere RFC", "province": "Leinster", "tier": "AIL Tier 1" },
+    { "name": "Clontarf RFC", "province": "Leinster", "tier": "AIL Tier 1" },
+    { "name": "Dublin University RFC (CCI)", "province": "Leinster", "tier": "AIL Tier 1" },
+    { "name": "Blackrock Women's RFC", "province": "Leinster", "tier": "Women's" },
+    { "name": "Garryowen RFC", "province": "Munster", "tier": "AIL Tier 1" },
+    { "name": "Shannon RFC", "province": "Munster", "tier": "AIL Tier 1" },
+    { "name": "UCC RFC", "province": "Munster", "tier": "AIL Tier 1" },
+    { "name": "Young Munster RFC", "province": "Munster", "tier": "AIL Tier 1" },
+    { "name": "Cork Constitution RFC", "province": "Munster", "tier": "AIL Tier 1" },
+    { "name": "Lansdowne RFC", "province": "Munster", "tier": "AIL Tier 1" },
+    { "name": "City of Derry RFC", "province": "Ulster", "tier": "AIL Tier 1" },
+    { "name": "Rainey Old Boys RFC", "province": "Ulster", "tier": "AIL Tier 1" },
+    { "name": "Queen's University RFC", "province": "Ulster", "tier": "AIL Tier 1" },
+    { "name": "Limavady RFC", "province": "Ulster", "tier": "AIL Tier 1" },
+    { "name": "Banbridge RFC", "province": "Ulster", "tier": "AIL Tier 1" },
+    { "name": "Ballymena RFC", "province": "Ulster", "tier": "AIL Tier 1" },
+    { "name": "Galway Corinthians RFC", "province": "Connacht", "tier": "AIL Tier 1" },
+    { "name": "Corrasna RFC", "province": "Connacht", "tier": "AIL Tier 1" },
+    { "name": "Claremorris RFC", "province": "Connacht", "tier": "AIL Tier 1" },
+    { "name": "Ballinasloe RFC", "province": "Connacht", "tier": "AIL Tier 1" }
+  ],
+  "tournaments": {
+    "six-nations": {
+      "name": "Six Nations",
+      "short": "Six Nations",
+      "group": "Tournaments",
+      "organiser": "Six Nations Rugby",
+      "teams": ["Ireland", "England", "France", "Italy", "Scotland", "Wales"],
+      "format": "Round robin (home and away over two years for full double round robin every two years, single round robin in off years)",
+      "season": "Feb–Mar annually",
+      "pubNote": "Away games kick off midday–evening Irish time — pub-friendly. Home games at Aviva are in Dublin pubs."
+    },
+    "womens-six-nations": {
+      "name": "Women's Six Nations",
+      "short": "Women's Six Nations",
+      "group": "Tournaments",
+      "organiser": "Six Nations Rugby",
+      "teams": ["Ireland Women", "England Women", "France Women", "Italy Women", "Scotland Women", "Wales Women"],
+      "format": "Round robin",
+      "season": "Mar–Apr annually",
+      "pubNote": "Away games kick off midday–evening Irish time — pub-friendly. Ireland home games at Aviva/USW are pub-friendly."
+    },
+    "rugby-world-cup": {
+      "name": "Rugby World Cup",
+      "short": "Rugby World Cup",
+      "group": "Tournaments",
+      "organiser": "World Rugby",
+      "teams": "20 teams (men's). Expands to 24 in 2027.",
+      "season": "Every four years. 2023 in France. 2027 in Australia.",
+      "pubNote": "Pool games against touring sides in Southern Hemisphere = morning Irish time (watch at home, meet later). Ireland home games/pub-friendly. Final 13 Nov 2027 Sydney ~9am Irish time — early morning pub possible."
+    },
+    "womens-rugby-world-cup": {
+      "name": "Women's Rugby World Cup",
+      "short": "Women's Rugby World Cup",
+      "group": "Tournaments",
+      "organiser": "World Rugby",
+      "teams": "12 teams (expanding to 16 in 2027).",
+      "Season": "Every four years. 2025 in England. 2027 in Ireland (hosts: Ireland, together with Scotland, Wales, Northern Ireland).",
+      "pubNote": "If 2027 is hosted in Ireland, all Ireland games are in Irish time and pub-friendly. If elsewhere, depends on timezone."
+    },
+    "urc": {
+      "name": "United Rugby Championship",
+      "short": "URC",
+      "group": "Tournaments",
+      "organiser": "URC Ltd",
+      "teams": ["Leinster", "Munster", "Ulster", "Connacht", "Cardiff", "Ospreys", "Scarlets", "Dragons", "Edinburgh", "Glasgow", "Benetton", "Zebre", "CW", "Lions", "Bulls", "Stormers", "Franchise", "Carey"],
+      "format": "Regular season + playoffs (URC Final)",
+      "season": "Sep–May annually",
+      "pubNote": "Most URC games kick off in Irish time (afternoon/evening). Away games in South Africa/Argentina = early morning Irish time."
+    },
+    "european-champions-cup": {
+      "name": "European Champions Cup",
+      "short": "Champions Cup",
+      "group": "Tournaments",
+      "organiser": "EPCR",
+      "teams": "Top URC and other European league teams qualify.",
+      "format": "Pool stage + knockout (semi-finals, final)",
+      "season": "Oct/Nov–Jan (annual)",
+      "pubNote": "Champions Cup games usually kick off in the afternoon local time = morning Irish time for away games in France/England/Italy/Scotland/Wales — pub-friendly if you're up early. Final usually evening Irish time."
+    },
+    "european-challenge-cup": {
+      "name": "European Challenge Cup",
+      "short": "Challenge Cup",
+      "group": "Tournaments",
+      "organiser": "EPCR",
+      "teams": "Wider set of teams qualify than Champions Cup.",
+      "format": "Pool stage + knockout",
+      "season": "Oct/Nov–Jan (annual)",
+      "pubNote": "Similar kick-off pattern to Champions Cup — morning Irish time for away games in Western Europe, pub-friendly if you're up early."
+    },
+    "rugby-championship": {
+      "name": "Rugby Championship",
+      "short": "Rugby Championship",
+      "group": "World Tournaments",
+      "organiser": "SANZAAR",
+      "teams": ["New Zealand", "South Africa", "Australia", "Argentina"],
+      "format": "Round robin (home and away)",
+      "season": "Jul–Aug annually (Southern Hemisphere winter)",
+      "pubNote": "Southern Hemisphere tournament — evening local kick-offs are early morning Irish time. Watch at home, meet later. Northern Hemisphere touring sides in Irish summer fall in Irish afternoon/evening — pub-friendly."
+    },
+    "sevens-world-series": {
+      "name": "Sevens World Series",
+      "short": "Sevens World Series",
+      "group": "Tournaments",
+      "organiser": "World Rugby",
+      "teams": "15 core teams including Ireland Sevens.",
+      "format": "Series of 15-a-side sevens tournaments worldwide.",
+      "season": "Oct/Nov–May (annual)",
+      "pubNote": "Dublin Sevens stop is pub-friendly. Away stops in Europe (Paris, London, etc.) are morning Irish time — pub-friendly if up early. Stops in Asia/Americas are early morning Irish time."
+    },
+    "sevens-world-cup": {
+      "name": "Rugby World Cup Sevens",
+      "short": "Sevens World Cup",
+      "group": "Tournaments",
+      "organiser": "World Rugby",
+      "teams": "16 teams (men's and women's, separate).",
+      "season": "Every four years. 2025 in Saudi Arabia.",
+      "pubNote": "Saudi Arabia — evening local time = early morning Irish time."
+    },
+    "world-cup-sevens-womens": {
+      "name": "Women's Sevens World Cup",
+      "short": "Women's Sevens World Cup",
+      "group": "Tournaments",
+      "Season": "Every four years.",
+      "pubNote": "Same timezone logic as men's Sevens World Cup."
+    },
+    "world-cup-2027": {
+      "name": "Rugby World Cup 2027",
+      "short": "RWC 2027",
+      "group": "Tournaments",
+      "season": "1 Oct – 13 Nov 2027, Australia.",
+      "pubNote": "Australia is 11 hours ahead (east coast) — evening Australian kick-off = morning Irish time. Final 13 Nov 2027, 20:00 AEDT = 9:00am Irish time — early morning pub possible."
+    },
+    "leinsterseniorscup": {
+      "name": "Leinster Senior Cup",
+      "short": "Leinster Senior Cup",
+      "group": "Clubs & Cups",
+      "season": "Annual, usually early season.",
+      "pubNote": "League games in Irish time. Cup games at various venues — pub-friendly if in Dublin."
+    },
+    "munsterseniorscup": {
+      "name": "Munster Senior Cup",
+      "short": "Munster Senior Cup",
+      "group": "Clubs & Cups",
+      "season": "Annual, usually early season.",
+      "pubNote": "Games in Munster — Limerick/Cork/Kerry pubs. Dublin pubs if watching remotely."
+    },
+    "ulsterseniorscup": {
+      "name": "Ulster Senior Cup",
+      "short": "Ulster Senior Cup",
+      "group": "Clubs & Cups",
+      "season": "Annual, usually early season.",
+      "pubNote": "Games in Ulster — Belfast pubs. Dublin pubs if watching remotely."
+    },
+    "connaght seniors cup": {
+      "name": "Connacht Senior Cup",
+      "short": "Connacht Senior Cup",
+      "group": "Clubs & Cups",
+      "season": "Annual, usually early season.",
+      "pubNote": "Games in Connacht — Galway/ROI pubs. Dublin pubs if watching remotely."
+    },
+    "pacific-nations-cup": {
+      "name": "Pacific Nations Cup",
+      "short": "Pacific Nations Cup",
+      "group": "World Tournaments",
+      "organiser": "Pacific rugby unions",
+      "teams": ["Fiji", "Samoa", "Tonga", "Japan (guest)", "Others"],
+      "format": "Round robin / knockout",
+      "season": "Jul–Aug annually",
+      "pubNote": "Pacific teams — evening local kick-offs are early morning Irish time. Watch at home, meet later."
+    },
+    "rugby-europe-championship": {
+      "name": "Rugby Europe Championship",
+      "short": "Rugby Europe Championship",
+      "group": "World Tournaments",
+      "organiser": "Rugby Europe",
+      "teams": ["Georgia", "Romania", "Spain", "Portugal", "Others"],
+      "format": "Round robin / knockouts",
+      "season": "Feb–Jun annually",
+      "pubNote": "Eastern European teams — evening local kick-offs are morning Irish time (1–3 hours ahead). Watch at home, meet later, or pub-friendly if up early."
+    }
+  },
+  "worldTimezones": {
+    "description": "Kick-off time reference — how local kick-off times translate to Irish time for pub watchability.",
+    "zones": [
+      { "region": "Ireland / UK (winter)", "offset": "+00:00", "note": "Same as Irish time. Pub-friendly if kick-off is afternoon/evening local." },
+      { "region": "Ireland / UK (summer, DST)", "offset": "+01:00", "note": "1 hour ahead of Irish winter time. Pub-friendly if afternoon/evening local." },
+      { "region": "Western Europe (France, Spain, Italy — winter)", "offset": "+01:00", "note": "1 hour ahead of Irish time. Afternoon/evening local = late afternoon Irish — pub-friendly." },
+      { "region": "Western Europe (France, Spain, Italy — summer, DST)", "offset": "+02:00", "note": "2 hours ahead. Afternoon local = late afternoon Irish — pub-friendly." },
+      { "region": "Central Europe (Germany, Poland, etc. — winter)", "offset": "+01:00", "note": "1 hour ahead. Afternoon local = late afternoon Irish — pub-friendly." },
+      { "region": "Central Europe (Germany, Poland, etc. — summer, DST)", "offset": "+02:00", "note": "2 hours ahead. Afternoon local = late afternoon Irish — pub-friendly." },
+      { "region": "Eastern Europe (Georgia, etc.)", "offset": "+03:00 to +04:00", "note": "2–4 hours ahead. Evening local = late evening Irish — pub-friendly if up late. Morning local = early morning Irish." },
+      { "region": "South Africa", "offset": "+02:00", "note": "2 hours ahead. Afternoon/evening local = late afternoon/evening Irish — pub-friendly." },
+      { "region": "Argentina", "offset": "-03:00", "note": "3 hours behind. Afternoon/evening local = morning Irish — pub-friendly if early. Morning local = very early Irish." },
+      { "region": "New Zealand (standard)", "offset": "+12:00 to +13:00", "note": "12–13 hours ahead. Evening local = morning Irish — watch at home, meet later." },
+      { "region": "Australia (east coast, standard)", "offset": "+10:00", "note": "10 hours ahead. Evening local = morning Irish — watch at home, meet later. 2027 RWC final 20:00 AEDT = 9:00am Irish." },
+      { "region": "Australia (west coast)", "offset": "+08:00", "note": "8 hours ahead. Evening local = early morning Irish — watch at home, meet later." },
+      { "region": "Japan", "offset": "+09:00", "note": "9 hours ahead. Evening local = early morning Irish — watch at home, meet later." },
+      { "region": "Fiji / Samoa / Tonga", "offset": "+12:00 to +14:00", "note": "12–14 hours ahead. Evening local = early morning Irish — watch at home, meet later." }
+    ]
+  }
+}

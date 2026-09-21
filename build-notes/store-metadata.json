@@ -1,0 +1,168 @@
+{
+  "store": {
+    "appName": "Rugby Watch",
+    "bundleId": "com.robinfarrell.rugbywatch",
+    "packageName": "com.robinfarrell.rugbywatch",
+    "shortDescription": "Irish rugby fixtures, kick-off times, and pub watchability — Ireland featured, worldwide teams and tournaments, in your local timezone. Free, no login.",
+    "fullDescription": "Rugby Watch is a free app that brings together every Irish rugby team and tournament — national teams (men's, women's, U20, sevens), the four provinces (Leinster, Munster, Ulster, Connacht), clubs and domestic cups, the Six Nations, Rugby World Cup, URC, European Champions Cup, European Challenge Cup, and more — and every world national team and global tournament.\n\nEvery fixture is shown in your local timezone, so you can tell at a glance whether a match is watchable from a Dublin pub wherever you are. Ireland teams are featured first; world teams (Southern Hemisphere, Pacific, Europe) follow. Pub watchability is assessed relative to your local clock — a 6pm kick-off in your timezone is pub-friendly wherever you are.\n\nCoverage:\n• Ireland Men's Senior — Six Nations, Autumn Internationals, Summer Tour, Rugby World Cup (featured)\n• Ireland Women's Senior — Women's Six Nations, Women's Rugby World Cup (featured)\n• Ireland U20 Men and Women — U20 Six Nations, U20 World Cup (featured)\n• Ireland Sevens — Sevens World Series, Sevens World Cup (featured)\n• Leinster, Munster, Ulster, Connacht — URC, Champions Cup, Challenge Cup, domestic cups\n• Clubs and domestic cups — Leinster Senior Cup, Munster Senior Cup, Ulster Senior Cup, Connacht Senior Cup\n• Six Nations, Women's Six Nations\n• Rugby World Cup (2027 in Australia), Women's Rugby World Cup\n• United Rugby Championship (URC)\n• European Champions Cup, European Challenge Cup (EPCR)\n• Sevens World Series, Sevens World Cup\n• Rugby Championship (New Zealand, South Africa, Australia, Argentina)\n• Pacific Nations Cup (Fiji, Samoa, Tonga, Japan)\n• Rugby Europe Championship (Georgia, Romania, Spain, Portugal)\n• World national teams — men's and women's, all unions\n• World timezones reference — convert any kick-off to Irish time\n\nPrivacy: no personal data is collected to serve ads. Before non-essential adverts load, you can choose to accept or reject them — your choice is saved on your device. The group planning grid saves only to your own device. Read the privacy policy in the app for the full detail.\n\nFree to use. Ads support the app. GDPR: your choices are saved on your device.\n\nTimes shown in your local timezone — locale-aware, worldwide.",
+    "keywords": [
+      "Irish rugby",
+      "Ireland rugby",
+      "Six Nations",
+      "Rugby World Cup",
+      "URC",
+      "Champions Cup",
+      "Challenge Cup",
+      "Leinster",
+      "Munster",
+      "Ulster",
+      "Connacht",
+      "pub",
+      "fixtures",
+      "kick-off times",
+      "rugbywatch",
+      "world rugby",
+      "Southern Hemisphere",
+      "New Zealand",
+      "South Africa",
+      "Australia",
+      "Argentina",
+      "Pacific Nations Cup",
+      "Rugby Europe",
+      "Georgia rugby",
+      "Fiji rugby",
+      "timezone",
+      "locale"
+    ],
+    "category": "Sports",
+    "contentRating": "All ages",
+    "pricing": "Free",
+    "privacyPolicyUrl": "https://robin-virtcirt.github.io/privacy.html",
+    "supportUrl": "https://robin-virtcirt.github.io/",
+    "marketingUrl": null,
+    "contactEmail": "[YOUR EMAIL — replace with your real email]",
+    "contactName": "Robin Farrell",
+    "ageRestrictions": null,
+    "explicitContent": false
+  },
+  "admob": {
+    "androidAppId": "ca-app-pub-3940256099946549/1034747911",
+    "iosAppId": "ca-app-pub-3940256099946549/4411462910",
+    "testMode": true,
+    "note": "Replace these with your real AdMob App IDs before release. The current IDs are Google's test IDs — they show test ads but are not monetised."
+  },
+  "assets": {
+    "androidIcons": "android/app/src/main/res/mipmap-* (replace before release)",
+    "iosIcons": "ios/App/App/Assets.xcassets/AppIcon.appiconset (replace before release)",
+    "androidScreenshots": "assets/playstore/ (phone 1-6, 7-inch, 10-inch wide)",
+    "iosScreenshots": "assets/appstore/ (phone 1-6, iPad wide 1-3)",
+    "previewScreenshot": "assets/preview.png"
+  },
+  "screenshots": [
+    {
+      "platform": "android-phone",
+      "file": "assets/playstore/android-phone-1.png",
+      "description": "Home screen — rugby ball green header, 9 tabs, locale indicator"
+    },
+    {
+      "platform": "android-phone",
+      "file": "assets/playstore/android-phone-2.png",
+      "description": "Ireland Teams tab — men's, women's, U20, sevens cards with Featured badges"
+    },
+    {
+      "platform": "android-phone",
+      "file": "assets/playstore/android-phone-3.png",
+      "description": "Provinces tab — Leinster, Munster, Ulster, Connacht with URC + European comps"
+    },
+    {
+      "platform": "android-phone",
+      "file": "assets/playstore/android-phone-4.png",
+      "description": "Clubs & Cups tab — domestic cups + searchable clubs list"
+    },
+    {
+      "platform": "android-phone",
+      "file": "assets/playstore/android-phone-5.png",
+      "description": "Tournaments tab — Six Nations, RWC, URC, Champions Cup, Challenge Cup + Rugby Championship"
+    },
+    {
+      "platform": "android-phone",
+      "file": "assets/playstore/android-phone-6.png",
+      "description": "Europe tab — how Irish teams fit into URC and EPCR, kick-off time notes"
+    },
+    {
+      "platform": "android-phone",
+      "file": "assets/playstore/android-phone-7.png",
+      "description": "World tab — world national teams, world tournaments, timezone converter"
+    },
+    {
+      "platform": "android-phone",
+      "file": "assets/playstore/android-phone-8.png",
+      "description": "Ad consent dialog — accept/reject non-essential ads before they load"
+    },
+    {
+      "platform": "android-7-inch",
+      "file": "assets/playstore/android-7inch-wide.png",
+      "description": "Tournaments on a 7-inch tablet"
+    },
+    {
+      "platform": "android-10-inch",
+      "file": "assets/playstore/android-10inch-wide.png",
+      "description": "World on a 10-inch tablet — world teams and timezone converter"
+    },
+    {
+      "platform": "ios-phone",
+      "file": "assets/appstore/ios-phone-1.png",
+      "description": "Home screen on iPhone — locale indicator, 8 tabs"
+    },
+    {
+      "platform": "ios-phone",
+      "file": "assets/appstore/ios-phone-2.png",
+      "description": "Ireland Teams on iPhone — featured teams with green border"
+    },
+    {
+      "platform": "ios-phone",
+      "file": "assets/appstore/ios-phone-3.png",
+      "description": "Provinces on iPhone"
+    },
+    {
+      "platform": "ios-phone",
+      "file": "assets/appstore/ios-phone-4.png",
+      "description": "Clubs & Cups on iPhone"
+    },
+    {
+      "platform": "ios-phone",
+      "file": "assets/appstore/ios-phone-5.png",
+      "description": "Tournaments on iPhone — including Rugby Championship"
+    },
+    {
+      "platform": "ios-phone",
+      "file": "assets/appstore/ios-phone-6.png",
+      "description": "Europe on iPhone"
+    },
+    {
+      "platform": "ios-phone",
+      "file": "assets/appstore/ios-phone-7.png",
+      "description": "World on iPhone — world teams, tournaments, timezone converter"
+    },
+    {
+      "platform": "ios-wide",
+      "file": "assets/appstore/ios-ipad-wide-1.png",
+      "description": "Tournaments on iPad (wide)"
+    },
+    {
+      "platform": "ios-wide",
+      "file": "assets/appstore/ios-ipad-wide-2.png",
+      "description": "Planning on iPad (wide)"
+    },
+    {
+      "platform": "ios-wide",
+      "file": "assets/appstore/ios-ipad-wide-3.png",
+      "description": "Privacy policy on iPad (wide)"
+    },
+    {
+      "platform": "preview",
+      "file": "assets/preview.png",
+      "description": "Live site preview at https://robin-virtcirt.github.io/"
+    }
+  ]
+}

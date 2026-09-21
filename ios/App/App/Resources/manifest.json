@@ -1,0 +1,8 @@
+{
+  "resources": [
+    {
+      "path": "www/manifest.json",
+      "url": "/manifest.json"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "version": "1.0.0",
+  "private": true,
+  "name": "rugbywatch",
+  "displayName": "Rugby Watch",
+  "description": "Irish rugby fixtures, kick-off times, and pub watchability — all Irish teams and tournaments, including European competition. Free, no login. Android + iOS.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/robin-virtcirt/rugbywatch-app"
+  },
+  "keywords": [
+    "Irish rugby",
+    "Ireland rugby",
+    "Six Nations",
+    "Rugby World Cup",
+    "URC",
+    "Champions Cup",
+    "Challenge Cup",
+    "Leinster",
+    "Munster",
+    "Ulster",
+    "Connacht",
+    "pub",
+    "fixtures",
+    "kick-off times",
+    "rugbywatch"
+  ],
+  "author": "Robin Farrell",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@capacitor/app": "^6.0.1",
+    "@capacitor/clipboard": "^6.0.0",
+    "@capacitor/share": "^6.0.0",
+    "@capacitor/status-bar": "^6.0.0",
+    "playwright": "^1.63.0"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^6.0.1",
+    "@capacitor/cli": "^6.0.1",
+    "@capacitor/ios": "^6.0.1",
+    "typescript": "^5.6.3"
+  },
+  "scripts": {
+    "build": "npx cap sync",
+    "android": "npx cap sync android",
+    "ios": "npx cap sync ios",
+    "open-android": "npx cap open android",
+    "open-ios": "npx cap open ios"
+  }
+}

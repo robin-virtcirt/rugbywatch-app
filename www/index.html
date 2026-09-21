@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en-IE">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="Rugby Watch — Irish rugby fixtures, results, kick-off times, and pub watchability. Six Nations, Rugby World Cup, URC, European Champions Cup, Challenge Cup, and all Irish teams.">
+<meta name="theme-color" content="#16722e">
+<title>Rugby Watch — Irish Rugby</title>
+<link rel="manifest" href="/manifest.json">
+<style>
+  :root {
+    --green: #16722e;
+    --green-dark: #0f5a1f;
+    --green-light: #e8f0e8;
+    --navy: #1f3864;
+    --gold: #c9a227;
+    --white: #ffffff;
+    --row-off: #f2f2f2;
+    --text: #222222;
+    --muted: #666666;
+    --yes: #1f6b1f;
+    --yes-bg: #d6ead6;
+    --warn: #bf8f00;
+    --warn-bg: #fff2cc;
+    --no: #c00000;
+    --no-bg: #f4cccc;
+    --border: #bfbfbf;
+    --radius: 14px;
+    --shadow: 0 2px 10px rgba(0,0,0,0.08);
+    --shadow-lg: 0 6px 18px rgba(0,0,0,0.14);
+    --max-width: 720px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: #f8f9fa;
+    color: var(--text);
+    line-height: 1.55;
+    padding-bottom: 80px;
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap { max-width: var(--max-width); margin: 0 auto; padding: 14px; }
+
+  /* Header */
+  .header {
+    background: var(--green);
+    color: white;
+    padding: 22px 14px;
+    margin: -14px -14px 0 -14px;
+    border-radius: 0 0 var(--radius) var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .header h1 { font-size: 26px; line-height: 1.15; margin-bottom: 4px; }
+  .header p { font-size: 15px; opacity: 0.92; font-weight: 400; }
+
+  /* Tab bar */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin: 14px 0;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 0 0 auto;
+    padding: 10px 16px;
+    border: none;
+    background: #e9ecef;
+    color: #333;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 22px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.18s;
+  }
+  .tab.active { background: var(--green); color: white; box-shadow: 0 2px 6px rgba(22,114,46,0.3); }
+  .tab:active { transform: scale(0.97); }
+
+  /* Sections */
+  .section {
+    display: none;
+    background: white;
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+  }
+  .section.active { display: block; }
+
+  h2 { font-size: 19px; color: var(--green); margin: 0 0 10px 0; padding-bottom: 8px; border-bottom: 2px solid var(--green-light); }
+  h3 { font-size: 16px; color: var(--navy); margin: 14px 0 6px 0; }
+
+  p { font-size: 14px; margin-bottom: 7px; }
+  p.small { font-size: 12.5px; color: var(--muted); }
+  p.legal { font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 8px; margin-top: 12px; }
+
+  /* Lists */
+  ul, ol { padding-left: 20px; font-size: 14px; margin-bottom: 8px; }
+  li { margin-bottom: 4px; }
+
+  /* Badges */
+  .badge-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+  .badge {
+    background: var(--green-light);
+    color: var(--green);
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 12.5px;
+    font-weight: 500;
+    display: inline-block;
+  }
+  .badge.important { background: #fff2cc; color: #8b6914; font-weight: 600; }
+
+  /* Cards */
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+  }
+  .card.green { border-left: 4px solid var(--green); }
+  .card.warn { border-left: 4px solid var(--warn); }
+  .card.no { border-left: 4px solid var(--no); }
+  .card.blue { border-left: 4px solid var(--navy); }
+
+  .card h3 { font-size: 15px; color: var(--navy); margin: 0 0 6px 0; }
+  .card p { font-size: 13.5px; margin: 3px 0; }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 600;
+  }
+  .tag-yes { background: var(--yes-bg); color: var(--yes); }
+  .tag-warn { background: var(--warn-bg); color: var(--warn); }
+  .tag-no { background: var(--no-bg); color: var(--no); }
+
+  /* Table */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    background: var(--navy);
+    color: white;
+    padding: 9px 10px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  td {
+    padding: 9px 10px;
+    border-top: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--row-off); }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 16px;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+    margin-top: 10px;
+  }
+  .btn-primary { background: var(--green); color: white; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-secondary { background: #6c757d; color: white; }
+  .btn-outline {
+    background: transparent;
+    color: var(--green);
+    border: 2px solid var(--green);
+  }
+  .btn-block { width: 100%; }
+
+  /* Consent */
+  .consent-box {
+    background: #fafafa;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin: 12px 0;
+  }
+  .consent-box h3 { font-size: 15px; margin: 0 0 8px 0; }
+  .consent-box p { font-size: 13px; margin-bottom: 8px; }
+  .consent-options { display: flex; flex-direction: column; gap: 8px; }
+  .consent-opt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .consent-opt input { width: 18px; height: 18px; accent-color: var(--green); }
+  .consent-opt label { font-size: 13.5px; flex: 1; }
+  .consent-opt .check { font-size: 11px; color: var(--muted); }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 14px;
+    color: var(--muted);
+    font-size: 12.5px;
+    border-top: 1px solid var(--border);
+    margin-top: 14px;
+  }
+
+  @media (max-width: 420px) {
+    .header h1 { font-size: 21px; }
+    h2 { font-size: 17px; }
+    .tab { font-size: 13px; padding: 8px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<!-- Header -->
+<div class="header">
+  <h1>🏉 Rugby Watch</h1>
+  <p>Irish rugby fixtures, kick-off times, and pub watchability — for all the Irish teams and tournaments, including European competition.</p>
+</div>
+
+<!-- Locale indicator -->
+<div class="locale-indicator-wrap" id="locale-indicator"></div>
+
+<!-- Tabs -->
+<div class="tabs" id="tabs">
+  <button class="tab active" data-tab="home">Home</button>
+  <button class="tab" data-tab="ireland">Ireland Teams</button>
+  <button class="tab" data-tab="provinces">Provinces</button>
+  <button class="tab" data-tab="clubs">Clubs &amp; Cups</button>
+  <button class="tab" data-tab="tournaments">Tournaments</button>
+  <button class="tab" data-tab="europe">Europe</button>
+  <button class="tab" data-tab="world">World</button>
+  <button class="tab" data-tab="planning">Planning</button>
+</div>
+
+<!-- Home -->
+<div class="section active" id="section-home">
+  <h2>Home</h2>
+  <p><strong>Rugby Watch</strong> covers all the Irish rugby teams and tournaments — national teams, provinces, clubs, the big cups, and European competition — with kick-off times shown in your local timezone and notes on whether a match is watchable from a Dublin pub.</p>
+  <p>This is the free app version of the site at <strong>rugbywatch.ie</strong> (once the domain is live). It installs on your phone like an app — no login, no account, no subscription to use the fixture lists.</p>
+
+  <div class="badge-row">
+    <span class="badge">Six Nations</span>
+    <span class="badge">Rugby World Cup</span>
+    <span class="badge">URC</span>
+    <span class="badge">Champions Cup</span>
+    <span class="badge">Challenge Cup</span>
+    <span class="badge">Provinces</span>
+    <span class="badge important">All times shown in your local timezone</span>
+  </div>
+
+  <h3>What's here</h3>
+  <ul>
+    <li><strong>Ireland teams</strong> — men's senior, women's senior, U20, sevens — national fixtures, tours, autumn internationals, World Cup</li>
+    <li><strong>Provinces</strong> — Leinster, Munster, Ulster, Connacht — their URC fixtures and European competition (Champions Cup, Challenge Cup)</li>
+    <li><strong>Clubs &amp; Cups</strong> — domestic cups (Leinster Senior Cup, Munster Senior Cup, Ulster Senior Cup, Connacht Senior Cup) and a browseable clubs list</li>
+    <li><strong>Tournaments</strong> — Six Nations, Rugby World Cup, URC, European Champions Cup, Challenge Cup, Women's Six Nations, Women's Rugby World Cup</li>
+    <li><strong>Europe</strong> — how Irish teams fit into European competition (URC is cross-border; Champions/Challenge Cup is the main European club competition Irish provinces enter)</li>
+    <li><strong>World</strong> — the global tournaments the Irish teams play in, plus all the world national teams — Southern Hemisphere, Pacific, Europe</li>
+    <li><strong>Planning</strong> — add the people in your group, note what they're watching; saves to your device</li>
+  </ul>
+
+  <div class="card blue">
+    <h3>Pub watchability — the angle</h3>
+    <p>Every fixture includes a note on whether it's realistically watchable from a Dublin pub, based on the kick-off time in your local time. Games that kick off in the afternoon or evening in your timezone are pub-friendly. Games that kick off in the morning in your timezone (because they're in Australia or the West Coast of the US) are watchable if you're up early, or you watch at home and meet up later.</p>
+    <p style="margin-top:6px;">Your locale: <strong id="home-locale">detecting…</strong> · Your timezone: <strong id="home-tz">detecting…</strong>.</p>
+  </div>
+
+  <div class="card warn">
+    <h3>Data note</h3>
+    <p>Fixture lists in this app are provided as a guide — they reflect the published scheduled kick-offs where known, and where the actual dates/times aren't yet locked in, they're estimated. Always double-check the official source (IRFU, the province's site, URC, EPCR, etc.) before planning around a fixture. This is a guide, not the official fixture list.</p>
+  </div>
+
+  <div class="card green">
+    <h3>Privacy &amp; ads</h3>
+    <p>This app uses adverts to support it. Before non-essential adverts load, you can choose to accept or reject them — your choice is saved on your device. We don't collect personal data to serve you ads. Read the <a href="#privacy">Privacy Policy</a> for the full detail.</p>
+  </div>
+</div>
+
+<!-- Ireland Teams -->
+<div class="section" id="section-ireland">
+  <h2>Ireland Teams</h2>
+  <p>The Irish national teams. Click a team to see its fixtures. All kick-off times are converted to your local timezone for pub watchability.</p>
+
+  <div id="irish-team-list"></div>
+  <p class="small" style="margin-top:8px;">Fixtures are scheduled kick-offs where known. Tours and autumn internationals are usually scheduled well in advance; summer tour fixtures may be confirmed closer to the tour. Always check the IRFU for the final word.</p>
+</div>
+
+<!-- Provinces -->
+<div class="section" id="section-provinces">
+  <h2>Provinces</h2>
+  <p>The four Irish provinces — Leinster, Munster, Ulster, Connacht. Their URC fixtures and European competition (Champions Cup, Challenge Cup). Provinces enter European competition when they qualify.</p>
+
+  <div id="province-list"></div>
+  <p class="small" style="margin-top:8px;">European qualification: top teams in the URC and the previous season's Champions/Challenge Cup standings qualify for the European cups. The exact qualification spots change each season.</p>
+</div>
+
+<!-- Clubs & Cups -->
+<div class="section" id="section-clubs">
+  <h2>Clubs &amp; Domestic Cups</h2>
+  <p>The big domestic cups and a browseable clubs list. Club rugby is organised at provincial level — the clubs play in their provincial leagues, and the top clubs enter the domestic cups.</p>
+
+  <h3>Domestic Cups</h3>
+  <div class="card">
+    <h3>Leinster Senior Cup</h3>
+    <p>The premier club competition in Leinster province. Top Leinster clubs enter. Usually played in the early part of the season.</p>
+    <p class="small">Fixture list: see the Leinster section below for the current season's draw if available, or check the Leinster Rugby site.</p>
+  </div>
+  <div class="card">
+    <h3>Munster Senior Cup</h3>
+    <p>Top Munster clubs. One of the strongest domestic cups in Ireland.</p>
+  </div>
+  <div class="card">
+    <h3>Ulster Senior Cup</h3>
+    <p>Top Ulster clubs.</p>
+  </div>
+  <div class="card">
+    <h3>Connacht Senior Cup</h3>
+    <p>Top Connacht clubs.</p>
+  </div>
+
+  <h3>Clubs — browse</h3>
+  <p class="small">Selected clubs across the provinces. This is a starter list — club rugby has dozens of clubs. Use the search to find a club.</p>
+  <div id="club-list"></div>
+
+  <div style="margin-top:10px;">
+    <input type="text" id="club-search" class="btn btn-outline" style="width:100%; padding:12px; font-size:14px;" placeholder="Search clubs...">
+  </div>
+</div>
+
+<!-- Tournaments -->
+<div class="section" id="section-tournaments">
+  <h2>Tournaments</h2>
+  <p>The main tournaments Irish teams play in. Each tournament card links to the teams and fixtures.</p>
+
+  <div class="card green">
+    <h3>Six Nations</h3>
+    <p>Annual round-robin tournament: Ireland, England, France, Italy, Scotland, Wales. Usually Feb–Mar. Ireland play 5 matches. Away games kick off midday–evening Irish time — pub-friendly.</p>
+    <p class="small">See the Ireland men's team tab for the Ireland fixtures.</p>
+  </div>
+  <div class="card green">
+    <h3>Women's Six Nations</h3>
+    <p>Same six nations, women's teams. Same timing roughly.</p>
+  </div>
+  <div class="card green">
+    <h3>Rugby World Cup</h3>
+    <p>Every four years (next: 2027, Australia). Ireland men's and women's teams enter. Ireland men drawn in Pool D (Scotland, Uruguay, Portugal) for 2027.</p>
+    <p class="small">World Cup pool games are usually in the morning Irish time for Australian evening kick-offs — see the World tab.</p>
+  </div>
+  <div class="card green">
+    <h3>Women's Rugby World Cup</h3>
+    <p>Every four years (next: 2027). Ireland women's team.</p>
+  </div>
+  <div class="card">
+    <h3>United Rugby Championship (URC)</h3>
+    <p>Cross-border professional club competition: Ireland (Leinster, Munster, Ulster, Connacht), Scotland (4), Wales (4), Italy (4), South Africa (4). Season runs Sep–May.</p>
+    <p class="small">Provinces tab has the Irish province fixtures. Kick-offs in Irish time for most games — a few European away games may be morning Irish time.</p>
+  </div>
+  <div class="card">
+    <h3>European Champions Cup</h3>
+    <p>Top URC and other European league teams qualify. One of the two EPCR European club competitions. Irish provinces enter when qualified.</p>
+  </div>
+  <div class="card">
+    <h3>European Challenge Cup</h3>
+    <p>Second EPCR European club competition. A wider set of teams qualify. Irish provinces/clubs enter when qualified.</p>
+  </div>
+</div>
+
+<!-- Europe -->
+<div class="section" id="section-europe">
+  <h2>Europe — how Irish teams fit in</h2>
+  <p>Irish teams compete in Europe mainly through the provinces in two ways:</p>
+  <ul>
+    <li><strong>United Rugby Championship (URC)</strong> — a cross-border professional league that includes Irish provinces alongside Scottish, Welsh, Italian, and South African teams. It's the main day-to-day competition for the provinces. Most URC games are in Irish time (afternoon/evening Irish kick-offs).</li>
+    <li><strong>European club competitions (EPCR)</strong> — the European Champions Cup and European Challenge Cup. These are the two EPCR competitions. The top URC teams (and other European league top teams) qualify for the Champions Cup; a wider set qualify for the Challenge Cup. Irish provinces enter when qualified.</li>
+  </ul>
+  <p><strong>Kick-off times in Europe:</strong> most European away games kick off in the afternoon in the host country, which is usually morning Irish time (for games in France/England/Italy/Scotland/Wales — a few hours ahead). Some late European kick-offs are early evening Irish time. Pacific / far-ahead games (not relevant to Europe) would be early morning Irish time.</p>
+  <p><strong>Pub watchability for European games:</strong> a typical Champions Cup Saturday game in France kicking off at 18:00 local = about 17:00 Irish time — pub-friendly. A midday game in Cardiff = about 12:00 Irish time — pub-friendly. A late Saturday French game at 20:00 local = about 19:00 Irish time — pub-friendly.</p>
+</div>
+
+<!-- World -->
+<div class="section" id="section-world">
+  <h2>World — global tournaments &amp; world teams</h2>
+  <p>The global tournaments the Irish teams play in, plus all the world national teams — Southern Hemisphere, Pacific, Europe.</p>
+
+  <h3>World national teams</h3>
+  <p class="small">Every national team that competes in world rugby. Kick-off times shown in your local timezone. Pub watchability assessed relative to your local clock.</p>
+
+  <div id="world-team-list"></div>
+
+  <h3>World tournaments</h3>
+  <div class="card blue">
+    <h3>Rugby Championship</h3>
+    <p>Annual Southern Hemisphere round-robin: New Zealand, South Africa, Australia, Argentina. July–August. Evening local kick-offs = early morning Irish time — watch at home, meet later. Northern Hemisphere touring sides in Irish summer fall in Irish afternoon/evening — pub-friendly.</p>
+  </div>
+  <div class="card blue">
+    <h3>Pacific Nations Cup</h3>
+    <p>Fiji, Samoa, Tonga, and guest teams (Japan). July–August. Evening local kick-offs = early morning Irish time — watch at home, meet later.</p>
+  </div>
+  <div class="card blue">
+    <h3>Rugby Europe Championship</h3>
+    <p>Georgia, Romania, Spain, Portugal. February–June. Evening local kick-offs = morning Irish time (1–3 hours ahead) — pub-friendly if up early, or home watch.</p>
+  </div>
+  <div class="card blue">
+    <h3>Rugby World Cup 2027</h3>
+    <p>1 Oct – 13 Nov 2027, Australia. 24 teams (men's). Ireland men drawn in Pool D (Scotland, Uruguay, Portugal). Australia is 11 hours ahead (east coast) — evening Australian kick-off = morning Irish time. Final 13 Nov 2027, 20:00 AEDT = 9:00am Irish time — early morning pub possible.</p>
+  </div>
+  <div class="card blue">
+    <h3>Women's Rugby World Cup 2027</h3>
+    <p>2027 in Ireland (hosts: Ireland, together with Scotland, Wales, Northern Ireland). All Ireland games are in Irish time and pub-friendly. If elsewhere, depends on timezone.</p>
+  </div>
+  <div class="card blue">
+    <h3>Rugby World Cup Sevens</h3>
+    <p>Every four years. 2025 in Saudi Arabia — evening local time = early morning Irish time.</p>
+  </div>
+  <div class="card blue">
+    <h3>Sevens World Series</h3>
+    <p>Series of 15-a-side sevens tournaments worldwide. October/November–May. Dublin Sevens stop is pub-friendly. Away stops in Europe are morning Irish time — pub-friendly if up early. Stops in Asia/Americas are early morning Irish time.</p>
+  </div>
+
+  <h3>Timezone converter</h3>
+  <div id="timezone-converter"></div>
+</div>
+
+<!-- Planning -->
+<div class="section" id="section-planning">
+  <h2>Group Planning</h2>
+  <p>Add the people in your group and note what they're watching. Saves to this device only — there's no shared database.</p>
+
+  <div id="plan-grid"></div>
+
+  <div style="display:flex; gap:8px; margin-top:10px;">
+    <button class="btn btn-primary" id="btn-add-row">+ Add person</button>
+    <button class="btn btn-secondary" id="btn-clear" style="flex:0 0 auto; padding:12px 20px;">Clear all</button>
+  </div>
+  <p class="small" style="margin-top:8px;">Saves automatically to this phone. If you share the app, each person's device saves their own version.</p>
+</div>
+
+<!-- Privacy -->
+<div class="section" id="section-privacy">
+  <h2>Privacy Policy</h2>
+  <p><strong>Last updated:</strong> [DATE]</p>
+  <p><strong>Who we are:</strong> Rugby Watch is a free app provided by [PUBLISHER NAME]. Our contact: [CONTACT EMAIL].</p>
+  <p><strong>What we collect:</strong> This app does not collect personal data that identifies you. We do collect:</p>
+  <ul>
+    <li><strong>App analytics (if enabled):</strong> anonymous usage data such as which screens are opened, how long the app is used, and crash reports. This data does not identify you personally. You can disable analytics in the app settings.</li>
+    <li><strong>Advert identifiers:</strong> if you accept non-essential adverts, the app may use your device's advertising identifier for ad delivery. This is standard for free apps with ads. Your choice is saved on your device.</li>
+  </ul>
+  <p><strong>What we don't collect:</strong> we do not collect your name, email, location, device contacts, or any other personal information. The group planning grid saves only to your own device — we do not send it anywhere.</p>
+  <p><strong>Your choices:</strong></p>
+  <ul>
+    <li>Before non-essential adverts load, you can choose to accept or reject them. Your choice is saved on your device and can be changed in the app.</li>
+    <li>You can disable analytics in the app settings.</li>
+    <li>On iOS, you can reset your advertising identifier in Settings &gt; Privacy &amp; Security &gt; Apple Advertising. On Android, you can opt out of ad personalisation in Settings &gt; Google &gt; Ads.</li>
+  </ul>
+  <p><strong>Children:</strong> this app is not directed at children under 16. We do not knowingly collect data from children.</p>
+  <p><strong>Changes to this policy:</strong> we may update this policy from time to time. The date at the top shows when it was last updated.</p>
+  <p><strong>Contact:</strong> [CONTACT EMAIL].</p>
+  <p><em>This policy applies to the Rugby Watch app only. It does not cover third-party ad networks, which have their own privacy policies.</em></p>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  Rugby Watch · Irish rugby fixtures &amp; pub watchability<br>
+  Free app. Ads support it. GDPR: your choices are saved on your device. Data is a guide — check official sources.
+</div>
+
+</div>
+
+<!-- Ad placeholder script -->
+<script>
+// AdMob / ad handling — placeholder until real IDs are set
+// See app.js for the consent flow and ad loading
+</script>
+
+<script src="/js/app.js"></script>
+</body>
+</html>

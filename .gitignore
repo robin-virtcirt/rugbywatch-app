@@ -1,0 +1,6 @@
+node_modules/
+android/gradle/
+android/.gradle/
+android/gradlew*
+android/gradlew.bat
+capacitor.config.ts

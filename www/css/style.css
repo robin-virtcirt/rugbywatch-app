@@ -1,9 +1,13 @@
 /**
  * Rugby Watch — www/css/style.css
- * Expanded Irish rugby app styles — Ireland featured, worldwide content,
- * locale-aware time conversion and pub watchability.
+ * Single app, both stores. Locale-aware timezone conversion, pub watchability
+ * relative to user's clock, language selector, Ireland featured alongside
+ * worldwide teams/tournaments, GDPR consent, planning grid, Flappy Rugby.
  *
- * Note: most styling is inline in index.html for simplicity.
+ * Source of truth: www/js/data.json  (locales block primary; top-level
+ * teams/tournaments/provinces/clubs are English fallbacks).
+ *
+ * Note: most styling lives in index.html inline <style> for simplicity.
  * This file is available if you want to move styles out later.
  */
 
@@ -502,30 +506,60 @@ tr:nth-child(even) td {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
-  color: #999;
-  z-index: 50;
+  font-size: 12px;
+  color: #888;
 }
 
-.consent-dialog {
-  position: fixed;
-  bottom: 0;
+/* ===== Flappy Rugby ===== */
+.flappy-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 8px 0;
+}
+
+.flappy-overlay {
+  position: absolute;
+  top: 0;
   left: 0;
   right: 0;
-  top: 0;
-  background: rgba(0,0,0,0.5);
+  bottom: 0;
+  background: rgba(0,0,0,0.55);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
-  padding: 20px;
+  gap: 10px;
+  color: #fff;
 }
 
-.consent-dialog > div {
-  background: #fff;
-  border-radius: 14px;
-  padding: 20px;
-  max-width: 400px;
-  width: 100%;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+.flappy-title {
+  font-size: 22px;
+  color: #fff;
+  font-weight: 700;
+}
+
+.flappy-sub {
+  font-size: 13px;
+  color: #eee;
+}
+
+.flappy-gameover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15,40,20,0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #fff;
+}
+
+.flappy-score {
+  font-size: 18px;
+  font-weight: 700;
 }

@@ -1,1094 +1,1066 @@
 /**
- * Rugby Watch — app.js
- * One app, both stores. Locale-aware timezone conversion, pub watchability
- * relative to user's clock, language selector, Ireland featured alongside
- * worldwide teams/tournaments, GDPR consent, planning grid, Flappy Rugby.
+ * Rugby Watch — www/js/app.js
  *
- * Source of truth: www/js/data.json  (locales block primary; top-level
- * teams/tournaments/provinces/clubs are English fallbacks).
+ * Cross-platform rugby watch app (iOS + Android). Ireland featured alongside
+ * worldwide content. Locale-aware timezone conversion with pub watchability
+ * relative to user's clock. Language selector drives all UI strings via the
+ * locales block in data.json. Includes Flappy Rugby mini-game.
+ *
+ * Source of truth: www/js/data.json (single source of truth for all
+ * teams, tournaments, provinces, clubs, and locale strings).
+ *
+ * This file reads data.json on load and re-renders on locale change.
  */
+
 "use strict";
+(function () {
+  'use strict';
 
-var http       = require("http");
-var fs         = require("fs");
-var DATA_RAW   = require("./www/js/data.json");
-var data       = DATA_RAW;
+  // ── Globals ────────────────────────────────────────────────────────
+  var APP_NAME = 'Rugby Watch';
+  var DATA_PATH = '/www/js/data.json';
+  var data = null;
+  var currentLocale = 'en';
+  var isBeingDestroyed = false;
 
-var SERVER_PORT = 3977;
-var MIME = {
-  ".html": "text/html; charset=utf-8",
-  ".js":  "application/javascript; charset=utf-8",
-  ".css": "text/css; charset=utf-8",
-  ".png": "image/png",
-  ".jpg": "image/jpeg",
-  ".svg": "image/svg+xml",
-  ".webp": "image/webp",
-  ".json": "application/json",
-  ".ico": "image/x-icon",
-  ".xml": "application/xml",
-  ".txt": "text/plain",
-  ".woff": "font/woff",
-  ".woff2": "font/woff2",
-  ".ttf": "font/ttf"
-};
-var DOC_ROOT = __dirname + "/www";
+  // ── DOM refs ───────────────────────────────────────────────────────
+  var $ = function (s) { return document.querySelector(s); };
+  var $$ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
 
-function extOf(path) { var i = path.lastIndexOf("."); return i >= 0 ? path.slice(i).toLowerCase() : ""; }
-function contentTypeFor(path) { return MIME[extOf(path)] || "application/octet-stream"; }
-function tryStat(p) { try { return fs.statSync(p); } catch(e) { return null; } }
+  var localeSelector = $('#locale-selector');
+  var localeIndicator = $('#locale-indicator');
+  var tabButtons = $$('.tab');
+  var sections = $$('.section');
+  var searchInput = $('#search-input');
+  var searchClear = $('#search-clear');
+  var flappyStartBtn = $('#flappy-showing');  // kick off from badge click
 
-function corsHeaders(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Origin, Accept, Content-Type");
-  res.setHeader("Access-Control-Max-Age", "86400");
-  if (req.method === "OPTIONS") { res.writeHead(204); res.end(); return true; }
-  return false;
-}
-
-function serveFile(path, contentType, req, res) {
-  var stat = tryStat(path);
-  if (!stat) { res.writeHead(404, { "Content-Type": "text/plain" }); res.end("Not found"); return; }
-  res.writeHead(200, {
-    "Content-Type": contentType,
-    "Cache-Control": "no-cache, no-store, must-revalidate",
-    "Pragma": "no-cache",
-    "Expires": "0"
+  // ── Init ───────────────────────────────────────────────────────────
+  loadData(function () {
+    bindLocaleSelector();
+    restoreLocale();
+    bindTabs();
+    renderAllTabs();
+    bindSearch();
+    bindFlappyShowBadge();
+    showLocaleIndicator(currentLocale);
   });
-  fs.createReadStream(path).pipe(res);
-}
 
-function serve(req, res) {
-  var uri = (req.url || "/").split("?")[0];
-  if (corsHeaders(req, res)) return;
-  if (uri === "/" || uri === "/index.html") {
-    serveFile(DOC_ROOT + "/index.html", "text/html; charset=utf-8", req, res);
-    return;
+  // ── Data load ──────────────────────────────────────────────────────
+  function loadData(cb) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', DATA_PATH, true);
+    xhr.responseType = 'json';
+    xhr.onerror = function () {
+      console.error('Failed to load data.json');
+      cb(null);
+    };
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        try {
+          data = xhr.response;
+          if (!data || typeof data !== 'object') throw new Error('bad data');
+          cb(data);
+        } catch (e) {
+          console.error(e);
+          cb(null);
+        }
+      } else {
+        cb(null);
+      }
+    };
+    xhr.send();
   }
-  var filePath = DOC_ROOT + uri;
-  var stat = tryStat(filePath);
-  if (!stat) {
-    var altPath = DOC_ROOT + uri + ".html";
-    stat = tryStat(altPath);
-    if (stat) { serveFile(altPath, "text/html; charset=utf-8", req, res); return; }
-    res.writeHead(404, { "Content-Type": "text/plain" });
-    res.end("Not found: " + uri);
-    return;
-  }
-  res.writeHead(200, {
-    "Content-Type": contentTypeFor(filePath),
-    "Cache-Control": "no-cache, no-store, must-revalidate",
-    "Pragma": "no-cache",
-    "Expires": "0"
-  });
-  var fstream = null;
-  try { fstream = fs.createReadStream(filePath); } catch(e) {
-    res.writeHead(500, { "Content-Type": "text/plain" }); res.end("Internal server error"); return;
-  }
-  fstream.on("error", function() { res.writeHead(500); res.end(); });
-  fstream.pipe(res);
-}
 
-function bootServer() {
-  http.createServer(serve).listen(SERVER_PORT, function() {
-    console.log("Rugby Watch dev server listening on http://localhost:" + SERVER_PORT);
-  });
-}
-
-// ---- locale helpers ----
-var currentLocale = "en";
-var currentDict = data.locales.en.dict;
-var currentTeams = data.locales.en.teams || {};
-var currentTournaments = data.locales.en.tournaments || {};
-var currentProvinces = data.locales.en.provinces || {};
-var currentClubs = data.locales.en.clubs || [];
-var cachedTZ = null;
-
-function preferredLocale() {
-  var nav = typeof navigator !== "undefined" ? navigator : null;
-  if (nav && nav.language) {
-    var code = nav.language.toLowerCase();
-    if (data.locales[code]) return code;
-    if (code.startsWith("en")) return "en";
-    if (code.startsWith("cy")) return "cy";
-    if (code.startsWith("fr")) return "fr";
-    if (code.startsWith("es")) return "es";
-    if (code.startsWith("it")) return "it";
-    if (code.startsWith("de")) return "de";
-    if (code.startsWith("pt")) return "pt";
-    if (code.startsWith("ja")) return "ja";
-  }
-  return "en";
-}
-
-function detectLocale() {
-  try {
-    var dtf = new Intl.DateTimeFormat();
-    var opts = dtf.resolvedOptions();
-    cachedTZ = opts.timeZone || "Europe/Dublin";
-  } catch(e) { cachedTZ = "Europe/Dublin"; }
-  var nav = typeof navigator !== "undefined" ? navigator : null;
-  var newLocale = preferredLocale();
-  if (newLocale !== currentLocale) setLocale(newLocale);
-}
-
-function setLocale(code) {
-  if (!data.locales[code]) return;
-  currentLocale = code;
-  currentDict = data.locales[code].dict || {};
-  currentTeams = data.locales[code].teams || {};
-  currentTournaments = data.locales[code].tournaments || {};
-  currentProvinces = data.locales[code].provinces || {};
-  currentClubs = data.locales[code].clubs || [];
-  localStorage.setItem("rw-locale", code);
-}
-
-function localeField(obj, key, fallback) {
-  if (!obj) return fallback;
-  var v = obj[key];
-  return (v !== undefined && v !== "") ? v : fallback;
-}
-function localeTeamDisplay(teamId) {
-  if (currentTeams[teamId]) return currentTeams[teamId].name || data.teams[teamId].name;
-  if (data.teams[teamId]) return data.teams[teamId].name;
-  return teamId;
-}
-function localeTournamentDisplay(tid) {
-  if (currentTournaments && currentTournaments[tid]) return currentTournaments[tid].name || data.tournaments[tid].name;
-  if (data.tournaments && data.tournaments[tid]) return data.tournaments[tid].name;
-  return tid;
-}
-function localeProvinceDisplay(code) {
-  if (currentProvinces[code]) return currentProvinces[code].name || data.provinces[code].name;
-  if (data.provinces[code]) return data.provinces[code].name;
-  return code;
-}
-
-function t(key) {
-  if (currentDict[key] !== undefined) return currentDict[key];
-  if (data.locales.en && data.locales.en.dict[key] !== undefined) return data.locales.en.dict[key];
-  return key;
-}
-
-// ---- timezone conversion ----
-function toUserTime(text, tz) {
-  if (!text) return "";
-  tz = tz || cachedTZ || "Europe/Dublin";
-  try {
-    var parser = new Intl.DateTimeFormat("en-US", {
-      timeZone: tz, hour: "2-digit", minute: "2-digit",
-      second: "2-digit", hour12: false
-    });
-    var iso = text.replace(/Z$/, "");
-    var d = new Date(iso);
-    if (isNaN(d.getTime())) return text;
-    return parser.format(d);
-  } catch(e) { return text; }
-}
-
-function toUserTimeSlot(dateStr, timeStr, tz) {
-  tz = tz || cachedTZ || "Europe/Dublin";
-  if (!dateStr || !timeStr) return "";
-  try {
-    var combined = dateStr + "T" + timeStr + ":00";
-    var d = new Date(combined);
-    if (isNaN(d.getTime())) return dateStr + " " + timeStr;
-    var parser = new Intl.DateTimeFormat("en-US", {
-      timeZone: tz, month: "short", day: "numeric",
-      hour: "2-digit", minute: "2-digit", hour12: false, timeZoneName: "short"
-    });
-    return parser.format(d);
-  } catch(e) { return dateStr + " " + timeStr; }
-}
-
-function pubWatchability(timeStr) {
-  if (!timeStr) return t("watch.unknown");
-  var h = parseInt(timeStr, 10);
-  if (isNaN(h)) return t("watch.unknown");
-  if (h >= 16 && h <= 22) return t("watch.pub");
-  if (h >= 12 && h < 16) return t("watch.early");
-  if (h >= 8 && h < 12) return t("watch.tooearly");
-  return t("watch.unknown");
-}
-
-// ---- rendered HTML cache ----
-var rendered = {};
-
-// ---- locale indicator ----
-function localeFlag(code) {
-  var flags = { en:"🏴", cy:"🏴", fr:"🇫🇷", es:"🇪🇸", it:"🇮🇹", de:"🇩🇪", pt:"🇵🇹", ja:"🇯🇵" };
-  return flags[code] || "🏉";
-}
-
-function renderLocaleSelector() {
-  var sel = '<select id="locale-selector" aria-label="Language">';
-  Object.keys(data.locales).forEach(function(code) {
-    var l = data.locales[code];
-    var label = (l && l.label) ? l.label : code;
-    var selAttr = (code === currentLocale) ? ' selected="selected"' : "";
-    sel += '<option value="' + code + '"' + selAttr + '>' + label + '</option>';
-  });
-  sel += "</select>";
-  return sel;
-}
-
-function renderLocaleIndicator() {
-  var el = document.getElementById("locale-indicator");
-  if (!el) return;
-  var tzLabel = cachedTZ ? cachedTZ.replace(/_/g, " ") : "Europe/Dublin";
-  var localeLabel = currentLocale.toUpperCase();
-  var flag = localeFlag(currentLocale);
-  el.innerHTML =
-    '<div class="locale-indicator">' +
-      '<span class="locale-flag">' + flag + '</span>' +
-      '<span class="locale-code">' + localeLabel + '</span>' +
-      '<span class="locale-sep">·</span>' +
-      '<span class="locale-tz">' + tzLabel + '</span>' +
-    "</div>";
-}
-
-// ---- home ----
-function renderHome() {
-  var html =
-    '<div class="section" id="section-home">' +
-      '<h2>' + t("home.title") + "</h2>" +
-      '<p class="section-intro">' + t("home.intro") + "</p>" +
-      '<div class="badge-row">' +
-        '<span class="badge">' + t("badge.sixnations") + "</span>" +
-        '<span class="badge">' + t("badge.rwc") + "</span>" +
-        '<span class="badge">' + t("badge.urc") + "</span>" +
-        '<span class="badge">' + t("badge.champions") + "</span>" +
-        '<span class="badge">' + t("badge.challenge") + "</span>" +
-        '<span class="badge">' + t("badge.provinces") + "</span>" +
-        '<span class="badge important">' + t("badge.timezone") + "</span>" +
-      "</div>" +
-      '<div id="what-list"></div>' +
-      '<div class="card">' +
-        '<h3>' + t("home.pub.h3") + "</h3>" +
-        '<p>' + t("home.pub.p1") + "</p>" +
-        '<p>' + t("home.pub.p2") + "</p>" +
-      "</div>" +
-      '<div class="card warn">' +
-        '<h3>' + t("home.datanote.h3") + "</h3>" +
-        '<p>' + t("home.datanote.p") + "</p>" +
-      "</div>" +
-      '<div class="card green">' +
-        '<h3>' + t("home.privacy.h3") + "</h3>" +
-        '<p>' + t("home.privacy.p") + "</p>" +
-      "</div>" +
-    "</div>";
-  rendered["home"] = html;
-}
-
-// ---- world teams ----
-function renderWorldTeams() {
-  var html = '<div class="section" id="section-world">' +
-    '<h2>' + t("section.world.title") + '</h2>' +
-    '<p class="section-intro">' + t("section.world.intro") + '</p>' +
-    '<div class="world-teams-group">';
-
-  Object.keys(data.teams).forEach(function(id) {
-    var team = data.teams[id];
-    if (!team) return;
-    var displayed = localeTeamDisplay(id);
-    var short = localeField(currentTeams[id], "short", localeField(team, "short", ""));
-    var union = localeField(currentTeams[id], "union", localeField(team, "union", ""));
-    var jersey = localeField(currentTeams[id], "jersey", localeField(team, "jersey", ""));
-    var pubNote = (currentTeams[id] && currentTeams[id].pubNote) ? currentTeams[id].pubNote : (team.pubNote || "");
-    var featured = team.featured ? " featured" : "";
-    var badge = team.featured ? '<span class="badge badge-featured">' + t("badge.featured") + '</span>' : "";
-
-    html += '<div class="team-card' + featured + '">' +
-      '<div class="team-header">' +
-        '<div class="team-flag">🏉</div>' +
-        '<div class="team-meta">' +
-          '<span class="team-name">' + displayed + '</span>' +
-          (short ? '<span class="team-short">' + short + '</span>' : "") +
-        '</div>' +
-        badge +
-      '</div>' +
-      '<div class="team-detail">' +
-        (union ? '<div class="team-row"><span class="row-label">' + t("team.union") + ':</span> <span>' + union + '</span></div>' : "") +
-        (jersey ? '<div class="team-row"><span class="row-label">' + t("team.jersey") + ':</span> <span>' + jersey + '</span></div>' : "") +
-        '<div class="team-pub">' + pubNote + '</div>' +
-      '</div>' +
-    '</div>';
-  });
-
-  html += "</div></div>";
-  rendered["world"] = html;
-}
-
-// ---- timezone converter ----
-function renderTimezoneConverter() {
-  var tz = cachedTZ || "Europe/Dublin";
-  var intro = t("tzconverter.intro");
-  var foot = t("tzconverter.foot").replace("{locale}", currentLocale.toUpperCase()).replace("{tz}", tz);
-
-  var regions = [
-    { name: "Europe/Dublin",     label: "Ireland (Dublin)" },
-    { name: "Europe/London",     label: "UK (London)" },
-    { name: "Europe/Paris",      label: "France (Paris)" },
-    { name: "Europe/Madrid",     label: "Spain (Madrid)" },
-    { name: "Europe/Rome",       label: "Italy (Rome)" },
-    { name: "Europe/Berlin",     label: "Germany (Berlin)" },
-    { name: "Europe/Lisbon",     label: "Portugal (Lisbon)" },
-    { name: "Europe/Warsaw",     label: "Poland (Warsaw)" },
-    { name: "Europe/Prague",     label: "Czech (Prague)" },
-    { name: "Europe/Amsterdam",  label: "Netherlands (Amsterdam)" },
-    { name: "Europe/Brussels",   label: "Belgium (Brussels)" },
-    { name: "Europe/Stockholm",  label: "Sweden (Stockholm)" },
-    { name: "Europe/Oslo",       label: "Norway (Oslo)" },
-    { name: "Europe/Copenhagen", label: "Denmark (Copenhagen)" },
-    { name: "Europe/Helsinki",   label: "Finland (Helsinki)" },
-    { name: "Europe/Athens",     label: "Greece (Athens)" },
-    { name: "Europe/Istanbul",   label: "Turkey (Istanbul)" },
-    { name: "Europe/Riga",       label: "Latvia (Riga)" },
-    { name: "Europe/Vilnius",    label: "Lithuania (Vilnius)" },
-    { name: "Europe/Sofia",      label: "Bulgaria (Sofia)" },
-    { name: "Europe/Bucharest",  label: "Romania (Bucharest)" },
-    { name: "Europe/Budapest",   label: "Hungary (Budapest)" },
-    { name: "Europe/Zagreb",     label: "Croatia (Zagreb)" },
-    { name: "Europe/Ljubljana",  label: "Slovenia (Ljubljana)" },
-    { name: "Europe/Sarajevo",   label: "Bosnia (Sarajevo)" },
-    { name: "Europe/Minsk",      label: "Belarus (Minsk)" },
-    { name: "Europe/Kiev",       label: "Ukraine (Kiev)" },
-    { name: "America/New_York",      label: "USA (New York)" },
-    { name: "America/Chicago",       label: "USA (Chicago)" },
-    { name: "America/Denver",        label: "USA (Denver)" },
-    { name: "America/Los_Angeles",   label: "USA (Los Angeles)" },
-    { name: "America/Anchorage",     label: "USA (Anchorage)" },
-    { name: "America/Honolulu",      label: "USA (Honolulu)" },
-    { name: "Pacific/Auckland",      label: "New Zealand (Auckland)" },
-    { name: "Pacific/Chatham",       label: "New Zealand (Chatham)" },
-    { name: "Australia/Sydney",      label: "Australia (Sydney)" },
-    { name: "Australia/Melbourne",   label: "Australia (Melbourne)" },
-    { name: "Australia/Brisbane",    label: "Australia (Brisbane)" },
-    { name: "Australia/Perth",       label: "Australia (Perth)" },
-    { name: "Australia/Adelaide",    label: "Australia (Adelaide)" },
-    { name: "Australia/Darwin",      label: "Australia (Darwin)" },
-    { name: "Asia/Tokyo",            label: "Japan (Tokyo)" },
-    { name: "Asia/Osaka",            label: "Japan (Osaka)" },
-    { name: "Asia/Seoul",            label: "South Korea (Seoul)" },
-    { name: "Asia/Shanghai",         label: "China (Shanghai)" },
-    { name: "Asia/Hong_Kong",        label: "Hong Kong" }
-  ];
-
-  var rows = [];
-  regions.forEach(function(r) {
-    var kickOff16 = toUserTimeSlot("2026-03-15", "16:00", r.name);
-    var kickOff19 = toUserTimeSlot("2026-03-15", "19:00", r.name);
-    var watch16 = pubWatchability(kickOff16);
-    var watch19 = pubWatchability(kickOff19);
-    var watchCombined = watch16 === watch19 ? watch16 : (watch16 + " / " + watch19);
-    if (!kickOff16) watchCombined = t("watch.unknown");
-    rows.push("<tr>" +
-      '<td class="tz-region">' + r.label + "</td>" +
-      '<td class="tz-names">' + r.name + "</td>" +
-      '<td class="tz-kick16">' + kickOff16 + "</td>" +
-      '<td class="tz-kick19">' + kickOff19 + "</td>" +
-      '<td class="tz-watch">' + watchCombined + "</td>" +
-    "</tr>");
-  });
-
-  var bodyRows = rows.join("");
-  rendered["tz"] =
-    '<div class="section" id="section-tz-converter">' +
-      '<h2>' + t("tzconverter.title") + "</h2>" +
-      '<p class="section-intro">' + intro + "</p>" +
-      '<p>Your locale: ' + currentLocale.toUpperCase() + ' · Your timezone: ' + tz + '</p>' +
-      '<table class="tz-table">' +
-        '<thead><tr>' +
-          '<th>' + t("tzconverter.region") + '</th>' +
-          '<th>Region name</th>' +
-          '<th>16:00 local → your TZ</th>' +
-          '<th>19:00 local → your TZ</th>' +
-          '<th>' + t("tzconverter.watchability") + '</th>' +
-        "</tr></thead>" +
-        '<tbody>' + bodyRows + "</tbody>" +
-      "</table>" +
-      '<div class="tz-table-foot">' + foot + "</div>" +
-    "</div>";
-}
-
-// ---- tab navigation ----
-function switchTab(tabId) {
-  Object.keys(rendered).forEach(function(k) {
-    var el = document.getElementById("section-" + k);
-    if (el) el.classList.remove("active");
-  });
-  var target = document.getElementById("section-" + tabId);
-  if (target) target.classList.add("active");
-  document.querySelectorAll(".tab-bar .tab").forEach(function(t) {
-    t.classList.toggle("active", t.getAttribute("data-tab") === tabId);
-  });
-  window.scrollTo(0, 0);
-}
-
-// ---- club list ----
-function renderClubs() {
-  var container = document.getElementById("clubs-section");
-  if (!container) return;
-  var clubList = data.clubs || [];
-  var pubNote18 = pubWatchability(toUserTime("18:00", cachedTZ));
-
-  var rows = clubList.map(function(club) {
-    var provinceName = localeProvinceDisplay(club.province);
-    return "<tr>" +
-      '<td class="club-name">' + club.name + "</td>" +
-      '<td class="club-province">' + provinceName + "</td>" +
-      '<td class="club-tier">' + club.tier + "</td>" +
-    "</tr>";
-  }).join("");
-
-  container.innerHTML =
-    '<h2>' + t("section.clubs.title") + "</h2>" +
-    '<p class="section-intro">' + t("section.clubs.intro") + "</p>" +
-    (clubList.length ? "" : '<p class="clubs-empty">' + t("clubs.none") + "</p>") +
-    '<table class="club-table">' +
-      '<thead><tr><th>' + t("team.home") + '</th><th>Province</th><th>Tier</th></tr></thead>' +
-      '<tbody>' + rows + '</tbody>' +
-    "</table>" +
-    '<div class="club-pub-note">' +
-      t("home.pub.p1").replace(/18:00/, pubNote18) +
-    "</div>";
-}
-
-// ---- tournaments list ----
-function renderTournaments() {
-  var container = document.getElementById("tournaments-section");
-  if (!container) return;
-  var series = [
-    { id: "sixnations", nameKey: "tournament.sixnations" },
-    { id: "rwc",       nameKey: "tournament.rwc" },
-    { id: "urc",       nameKey: "tournament.urc" },
-    { id: "champions", nameKey: "tournament.champions" },
-    { id: "challenge", nameKey: "tournament.challenge" }
-  ];
-  var cells = series.map(function(s) {
-    var label = t(s.nameKey);
-    var detail = t(s.nameKey + ".detail");
-    return '<div class="tournament-cell">' +
-             '<h3>' + label + "</h3>" +
-             '<p>' + detail + "</p>" +
-           "</div>";
-  });
-  container.innerHTML = '<h2>' + t("section.tournaments.title") + "</h2>" +
-    '<p class="section-intro">' + t("section.tournaments.intro") + '</p>' +
-    '<div class="tournaments-grid">' + cells.join("") + "</div>";
-}
-
-// ---- app header / TOC ----
-function renderAppHeader() {
-  var container = document.getElementById("app-toc");
-  if (!container) return;
-  var tabs = [
-    { id: "home",        label: t("tab.home") },
-    { id: "ireland",     label: t("tab.ireland") },
-    { id: "provinces",   label: t("tab.provinces") },
-    { id: "clubs",       label: t("tab.clubs"),      noteKey: "section.clubs.intro" },
-    { id: "tournaments", label: t("tab.tournaments") },
-    { id: "europe",      label: t("tab.europe") },
-    { id: "world",       label: t("tab.world") },
-    { id: "planning",    label: t("tab.planning") },
-    { id: "privacy",     label: t("tab.privacy") }
-  ];
-  container.innerHTML = tabs.map(function(tab) {
-    var extra = tab.noteKey ? "<p class=\"toc-note\">" + t(tab.noteKey) + "</p>" : "";
-    return '<button class="toc-item" data-tab="' + tab.id + '">' +
-      '<span class="toc-label">' + tab.label + '</span>' + extra + "</button>";
-  }).join("");
-}
-
-// ---- rebuild home "what we cover" list ----
-function rebuildHomeWhat() {
-  var whatList = document.getElementById("what-list");
-  if (!whatList) return;
-  var items = [
-    "<li>" + t("home.what.ireland") + "</li>",
-    "<li>" + t("home.what.provinces") + "</li>",
-    "<li>" + t("home.what.clubs") + "</li>",
-    "<li>" + t("home.what.tournaments") + "</li>",
-    "<li>" + t("home.what.europe") + "</li>",
-    "<li>" + t("home.what.world") + "</li>",
-    "<li>" + t("home.what.planning") + "</li>"
-  ];
-  whatList.innerHTML = items.join("");
-}
-
-// ---- consent section ----
-function renderConsent() {
-  var container = document.getElementById("consent-section");
-  if (!container) return;
-  var denied = localStorage.getItem("rw-pub") === "denied";
-  var accepted = localStorage.getItem("rw-pub") === "accepted";
-  container.innerHTML =
-    '<div class="consent-section' + (denied ? " consent-denied" : (accepted ? " consent-accepted" : " consent-pending")) + '">' +
-      '<h2>' + t("consent.title") + "</h2>" +
-      '<p class="section-intro">' + t("consent.intro") + "</p>" +
-      '<div class="consent-options">' +
-        '<button class="consent-btn" id="consent-accept">' +
-          '<span class="consent-btn-label">' + t("consent.accept") + '</span>' +
-          '<span class="consent-btn-desc">' + t("consent.accept.desc") + '</span>' +
-        "</button>" +
-        '<button class="consent-btn" id="consent-reject">' +
-          '<span class="consent-btn-label">' + t("consent.reject") + '</span>' +
-          '<span class="consent-btn-desc">' + t("consent.reject.desc") + '</span>' +
-        "</button>" +
-      "</div>" +
-      (denied
-        ? '<div class="consent-status"><span class="consent-status-icon">✕</span> ' + t("consent.rejected") + '<br><span class="consent-status-desc">' + t("consent.rejected.desc") + '</span></div>'
-        : (accepted
-          ? '<div class="consent-status"><span class="consent-status-icon">✓</span> ' + t("consent.accepted") + '<br><span class="consent-status-desc">' + t("consent.accepted.desc") + '</span></div>'
-          : "")) +
-      '<button class="consent-change-btn" id="consent-change" style="display:' + (denied || accepted ? "inline-block" : "none") + '\">' + t("consent.change") + "</button>" +
-    "</div>";
-
-  var acceptBtn = document.getElementById("consent-accept");
-  if (acceptBtn) acceptBtn.addEventListener("click", function() {
-    localStorage.setItem("rw-pub", "accepted");
-    renderConsent();
-    applyPubDenialState();
-  });
-  var rejectBtn = document.getElementById("consent-reject");
-  if (rejectBtn) rejectBtn.addEventListener("click", function() {
-    localStorage.setItem("rw-pub", "denied");
-    renderConsent();
-    applyPubDenialState();
-  });
-  var changeBtn = document.getElementById("consent-change");
-  if (changeBtn) changeBtn.addEventListener("click", function() { renderConsent(); });
-}
-
-// ---- data note ----
-function renderDataNote() {
-  var container = document.getElementById("data-note");
-  if (!container) return;
-  container.innerHTML =
-    '<div class="data-note">' +
-      '<h3>' + t("home.datanote.h3") + "</h3>" +
-      '<p>' + t("home.datanote.p") + "</p>" +
-    "</div>";
-}
-
-// ---- privacy section ----
-function renderPrivacy() {
-  var container = document.getElementById("privacy-section");
-  if (!container) return;
-  container.innerHTML =
-    '<div class="privacy-section">' +
-      '<h2>' + t("section.privacy.title") + "</h2>" +
-      '<p class="section-intro">' + t("section.privacy.intro") + "</p>" +
-      '<div class="privacy-links"><a href="/www/privacy.html" class="privacy-link">' + t("section.privacy.title") + '</a></div>' +
-    "</div>";
-}
-
-// ---- planning section ----
-function renderPlanning() {
-  var container = document.getElementById("planning-section");
-  if (!container) return;
-  var people = [];
-  try {
-    var raw = localStorage.getItem("rw-planning");
-    if (raw) people = JSON.parse(raw);
-  } catch(e) { people = []; }
-
-  var items = people.map(function(p, idx) {
-    return '<div class="planning-row">' +
-      '<div class="planning-name">' + (p.name || "???") + "</div>" +
-      '<div class="planning-sixnations">' + (p.sixnations || "") + ' <span class="planning-tag">' + t("planning.field.sixnations") + '</span></div>' +
-      '<div class="planning-rwc">' + (p.rwc || "") + ' <span class="planning-tag">' + t("planning.field.rwc") + '</span></div>' +
-      '<div class="planning-notes">' + (p.notes || "") + ' <span class="planning-tag">' + t("planning.field.notes") + '</span></div>' +
-      '<button class="planning-remove" data-idx="' + idx + '">✕</button>' +
-    "</div>";
-  }).join("");
-
-  var emptyMsg = "<p class=\"planning-empty\">" + t("planning.empty") + "</p>";
-
-  container.innerHTML =
-    '<div class="planning-section">' +
-      '<h2>' + t("section.planning.title") + "</h2>" +
-      '<p class="section-intro">' + t("section.planning.intro") + "</p>" +
-      '<form id="planning-form" class="planning-form">' +
-        '<div class="planning-row planning-add-row">' +
-          '<input class="planning-input" name="name" placeholder="' + t("planning.field.name.ph") + '">' +
-          '<input class="planning-input" name="sixnations" placeholder="' + t("planning.field.sixnations.ph") + '">' +
-          '<input class="planning-input" name="rwc" placeholder="' + t("planning.field.rwc.ph") + '">' +
-          '<input class="planning-input" name="notes" placeholder="' + t("planning.field.notes.ph") + '">' +
-          '<button class="planning-add-btn" type="submit">+ ' + t("planning.field.name") + "</button>" +
-        "</div>" +
-      "</form>" +
-      (people.length ? "<div class=\"planning-list\">" + items + "</div>" : emptyMsg) +
-      '<button class="planning-clear-btn" id="planning-clear" style="display:' + (people.length ? "inline-block" : "none") + '">Clear all</button>' +
-    "</div>";
-
-  var form = document.getElementById("planning-form");
-  if (form) {
-    form.addEventListener("submit", function(e) {
-      e.preventDefault();
-      var fd = new FormData(form);
-      var name = fd.get("name");
-      var sixnations = fd.get("sixnations");
-      var rwc = fd.get("rwc");
-      var notes = fd.get("notes");
-      if (!name || !name.trim()) return;
-      people.push({ name: name.trim(), sixnations: sixnations.trim(), rwc: rwc.trim(), notes: notes.trim() });
-      try { localStorage.setItem("rw-planning", JSON.stringify(people)); } catch(e) {}
-      renderPlanning();
+  // ── Locale ─────────────────────────────────────────────────────────
+  function bindLocaleSelector() {
+    if (!localeSelector) return;
+    localeSelector.addEventListener('change', onChange);
+    // Also support the data-locale attributes on the select element
+    Array.prototype.forEach.call(localeSelector.options, function (opt) {
+      opt.addEventListener('click', onChange);
     });
   }
-  var clearBtn = document.getElementById("planning-clear");
-  if (clearBtn) {
-    clearBtn.addEventListener("click", function() {
-      if (!confirm(t("planning.clear.confirm"))) return;
-      people = [];
-      try { localStorage.setItem("rw-planning", JSON.stringify(people)); } catch(e) {}
-      renderPlanning();
-    });
-  }
-  document.querySelectorAll(".planning-remove").forEach(function(btn) {
-    btn.addEventListener("click", function() {
-      var idx = parseInt(btn.getAttribute("data-idx"), 10);
-      if (isNaN(idx)) return;
-      people.splice(idx, 1);
-      try { localStorage.setItem("rw-planning", JSON.stringify(people)); } catch(e) {}
-      renderPlanning();
-    });
-  });
-}
 
-// ---- pub denial state ----
-function applyPubDenialState() {
-  var denied = localStorage.getItem("rw-pub") === "denied";
-  document.querySelectorAll(".pub-banner, .pub-banner-anchored").forEach(function(el) {
-    el.style.display = denied ? "none" : "";
-  });
-  document.querySelectorAll(".home-pub-note, .pub-note-inline").forEach(function(el) {
-    if (denied) { el.style.opacity = "0.4"; el.title = "Ad/monetisation restricted by user consent"; }
-    else { el.style.opacity = ""; el.title = ""; }
-  });
-  var adBanner = document.getElementById("ad-mobile-banner");
-  if (adBanner) adBanner.style.display = denied ? "none" : "";
-  var interstitial = document.getElementById("ad-interstitial-slot");
-  if (interstitial) interstitial.style.display = denied ? "none" : "";
-}
-
-// ---- detect pub consent from localStorage ----
-function detectPubOption() {
-  try {
-    if (localStorage.getItem("rw-pub") === "denied") {
-      document.querySelectorAll(".pub-banner").forEach(function(el) { el.style.display = "none"; });
+  function onChange() {
+    var checked = localeSelector.querySelector('option:checked');
+    if (!checked) return;
+    var locale = checked.value || checked.getAttribute('data-locale') || checked.textContent.trim().toLowerCase();
+    if (locale && data && data.locales && data.locales[locale]) {
+      currentLocale = locale;
+      renderAllTabs();
+      showLocaleIndicator(locale);
+    } else {
+      // fallback: try the text content
+      var txt = (checked.textContent || '').trim().toLowerCase();
+      if (txt && data && data.locales) {
+        var found = Object.keys(data.locales).find(function (k) {
+          return data.locales[k].label && data.locales[k].label.toLowerCase() === txt;
+        });
+        if (found) {
+          currentLocale = found;
+          renderAllTabs();
+          showLocaleIndicator(found);
+        }
+      }
     }
-  } catch(e) {}
-}
+  }
 
-// ---- main setup ----
-function setup() {
-  detectLocale();
-  detectPubOption();
-  var knewLocale = localStorage.getItem("rw-locale");
-  if (knewLocale && data.locales[knewLocale]) setLocale(knewLocale);
+  function restoreLocale() {
+    var saved = localStorage.getItem('rugbywatch-locale');
+    if (saved && data && data.locales && data.locales[saved]) {
+      currentLocale = saved;
+    }
+    if (localeSelector) {
+      for (var i = 0; i < localeSelector.options.length; i++) {
+        var opt = localeSelector.options[i];
+        if (opt.value === currentLocale || opt.getAttribute('data-locale') === currentLocale) {
+          opt.selected = true;
+          break;
+        }
+      }
+    }
+    showLocaleIndicator(currentLocale);
+  }
 
-  var sel = document.getElementById("locale-selector");
-  if (sel) {
-    sel.value = currentLocale;
-    sel.addEventListener("change", function(e) {
-      setLocale(e.target.value);
-      renderWorldTeams();
-      renderTimezoneConverter();
-      rebuildHomeWhat();
-      renderClubs();
-      renderTournaments();
-      renderLocaleIndicator();
-      renderAppHeader();
-      renderConsent();
-      renderPlanning();
-      renderDataNote();
-      renderPrivacy();
+  function showLocaleIndicator(loc) {
+    if (!localeIndicator) return;
+    var l = data && data.locales && data.locales[loc] ? data.locales[loc] : null;
+    if (!l) {
+      localeIndicator.textContent = 'Language: ' + (loc || 'en');
+      return;
+    }
+    var tz = getText(l, 'tzLabel') || '';
+    var rt = getText(l, 'rt') || '';
+    var label = getText(l, 'label') || loc.toUpperCase();
+    localeIndicator.innerHTML =
+      '<span class="locale-badge"><span class="locale-lang">' + label + '</span>' +
+      (tz ? '<span class="locale-sep">·</span><span class="locale-tz">' + tz + '</span>' : '') +
+      '</span>' +
+      '<span class="locale-label">' + (rt ? rt + '' : '') + '</span>';
+  }
+
+  function getText(loc, key) {
+    if (!data || !data.locales || !data.locales[this.currentLocale]) return null;
+    var dict = data.locales[this.currentLocale].dict;
+    // Try compound key
+    if (dict && dict[key]) return dict[key];
+    // try the key directly on locale
+    if (data.locales[this.currentLocale][key] && typeof data.locales[this.currentLocale][key] === 'string') return data.locales[this.currentLocale][key];
+    return null;
+  }
+
+  function text(keyOrDict) {
+    // Support both 'key' string and {dict, key} object form
+    if (!data) return keyOrDict || '';
+    var loc = currentLocale;
+    if (!data.locales[loc]) loc = 'en';
+    var dict = data.locales[loc].dict;
+    if (typeof keyOrDict === 'string') {
+      return dict && dict[keyOrDict] ? dict[keyOrDict] : keyOrDict;
+    }
+    if (keyOrDict.dictKey && dict && dict[keyOrDict.dictKey]) return dict[keyOrDict.dictKey];
+    if (keyOrDict.raw) return keyOrDict.raw;
+    return '';
+  }
+
+  function textFor(loc, dictKey) {
+    if (!data || !data.locales || !data.locales[loc]) return dictKey || '';
+    var dict = data.locales[loc].dict;
+    return dict && dict[dictKey] ? dict[dictKey] : dictKey;
+  }
+
+  // ── Tabs ───────────────────────────────────────────────────────────
+  function bindTabs() {
+    Array.prototype.forEach.call(tabButtons, function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-tab');
+        if (!id) return;
+        setActiveTab(id);
+      });
     });
   }
 
-  renderLocaleIndicator();
-  renderAppHeader();
-  if (!rendered["home"]) renderHome();
-  if (!rendered["world"]) renderWorldTeams();
-  if (!rendered["tz"]) renderTimezoneConverter();
-  if (!rendered["clubs"]) renderClubs();
-  if (!rendered["tournaments"]) renderTournaments();
-  if (!rendered["consent"]) renderConsent();
-  if (!rendered["planning"]) renderPlanning();
-  if (!rendered["data-note"]) renderDataNote();
-  if (!rendered["privacy"]) renderPrivacy();
-  rebuildHomeWhat();
-}
-
-// ---- tab click handlers ----
-function bindTabs() {
-  document.querySelectorAll(".tab-bar .tab").forEach(function(tab) {
-    tab.addEventListener("click", function() {
-      var tabId = tab.getAttribute("data-tab");
-      if (tabId) switchTab(tabId);
+  function setActiveTab(id) {
+    if (!id) return;
+    Array.prototype.forEach.call(tabButtons, function (btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-tab') === id);
     });
-  });
-  document.querySelectorAll(".toc-item").forEach(function(item) {
-    item.addEventListener("click", function() {
-      var tabId = item.getAttribute("data-tab");
-      if (tabId) switchTab(tabId);
+    Array.prototype.forEach.call(sections, function (s) {
+      s.classList.toggle('active', s.id === 'section-' + id);
     });
-  });
-}
 
-// ---- Flappy Rugby (silly mini-game) ----
-function flappyInit() {
-  var canvas = document.getElementById("flappy-canvas");
-  if (!canvas) return;
-  var ctx = canvas.getContext("2d");
-  var W = canvas.width, H = canvas.height;
-  var overlay = document.getElementById("flappy-overlay");
-  var gameover = document.getElementById("flappy-gameover");
-  var scoreEl = document.getElementById("flappy-score");
-  var startBtn = document.getElementById("flappy-start");
-  var restartBtn = document.getElementById("flappy-restart");
+    // Re-render that tab's dynamic content if needed
+    if (id === 'ireland') renderIrelandTeams();
+    if (id === 'provinces') renderProvinces();
+    if (id === 'clubs') renderClubs();
+    if (id === 'tournaments') renderTournaments();
+    if (id === 'planning') renderPlanning();
+    if (id === 'europe') renderEurope();
+    if (id === 'world') renderWorld();
+    // consent is static
+    if (id === 'account') renderAccount();
 
-  var state = "idle";
-  var bird = { x: 60, y: H / 2, r: 14, vy: 0, rot: 0 };
-  var g = 0.45;
-  var flapV = -7.2;
-  var pipes = [];
-  var pipeGap = 130;
-  var pipeWidth = 38;
-  var pipeSpeed = 2.6;
-  var spawnInterval = 95;
-  var frame = 0;
-  var score = 0;
-  var highScore = 0;
-  try { highScore = parseInt(localStorage.getItem("rw-flappy-high"), 10) || 0; } catch(e) {}
-  var deaths = 0;
-  var maxDeaths = 3;
-  var wingFlap = 0;
-
-  var BODY = "#16722e";
-  var BODY_DARK = "#0f5a1f";
-  var BALL_WHITE = "#f5f5f0";
-  var POST_RED = "#c0392b";
-  var POST_WHITE = "#ffffff";
-  var SKY_TOP = "#87CEEB";
-  var SKY_BOT = "#cce6f0";
-  var GROUND = "#6b8e4e";
-
-  function reset() {
-    bird.y = H / 2;
-    bird.vy = 0;
-    bird.rot = 0;
-    pipes = [];
-    frame = 0;
-    score = 0;
-    deaths = 0;
-    state = "playing";
-    overlay.style.display = "none";
-    gameover.style.display = "none";
-    if (scoreEl) scoreEl.textContent = "Score: 0";
+    // Track analytics (if consent given)
+    trackEvent('tab', id);
   }
 
-  function flap() {
-    if (state !== "playing") return;
-    bird.vy = flapV;
-    wingFlap = 0;
+  function trackEvent(cat, act) {
+    // placeholder — no external analytics; could be wired later
   }
 
-  function drawBall(cx, cy, r, rot) {
+  // ── Search / filter ──────────────────────────────────────────────────
+  function bindSearch() {
+    if (!searchInput) return;
+    searchInput.addEventListener('input', function () {
+      var q = this.value.trim().toLowerCase();
+      if (searchClear) searchClear.style.display = q ? 'inline-block' : 'none';
+      onSearch(q);
+    });
+    if (searchClear) {
+      searchClear.addEventListener('click', function () {
+        searchInput.value = '';
+        searchInput.dispatchEvent(new Event('input'));
+      });
+    }
+  }
+
+  function onSearch(q) {
+    // filter team cards, club rows, tournament rows across all tabs
+    $$('.team-card').forEach(function (el) {
+      var txt = (el.getAttribute('data-name') || '').toLowerCase();
+      el.style.display = txt.indexOf(q) !== -1 && !q ? '' : (q ? (txt.indexOf(q) !== -1 ? '' : 'none') : '');
+    });
+    $$('.club-row').forEach(function (el) {
+      var txt = (el.getAttribute('data-name') || '').toLowerCase();
+      el.style.display = txt.indexOf(q) !== -1 && !q ? '' : (q ? (txt.indexOf(q) !== -1 ? '' : 'none') : '');
+    });
+    $$('.tournament-row').forEach(function (el) {
+      var txt = (el.getAttribute('data-name') || '').toLowerCase();
+      el.style.display = txt.indexOf(q) !== -1 && !q ? '' : (q ? (txt.indexOf(q) !== -1 ? '' : 'none') : '');
+    });
+  }
+
+  // ── Flappy Rugby show badge (appearance) ─────────────────────────
+  function bindFlappyShowBadge() {
+    if (flappyStartBtn) {
+      flappyStartBtn.addEventListener('click', function () {
+        showFlappyGame(true);
+      });
+      // Also wire the flappy-showing element
+      var fs = $('#flappy-showing');
+      if (fs) {
+        fs.addEventListener('click', function () { showFlappyGame(true); });
+      }
+    }
+    // Also wire any element with data-flappy-start
+    $$('[data-flappy-start]').forEach(function (el) {
+      el.addEventListener('click', function () { showFlappyGame(true); });
+    });
+  }
+
+  // ── Flappy Rugby mini-game ──────────────────────────────────────────
+  function showFlappyGame(visible) {
+    if (!document.getElementById('flappy-overlay')) return;
+    var overlay = document.getElementById('flappy-overlay');
+    var gameover = document.getElementById('flappy-gameover');
+    if (!overlay) return;
+    overlay.style.display = visible ? 'flex' : 'none';
+    if (gameover) gameover.style.display = 'none';
+    if (visible) {
+      // Kill any running loop first
+      if (flappyCtx) {
+        flappyCtx = null;
+      }
+      // Start loop after a tiny delay so the DOM repaints
+      setTimeout(function () {
+        initFlappy();
+      }, 50);
+    }
+  }
+
+  // ── Flappy game state ────────────────────────────────────────────────
+  var flappyCanvas = null;
+  var flappyCtx = null;
+  var flappy = null;
+  var flappyAnimId = null;
+  var flappyPipeTimer = null;
+  var flappyGravity = 0.45;
+  var flappyFlapPower = -7.5;
+  var flappyPipeGap = 145;
+  var flappyPipeSpeed = 2.6;
+  var flappyPipeFreq = 110; // frames between pipes (tune per device)
+  var flappyPipeTimerCount = 0;
+  var flappyScore = 0;
+  var flappyHighScore = 0;
+  var flappyGameOver = false;
+  var flappyFrame = 0;
+  var flappyWingPhase = 0; // wing flap animation phase
+  var flappyBaseWingIndex = 0;
+  var flappyPaused = false;
+
+  function initFlappy() {
+    var canvas = document.getElementById('flappy-canvas');
+    if (!canvas) {
+      // Try the id used in the gameover block
+      canvas = document.getElementById('flappy-gameover-canvas');
+    }
+    if (!canvas) return;
+    canvas.width = 340;
+    canvas.height = 460;
+    var ctx = canvas.getContext('2d');
+    flappyCanvas = canvas;
+    flappyCtx = ctx;
+    flappy = {
+      x: 70,
+      y: 200,
+      vy: 0,
+      r: 17,
+      wing: 0,
+      rotation: 0,
+    };
+    flappyScore = 0;
+    flappyGameOver = false;
+    flappyPipeTimerCount = 0;
+    flappyFrame = 0;
+    flappyHighScore = 0;
+    highScoreEl = $('#flappy-high-score');
+    scoreEl = $('#flappy-score');
+    if (highScoreEl) highScoreEl.textContent = 'Best: 0';
+    if (scoreEl) scoreEl.textContent = '0';
+    if (gameoverEl) gameoverEl.style.display = 'none';
+
+    // Clear any old pipes
+    var oldPipes = $$('[data-flappy-pipe]');
+    oldPipes.forEach(function (el) { if (el && el.parentNode) el.parentNode.removeChild(el); });
+
+    // Create pipe container
+    var container = document.getElementById('flappy-pipes');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'flappy-pipes';
+      container.style.cssText = 'position:absolute; top:0; left:0; right:0; bottom:0; pointer-events:none;';
+      canvas.parentNode.style.position = 'relative';
+      canvas.parentNode.appendChild(container);
+    }
+    // Clear existing pipes
+    var existing = $$('[data-flappy-pipe]');
+    existing.forEach(function (el) { if (el.parentNode) el.parentNode.removeChild(el); });
+
+    // Remove old score popup
+    var sp = document.getElementById('flappy-score-popup');
+    if (sp) sp.remove();
+
+    // Wire controls: tap/click/space
+    canvas.removeEventListener('click', onFlappyTap);
+    canvas.removeEventListener('touchstart', onFlappyTouch);
+    window.removeEventListener('keydown', onFlappyKeydown);
+    window.removeEventListener('keyup', onFlappyKeyup);
+    canvas.addEventListener('click', onFlappyTap);
+    canvas.addEventListener('touchstart', onFlappyTouch, { passive: true });
+    window.addEventListener('keydown', onFlappyKeydown);
+    window.addEventListener('keyup', onFlappyKeyup);
+
+    // Hide start overlay after first interaction handled below
+    var startOverlay = document.getElementById('flappy-start-overlay');
+    if (startOverlay) startOverlay.style.display = 'none';
+
+    // Draw first frame
+    drawFlappy();
+    // Start loop
+    if (flappyAnimId) cancelAnimationFrame(flappyAnimId);
+    flappyLoop();
+    // Pipe timer
+    if (flappyPipeTimer) clearInterval(flappyPipeTimer);
+    flappyPipeTimer = setInterval(flappySpawnPipe, 1000);
+    flappyPipeTimerCount = 0;
+  }
+
+  function onFlappyTap(e) {
+    e.preventDefault();
+    if (flappyGameOver) {
+      // Restart
+      if (flappyCtx) flappyCtx.clearRect(0, 0, flappyCanvas.width, flappyCanvas.height);
+      initFlappy();
+      return;
+    }
+    flapFlappy();
+  }
+
+  function onFlappyTouch(e) {
+    e.preventDefault();
+    if (flappyGameOver) {
+      if (flappyCtx) flappyCtx.clearRect(0, 0, flappyCanvas.width, flappyCanvas.height);
+      initFlappy();
+      return;
+    }
+    flapFlappy();
+  }
+
+  function onFlappyKeydown(e) {
+    if (e.key === ' ' || e.key === 'Space') {
+      e.preventDefault();
+      if (flappyGameOver) {
+        if (flappyCtx) flappyCtx.clearRect(0, 0, flappyCanvas.width, flappyCanvas.height);
+        initFlappy();
+        return;
+      }
+      flapFlappy();
+    }
+  }
+
+  function onFlappyKeyup(e) {
+    // nothing
+  }
+
+  function flapFlappy() {
+    if (!flappy || flappyGameOver) return;
+    flappy.vy = flappyFlapPower;
+    flappy.wing = 1; // trigger wing animation
+    flappyWingPhase = 0;
+  }
+
+  function flappySpawnPipe() {
+    if (!flappyCanvas) return;
+    if (flappyGameOver) return;
+    if (flappyPaused) return;
+
+    var canvas = flappyCanvas;
+    var minTop = 60;
+    var maxTop = canvas.height - flappyPipeGap - 80;
+    var top = minTop + Math.random() * (maxTop - minTop);
+    var x = canvas.width + 20;
+    var w = 16;
+
+    var topEl = document.createElement('div');
+    topEl.setAttribute('data-flappy-pipe', '');
+    topEl.style.cssText =
+      'position:absolute; left:' + x + 'px; top:0; width:' + w + 'px; height:' + top + 'px; ' +
+      'background: linear-gradient(90deg, #7cb342, #558b2f); border-radius:4px 4px 0 0; ' +
+      'box-shadow: 0 0 6px rgba(0,0,0,0.15);';
+    var container = document.getElementById('flappy-pipes');
+    if (container) container.appendChild(topEl);
+
+    var bottomEl = document.createElement('div');
+    bottomEl.setAttribute('data-flappy-pipe', '');
+    bottomEl.style.cssText =
+      'position:absolute; left:' + x + 'px; top:' + (top + flappyPipeGap) + 'px; width:' + w + 'px; ' +
+      'height:' + (canvas.height - top - flappyPipeGap) + 'px; ' +
+      'background: linear-gradient(90deg, #7cb342, #558b2f); border-radius:4px 4px 0 0; ' +
+      'box-shadow: 0 0 6px rgba(0,0,0,0.15);';
+    if (container) container.appendChild(bottomEl);
+
+    // Gap indicator
+    var capTop = document.createElement('div');
+    capTop.setAttribute('data-flappy-pipe', '');
+    capTop.style.cssText =
+      'position:absolute; left:' + (x) + 'px; top:' + (top - 8) + 'px; width:' + (w + 6) + 'px; height:8px; ' +
+      'background:#558b2f; border-radius:2px 2px 0 0;';
+    if (container) container.appendChild(capTop);
+
+    var capBot = document.createElement('div');
+    capBot.setAttribute('data-flappy-pipe', '');
+    capBot.style.cssText =
+      'position:absolute; left:' + (x) + 'px; top:' + (top + flappyPipeGap) + 'px; width:' + (w + 6) + 'px; height:8px; ' +
+      'background:#558b2f; border-radius:0 0 2px 2px;';
+    if (container) container.appendChild(capBot);
+  }
+
+  function flappyLoop() {
+    if (!flappy || !flappyCanvas) {
+      if (flappyAnimId) cancelAnimationFrame(flappyAnimId);
+      return;
+    }
+    flappyFrame++;
+
+    if (!flappyGameOver) {
+      // gravity
+      flappy.vy += flappyGravity;
+      flappy.y += flappy.vy;
+
+      // rotation
+      flappy.rotation = Math.max(-0.5, Math.min(1.2, flappy.vy * 0.06));
+
+      // wing animation
+      if (flappy.wing > 0) {
+        flappyWingPhase += 0.35;
+        flappy.wing = Math.max(0, flappy.wing - 0.02);
+        flappyBaseWingIndex = Math.floor(flappyWingPhase) % 3;
+      } else {
+        // hover wing micro
+        flappyBaseWingIndex = flappyFrame % 60 < 30 ? 0 : 1;
+      }
+
+      // pipe collision (DOM-based)
+      var pipes = $$('[data-flappy-pipe]');
+      var hit = false;
+      var pipeData = [];
+      pipes.forEach(function (el) {
+        var st = window.getComputedStyle(el);
+        var l = parseFloat(st.left);
+        var t = parseFloat(st.top);
+        var w = parseFloat(st.width);
+        var h = parseFloat(st.height);
+        if (isNaN(l) || isNaN(t) || isNaN(w) || isNaN(h)) return;
+        // treat as rect
+        if (el.getAttribute('data-pipe-top')) {
+          pipeData.push({ x: l, y: t, w: w, h: h, top: true });
+        } else if (el.getAttribute('data-pipe-bottom')) {
+          pipeData.push({ x: l, y: t, w: w, h: h, top: false });
+        } else {
+          // generic pipe piece
+          pipeData.push({ x: l, y: t, w: w, h: h, top: null });
+        }
+      });
+
+      var ball = { x: flappy.x, y: flappy.y, r: flappy.r };
+      for (var i = 0; i < pipeData.length; i++) {
+        var p = pipeData[i];
+        if (rectCircleOverlap(p, ball)) {
+          hit = true;
+          break;
+        }
+      }
+
+      if (hit) {
+        gameOverFlappy();
+        return;
+      }
+
+      // Scoring: if ball passes a top pipe's right edge
+      for (var j = 0; j < pipeData.length; j++) {
+        var p = pipeData[j];
+        if (!p.top) continue;
+        if (p.x + p.w >= ball.x && p.x + p.w - 2 < ball.x + ball.r) {
+          // passed
+        }
+        if (p.x + p.w < ball.x - ball.r && !p.scored) {
+          p.scored = true;
+          flappyScore++;
+          if (scoreEl) scoreEl.textContent = String(flappyScore);
+          // popup
+          var popup = document.createElement('div');
+          popup.id = 'flappy-score-popup';
+          popup.textContent = '+' + flappyScore;
+          popup.style.cssText =
+            'position:absolute; left:' + (p.x + 20) + 'px; top:' + (p.y + 4) + 'px; ' +
+            'color:#fff; font-size:18px; font-weight:700; pointer-events:none; ' +
+            'text-shadow: 0 2px 6px rgba(0,0,0,0.4);';
+          var container = document.getElementById('flappy-pipes');
+          if (container) container.appendChild(popup);
+          setTimeout(function () { if (popup.parentNode) popup.parentNode.removeChild(popup); }, 600);
+        }
+      }
+
+      // Move pipes
+      pipes.forEach(function (el) {
+        var left = parseFloat(el.style.left) - flappyPipeSpeed;
+        if (left < -40) {
+          if (el.parentNode) el.parentNode.removeChild(el);
+        } else {
+          el.style.left = left + 'px';
+        }
+      });
+
+      // Wing display
+      if (wingEl) {
+        wingEl.style.transform = 'rotate(' + (flappyBaseWingIndex === 1 ? '12deg' : (flappyBaseWingIndex === 2 ? '-8deg' : '0deg')) + ')';
+      }
+
+    } else {
+      // game over gravity
+      if (flappy) {
+        flappy.vy += flappyGravity * 0.7;
+        flappy.y += flappy.vy;
+        flappy.rotation = Math.min(Math.PI / 2, flappy.rotation + 0.04);
+      }
+    }
+
+    drawFlappy();
+
+    if (flappyGameOver && flappy && flappy.y > flappyCanvas.height + 50) {
+      // show gameover after falling off
+      showFlappyGameOver(true);
+      // Stop loop
+      if (flappyAnimId) cancelAnimationFrame(flappyAnimId);
+      flappyAnimId = null;
+      return;
+    }
+
+    flappyAnimId = requestAnimationFrame(flappyLoop);
+  }
+
+  function rectCircleOverlap(r, c) {
+    var cx = c.x, cy = c.y, cr = c.r;
+    var rx = r.x, ry = r.y, rw = r.w, rh = r.h;
+    var closestX = Math.max(rx, Math.min(cx, rx + rw));
+    var closestY = Math.max(ry, Math.min(cy, ry + rh));
+    var dx = cx - closestX;
+    var dy = cy - closestY;
+    return (dx * dx + dy * dy) < (cr * cr);
+  }
+
+  function drawFlappy() {
+    if (!flappyCtx || !flappyCanvas) return;
+    var ctx = flappyCtx;
+    var w = flappyCanvas.width, h = flappyCanvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Sky gradient
+    var sky = ctx.createLinearGradient(0, 0, 0, h);
+    sky.addColorStop(0, '#bcd9b6');
+    sky.addColorStop(1, '#e8f5e0');
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, w, h);
+
+    // Ground
+    ctx.fillStyle = '#8d6e63';
+    ctx.fillRect(0, h - 40, w, 40);
+    ctx.fillStyle = '#6d4c41';
+    ctx.fillRect(0, h - 40, w, 4);
+
+    // Clouds
+    drawCloud(ctx, 40, 50, 0.9);
+    drawCloud(ctx, 200, 35, 1.1);
+    drawCloud(ctx, 280, 70, 0.7);
+
+    // Ball
+    if (flappy) {
+      drawRugbyBall(ctx, flappy.x, flappy.y, flappy.r, flappy.rotation, flappyBaseWingIndex);
+    }
+
+    // Score in canvas (fallback)
+    if (scoreEl && scoreEl.textContent) {
+      // already on DOM
+    }
+  }
+
+  function drawCloud(ctx, x, y, s) {
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.beginPath();
+    ctx.arc(x, y, 18 * s, 0, Math.PI * 2);
+    ctx.arc(x + 22 * s, y - 5 * s, 14 * s, 0, Math.PI * 2);
+    ctx.arc(x + 40 * s, y, 17 * s, 0, Math.PI * 2);
+    ctx.arc(x + 22 * s, y + 5 * s, 15 * s, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  function drawRugbyBall(ctx, x, y, r, rot, wingIdx) {
     ctx.save();
-    ctx.translate(cx, cy);
+    ctx.translate(x, y);
     ctx.rotate(rot);
 
+    // shadow
+    ctx.shadowColor = 'rgba(0,0,0,0.18)';
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetY = 2;
+
+    // Body ellipse
+    var rw = r * 1.45;
+    var rh = r * 0.92;
+    var grad = ctx.createRadialGradient(-rw * 0.2, -rh * 0.2, 2, 0, 0, rw);
+    grad.addColorStop(0, '#f5edd6');
+    grad.addColorStop(0.6, '#e7d7a8');
+    grad.addColorStop(1, '#c9b678');
+    ctx.fillStyle = grad;
     ctx.beginPath();
-    ctx.ellipse(0, 0, r * 1.35, r * 0.85, 0, 0, Math.PI * 2);
-    ctx.fillStyle = BODY;
+    ctx.ellipse(0, 0, rw, rh, 0, 0, Math.PI * 2);
     ctx.fill();
-    ctx.strokeStyle = BODY_DARK;
+
+    // Outline
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = '#a8885a';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, rw, rh, 0, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Seam
+    ctx.strokeStyle = '#b89a5e';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 4]);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, rw * 0.85, rh * 0.7, 0.3, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Laces
+    ctx.strokeStyle = '#8a6f3a';
+    ctx.lineWidth = 1.6;
+    for (var i = -3; i <= 3; i++) {
+      ctx.beginPath();
+      ctx.moveTo(i * 6, -rh * 0.5);
+      ctx.lineTo(i * 6, rh * 0.5);
+      ctx.stroke();
+    }
+
+    // Wings
+    ctx.fillStyle = '#16722e';
+    ctx.strokeStyle = '#0f5a1f';
     ctx.lineWidth = 1.5;
-    ctx.stroke();
+    ctx.shadowColor = 'rgba(0,0,0,0.15)';
+    ctx.shadowBlur = 4;
 
-    ctx.strokeStyle = BALL_WHITE;
-    ctx.lineWidth = 2;
+    var wingFlap = (wingIdx === 1) ? 0.6 : (wingIdx === 2 ? -0.35 : 0.15);
+    // Left wing
+    ctx.save();
+    ctx.translate(-rw - 4, -rh * 0.2);
+    ctx.rotate(-0.4 + wingFlap);
     ctx.beginPath();
-    ctx.ellipse(0, -r * 0.15, r * 0.9, r * 0.35, 0, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.ellipse(0, r * 0.15, r * 0.9, r * 0.35, 0, 0, Math.PI * 2);
-    ctx.stroke();
-
-    ctx.strokeStyle = "rgba(255,255,255,0.5)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(-r * 1.2, 0);
-    ctx.quadraticCurveTo(0, -r * 0.6, r * 1.2, 0);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(-r * 1.2, 0);
-    ctx.quadraticCurveTo(0, r * 0.6, r * 1.2, 0);
-    ctx.stroke();
-
-    var wingUp = Math.sin(wingFlap * 0.4) * 0.45 + 0.5;
-    ctx.fillStyle = "#e8a030";
-    ctx.beginPath();
-    ctx.moveTo(-r * 0.5, -r * 0.3);
-    ctx.quadraticCurveTo(-r * 1.7, -r * 0.8 - wingUp * r * 0.5, -r * 1.1, -r * 0.1);
-    ctx.quadraticCurveTo(-r * 1.5, r * 0.1, -r * 0.5, r * 0.1);
-    ctx.closePath();
-    ctx.fill();
-    ctx.strokeStyle = "#b87810";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(r * 0.5, -r * 0.3);
-    ctx.quadraticCurveTo(r * 1.7, -r * 0.8 - wingUp * r * 0.5, r * 1.1, -r * 0.1);
-    ctx.quadraticCurveTo(r * 1.5, r * 0.1, r * 0.5, r * 0.1);
-    ctx.closePath();
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(-14, -12, -20, 2);
+    ctx.quadraticCurveTo(-14, 8, 0, 2);
     ctx.fill();
     ctx.stroke();
+    ctx.restore();
 
-    ctx.fillStyle = "#111";
+    // Right wing
+    ctx.save();
+    ctx.translate(rw + 4, -rh * 0.2);
+    ctx.rotate(0.4 - wingFlap);
     ctx.beginPath();
-    ctx.arc(r * 0.4, -r * 0.25, r * 0.18, 0, Math.PI * 2);
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(14, -12, 20, 2);
+    ctx.quadraticCurveTo(14, 8, 0, 2);
     ctx.fill();
-    ctx.fillStyle = "#fff";
-    ctx.beginPath();
-    ctx.arc(r * 0.45, -r * 0.3, r * 0.07, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
 
-    ctx.fillStyle = "#e8a030";
+    // Wing highlight
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.save();
+    ctx.translate(-rw - 6, -rh * 0.35);
+    ctx.rotate(-0.4 + wingFlap);
     ctx.beginPath();
-    ctx.moveTo(r * 0.7, -r * 0.15);
-    ctx.lineTo(r * 1.0, -r * 0.05);
-    ctx.lineTo(r * 0.7, r * 0.05);
-    ctx.closePath();
+    ctx.ellipse(-6, 0, 8, 3, 0, 0, Math.PI * 2);
     ctx.fill();
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(rw + 6, -rh * 0.35);
+    ctx.rotate(0.4 - wingFlap);
+    ctx.beginPath();
+    ctx.ellipse(6, 0, 8, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
 
     ctx.restore();
   }
 
-  function drawPipe(topH) {
-    var px = W - pipeWidth;
-    ctx.fillStyle = BODY;
-    ctx.fillRect(px, 0, pipeWidth, topH);
-    ctx.strokeStyle = BODY_DARK;
-    ctx.lineWidth = 1.5;
-    ctx.strokeRect(px, 0, pipeWidth, topH);
-    ctx.fillStyle = POST_WHITE;
-    ctx.fillRect(px - 2, topH - 10, pipeWidth + 4, 6);
-
-    var botY = topH + pipeGap;
-    var botH = H - botY;
-    ctx.fillStyle = BODY;
-    ctx.fillRect(px, botY, pipeWidth, botH);
-    ctx.strokeStyle = BODY_DARK;
-    ctx.lineWidth = 1.5;
-    ctx.strokeRect(px, botY, pipeWidth, botH);
-    ctx.fillStyle = POST_WHITE;
-    ctx.fillRect(px - 2, botY, pipeWidth + 4, 6);
-
-    ctx.fillStyle = POST_RED;
-    ctx.fillRect(px + pipeWidth - 6, 0, 6, 14);
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(px + pipeWidth - 4, 3, 2, 6);
+  function gameOverFlappy() {
+    if (flappyGameOver) return;
+    flappyGameOver = true;
+    if (flappy) flappy.vy = -2;
+    // stop spawning
+    if (flappyPipeTimer) clearInterval(flappyPipeTimer);
+    // allow loop to finish current frame then stop
   }
 
-  function drawBackground() {
-    var grad = ctx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0, SKY_TOP);
-    grad.addColorStop(1, SKY_BOT);
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, W, H);
-
-    ctx.fillStyle = "rgba(255,255,255,0.5)";
-    for (var i = 0; i < 3; i++) {
-      var cx = (i * 130 + frame * 0.2) % (W + 100) - 50;
-      var cy = 40 + i * 30;
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, 30, 18, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.ellipse(cx - 20, cy + 5, 22, 14, 0, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    ctx.fillStyle = GROUND;
-    ctx.fillRect(0, H - 20, W, 20);
-    ctx.strokeStyle = "#4a6b30";
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(0, H - 20);
-    ctx.lineTo(W, H - 20);
-    ctx.stroke();
-    ctx.strokeStyle = "#3a5a20";
-    for (var i = 0; i < 12; i++) {
-      var gx = i * 30 + (frame * 0.5) % 30;
-      ctx.beginPath();
-      ctx.moveTo(gx, H - 20);
-      ctx.lineTo(gx - 3, H - 26);
-      ctx.moveTo(gx + 5, H - 20);
-      ctx.lineTo(gx + 8, H - 27);
-      ctx.stroke();
-    }
-  }
-
-  function drawPosts() {
-    ctx.strokeStyle = "rgba(255,255,255,0.3)";
-    ctx.lineWidth = 3;
-    var postX = W - 80;
-    ctx.beginPath();
-    ctx.moveTo(postX, 20); ctx.lineTo(postX, 70);
-    ctx.moveTo(postX - 15, 20); ctx.lineTo(postX + 15, 20);
-    ctx.stroke();
-    postX = W - 160;
-    ctx.beginPath();
-    ctx.moveTo(postX, 15); ctx.lineTo(postX, 65);
-    ctx.moveTo(postX - 12, 15); ctx.lineTo(postX + 12, 15);
-    ctx.stroke();
-  }
-
-  function draw() {
-    drawBackground();
-    drawPosts();
-    pipes.forEach(function(p) { drawPipe(p.topH); });
-    wingFlap++;
-    drawBall(bird.x, bird.y, bird.r, bird.rot);
-
-    ctx.fillStyle = "rgba(0,0,0,0.5)";
-    ctx.fillRect(0, 0, W, 30);
-    ctx.fillStyle = "#fff";
-    ctx.font = "bold 16px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Score: " + score, W / 2, 20);
-
-    for (var i = 0; i < maxDeaths; i++) {
-      ctx.fillStyle = i < deaths ? "#c0392b" : "#888";
-      ctx.beginPath();
-      ctx.arc(16 + i * 22, 15, 6, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  function update() {
-    if (state !== "playing") return;
-    frame++;
-    bird.vy += g;
-    bird.y += bird.vy;
-    bird.rot += bird.vy * 0.04;
-    bird.rot = Math.max(-0.5, Math.min(1.2, bird.rot));
-
-    if (frame % spawnInterval === 0) {
-      var minTop = 40;
-      var maxTop = H - pipeGap - 60;
-      var topH = minTop + Math.random() * (maxTop - minTop);
-      pipes.push({ x: W, topH: topH, scored: false });
-    }
-
-    pipes.forEach(function(p) { p.x -= pipeSpeed; });
-    pipes = pipes.filter(function(p) { return p.x + pipeWidth > -10; });
-
-    var hit = false;
-    if (bird.y + bird.r > H - 20 || bird.y - bird.r < 0) hit = true;
-
-    pipes.forEach(function(p) {
-      var bx = bird.x, by = bird.y, br = bird.r;
-      var px = p.x, pw = pipeWidth;
-      var topH = p.topH;
-      var botY = topH + pipeGap;
-      if (bx + br > px && bx - br < px + pw) {
-        if (by - br < topH) hit = true;
-        if (by + br > botY) hit = true;
+  function showFlappyGameOver(show) {
+    if (!gameoverEl) return;
+    gameoverEl.style.display = show ? 'flex' : 'none';
+    if (show) {
+      if (flappyScore > flappyHighScore) {
+        flappyHighScore = flappyScore;
+        if (highScoreEl) highScoreEl.textContent = 'Best: ' + flappyHighScore;
       }
-      if (!p.scored && p.x + pw < bx - br) {
-        p.scored = true;
-        score++;
-        if (scoreEl) scoreEl.textContent = "Score: " + score;
+      if (scoreEl) scoreEl.textContent = String(flappyScore);
+      if (highScoreEl) highScoreEl.textContent = 'Best: ' + flappyHighScore;
+      var restartMsg = textFor(currentLocale, 'flappyRestart') || 'Tap to restart';
+      if (restartMsgEl) restartMsgEl.textContent = restartMsg;
+    } else {
+      if (scoreEl) scoreEl.textContent = '0';
+      if (highScoreEl) highScoreEl.textContent = 'Best: ' + flappyHighScore;
+    }
+  }
+
+  // ── DOM refs for flappy ─────────────────────────────────────────────
+  var wingEl = null;
+  var scoreEl = null;
+  var highScoreEl = null;
+  var gameoverEl = null;
+  var restartMsgEl = null;
+
+  function cacheFlappyRefs() {
+    wingEl = $('#flappy-wing');
+    scoreEl = $('#flappy-score');
+    highScoreEl = $('#flappy-high-score');
+    gameoverEl = $('#flappy-gameover');
+    restartMsgEl = $('#flappy-restart-msg');
+  }
+  cacheFlappyRefs();
+
+  // ── Ireland Teams ────────────────────────────────────────────────────
+  function renderIrelandTeams() {
+    var container = $('#irish-team-list');
+    if (!container || !data) return;
+    container.innerHTML = '';
+    var teams = data.teams && data.teams.ireland ? data.teams.ireland : [];
+    if (!teams.length) {
+      container.innerHTML = '<p class="small">No teams loaded.</p>';
+      return;
+    }
+    teams.forEach(function (team) {
+      var card = document.createElement('div');
+      card.className = 'team-card' + (team.featured ? ' featured' : '');
+      card.setAttribute('data-name', team.name || '');
+      var badgeHtml = '';
+      if (team.badge) {
+        badgeHtml = '<span class="badge important">' + escapeHtml(team.badge) + '</span>';
       }
+      var pubStr = team.pubMatch ? '🟢 ' + (team.pubMatch === true ? getText(currentLocale, 'pubGood') || 'Great pub pick' : escapeHtml(team.pubMatch)) : '';
+      card.innerHTML =
+        '<div style="display:flex; justify-content:space-between; align-items:start;">' +
+          '<h3 style="margin:0; font-size:15px;">' + escapeHtml(team.name) + badgeHtml + '</h3>' +
+          '<span class="badge">' + escapeHtml(team.code || '') + '</span>' +
+        '</div>' +
+        '<div style="font-size:13px; color:#555;">' + (team.desc ? escapeHtml(team.desc) : '') + '</div>' +
+        (pubStr ? '<p style="font-size:12.5px; margin-top:6px;">' + pubStr + '</p>' : '');
+      container.appendChild(card);
     });
+  }
 
-    if (hit) {
-      deaths++;
-      if (deaths >= maxDeaths) {
-        state = "over";
-        if (score > highScore) {
-          highScore = score;
-          try { localStorage.setItem("rw-flappy-high", String(highScore)); } catch(e) {}
+  // ── Provinces ────────────────────────────────────────────────────────
+  function renderProvinces() {
+    var container = $('#province-list');
+    if (!container || !data) return;
+    container.innerHTML = '';
+    var provs = data.provinces || [];
+    if (!provs.length) {
+      container.innerHTML = '<p class="small">No provinces yet.</p>';
+      return;
+    }
+    provs.forEach(function (p) {
+      var el = document.createElement('div');
+      el.className = 'card';
+      el.setAttribute('data-name', p.name || '');
+      el.innerHTML =
+        '<h3>' + escapeHtml(p.name) + '</h3>' +
+        '<p>' + (p.desc ? escapeHtml(p.desc) : '') + '</p>' +
+        '<p class="small">Arena: ' + (p.arena ? escapeHtml(p.arena) : '') + '</p>';
+      container.appendChild(el);
+    });
+  }
+
+  // ── Clubs ────────────────────────────────────────────────────────────
+  function renderClubs() {
+    var container = $('#club-list');
+    if (!container || !data) return;
+    if (!container.nodeName) return;
+    container.innerHTML = '';
+    var clubs = data.clubs || [];
+    if (!clubs.length) {
+      container.innerHTML = '<p class="small">No clubs yet.</p>';
+      return;
+    }
+    clubs.forEach(function (c) {
+      var li = document.createElement('li');
+      li.className = 'club-row';
+      li.setAttribute('data-name', c.name || '');
+      li.innerHTML =
+        '<strong>' + escapeHtml(c.name) + '</strong>' +
+        (c.city ? ' · ' + escapeHtml(c.city) : '') +
+        '<br><span class="small">' + (c.division ? escapeHtml(c.division) : '') + '</span>';
+      container.appendChild(li);
+    });
+  }
+
+  // ── Tournaments ──────────────────────────────────────────────────────
+  function renderTournaments() {
+    var container = $('.tournament-list');
+    if (!container || !data) return;
+    // Find the one with class tournament-list (there's one per tab)
+    var wraps = $$('.tournament-list');
+    if (!wraps.length) return;
+    var activeWrap = null;
+    Array.prototype.forEach.call(wraps, function (w) {
+      if (w.style.display !== 'none') activeWrap = w;
+    });
+    if (!activeWrap) activeWrap = wraps[0];
+    activeWrap.innerHTML = '';
+    var turs = data.tournaments || [];
+    if (!turs.length) {
+      activeWrap.innerHTML = '<p class="small">No tournaments yet.</p>';
+      return;
+    }
+    turs.forEach(function (t) {
+      var row = document.createElement('div');
+      row.className = 'card blue tournament-row';
+      row.setAttribute('data-name', t.name || '');
+      var pubStr = t.pubMatch ? '🟢 ' + (t.pubMatch === true ? getText(currentLocale, 'pubGood') || 'Great pub pick' : escapeHtml(t.pubMatch)) : '';
+      row.innerHTML =
+        '<div style="display:flex; justify-content:space-between; align-items:start;">' +
+          '<h3 style="margin:0; font-size:15px;">' + escapeHtml(t.name) + '</h3>' +
+        '</div>' +
+        '<p class="small">' + (t.desc ? escapeHtml(t.desc) : '') + '</p>' +
+        '<p class="small" style="margin-top:4px;">' + (t.season ? escapeHtml(t.season) : '') + '</p>' +
+        (pubStr ? '<p style="font-size:12.5px; margin-top:4px;">' + pubStr + '</p>' : '');
+      activeWrap.appendChild(row);
+    });
+  }
+
+  // ── Europe ───────────────────────────────────────────────────────────
+  function renderEurope() {
+    var el = $('#section-europe');
+    if (!el || !data) return;
+    var html = '';
+    var euroTeams = data.europe && data.europe.teams ? data.europe.teams : [];
+    if (euroTeams.length) {
+      html += '<div class="badge-row">' + euroTeams.map(function (t) {
+        return '<span class="badge">' + escapeHtml(t) + '</span>';
+      }).join('') + '</div>';
+    }
+    var euroText = data.europe && data.europe.text ? data.europe.text : '';
+    if (euroText) {
+      html += '<p>' + escapeHtml(euroText) + '</p>';
+    }
+    var euroList = data.europe && data.europe.list ? data.europe.list : [];
+    if (euroList.length) {
+      html += '<ul>' + euroList.map(function (item) {
+        return '<li>' + escapeHtml(item) + '</li>';
+      }).join('') + '</ul>';
+    }
+    if (!html) html = '<p class="small">No Europe content.</p>';
+    el.innerHTML = html;
+  }
+
+  // ── World ────────────────────────────────────────────────────────────
+  function renderWorld() {
+    var el = $('#section-world');
+    if (!el || !data) return;
+    var html = '';
+    var worldTeams = data.world && data.world.teams ? data.world.teams : [];
+    if (worldTeams.length) {
+      html += '<div class="badge-row">' + worldTeams.map(function (t) {
+        return '<span class="badge">' + escapeHtml(t) + '</span>';
+      }).join('') + '</div>';
+    }
+    var worldText = data.world && data.world.text ? data.world.text : '';
+    if (worldText) {
+      html += '<p>' + escapeHtml(worldText) + '</p>';
+    }
+    var worldList = data.world && data.world.list ? data.world.list : [];
+    if (worldList.length) {
+      html += '<ul>' + worldList.map(function (item) {
+        return '<li>' + escapeHtml(item) + '</li>';
+      }).join('') + '</ul>';
+    }
+    var tzInfo = data.worldTimezones ? Object.keys(data.worldTimezones).slice(0, 30).map(function (k) {
+      var v = data.worldTimezones[k];
+      var label = v.label || k;
+      var off = v.offset ? (v.offset >= 0 ? '+' : '') + v.offset : '';
+      return '<li><strong>' + escapeHtml(label) + '</strong> — UTC' + off + '</li>';
+    }).join('') : '';
+    if (tzInfo) {
+      html += '<h3>' + (getText(currentLocale, 'worldTimezones') || 'World time zones') + '</h3><ul>' + tzInfo + '</ul>';
+    }
+    if (!html) html = '<p class="small">No world content.</p>';
+    el.innerHTML = html;
+  }
+
+  // ── Planning ─────────────────────────────────────────────────────────
+  var planningData = [];
+
+  function renderPlanning() {
+    var grid = $('#plan-grid');
+    if (!grid) return;
+    if (!planningData.length) {
+      grid.innerHTML =
+        '<p class="small" style="padding:8px 0;">No one added yet — tap + Add person to start your group.</p>';
+      return;
+    }
+    grid.innerHTML = '';
+    planningData.forEach(function (row, i) {
+      var div = document.createElement('div');
+      div.className = 'card';
+      div.style.marginBottom = '8px';
+      div.innerHTML =
+        '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+          '<strong>' + escapeHtml(row.name || '') + '</strong>' +
+          '<button class="btn btn-secondary" style="padding:6px 12px; font-size:12px; margin:0;" data-plan-remove="' + i + '">Remove</button>' +
+        '</div>' +
+        '<p class="small">Watching: ' + (row.watching ? escapeHtml(row.watching) : '') + '</p>' +
+        '<p class="small">Notes: ' + (row.notes ? escapeHtml(row.notes) : '') + '</p>';
+      grid.appendChild(div);
+    });
+    // bind remove buttons
+    $$('[data-plan-remove]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var idx = parseInt(btn.getAttribute('data-plan-remove'), 10);
+        if (!isNaN(idx) && planningData[idx]) {
+          planningData.splice(idx, 1);
+          renderPlanning();
+          savePlanning();
         }
-        if (scoreEl) scoreEl.textContent = "Score: " + score + " (best: " + highScore + ")";
-        overlay.style.display = "none";
-        gameover.style.display = "block";
-      } else {
-        bird.y = H / 2;
-        bird.vy = 0;
-        bird.rot = 0;
-      }
-    }
-  }
-
-  function loop() {
-    if (state === "playing") update();
-    draw();
-    requestAnimationFrame(loop);
-  }
-
-  function onFlap(e) {
-    if (e) e.preventDefault();
-    if (state === "idle" || state === "over") { reset(); return; }
-    flap();
-  }
-  canvas.addEventListener("mousedown", onFlap);
-  canvas.addEventListener("touchstart", onFlap, { passive: false });
-  document.addEventListener("keydown", function(e) {
-    if (e.code === "Space" || e.code === "ArrowUp") {
-      e.preventDefault();
-      onFlap();
-    }
-  });
-  if (startBtn) startBtn.addEventListener("click", function(e) { e.preventDefault(); reset(); });
-  if (restartBtn) restartBtn.addEventListener("click", function(e) { e.preventDefault(); reset(); });
-
-  state = "idle";
-  loop();
-}
-
-// ---- boot ----
-if (typeof document !== "undefined") {
-  document.addEventListener("DOMContentLoaded", function() {
-    setup();
-    flappyInit();
-    document.addEventListener("visibilitychange", function() {
-      if (!document.hidden) {
-        detectLocale();
-        renderLocaleIndicator();
-        renderWorldTeams();
-        renderTimezoneConverter();
-        rebuildHomeWhat();
-      }
+      });
     });
-  });
-}
+  }
 
-// Expose helpers for tests
-module.exports = {
-  renderAll: setup,
-  switchTab: switchTab,
-  setLocale: setLocale,
-  currentLocale: function() { return currentLocale; },
-  currentDict: function() { return currentDict; },
-  applyPubDenialState: applyPubDenialState,
-  detectLocale: detectLocale,
-  detectPubOption: detectPubOption,
-  toUserTime: toUserTime,
-  toUserTimeSlot: toUserTimeSlot,
-  pubWatchability: pubWatchability,
-  localeFlag: localeFlag,
-  buildTimeZoneTable: null,
-  pubWatchabilityForLabel: null
-};
+  function savePlanning() {
+    try {
+      localStorage.setItem('rugbywatch-planning', JSON.stringify(planningData));
+    } catch (e) {}
+  }
 
-// Boot the server when run directly
-if (require.main === module) {
-  bootServer();
-}
+  function loadPlanning() {
+    try {
+      var s = localStorage.getItem('rugbywatch-planning');
+      if (s) planningData = JSON.parse(s);
+    } catch (e) {
+      planningData = [];
+    }
+  }
+
+  // ── Account / consent ────────────────────────────────────────────────
+  function renderAccount() {
+    // static
+  }
+
+  // ── Helpers ──────────────────────────────────────────────────────────
+  function escapeHtml(s) {
+    if (typeof s !== 'string') return '';
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function getText(locale, key) {
+    var l = data && data.locales && data.locales[locale] ? data.locales[locale] : null;
+    if (!l) return null;
+    var dict = l.dict || {};
+    return dict[key] || null;
+  }
+
+  // ── Render all tabs on locale change ────────────────────────────────
+  function renderAllTabs() {
+    if (!data) return;
+    // Re-render content for each visible/active tab
+    if (data.teams && data.teams.ireland) renderIrelandTeams();
+    if (data.provinces) renderProvinces();
+    if (data.clubs) renderClubs();
+    if (data.tournaments) renderTournaments();
+    if (data.europe) renderEurope();
+    if (data.world) renderWorld();
+    if (planningData.length) renderPlanning();
+    showLocaleIndicator(currentLocale);
+    // Also update any dynamic text that uses currentLocale dict
+    updateDynamicText();
+  }
+
+  function updateDynamicText() {
+    // Update any element that has data-i18n attribute
+    $$('[data-i18n]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n');
+      var txt = textFor(currentLocale, key);
+      if (txt) el.textContent = txt;
+    });
+    // Update search placeholder if present
+    if (searchInput) {
+      var ph = textFor(currentLocale, 'searchTeams');
+      if (ph) searchInput.setAttribute('placeholder', ph);
+    }
+  }
+
+  // ── Boot ─────────────────────────────────────────────────────────────
+  loadPlanning();
+
+})();

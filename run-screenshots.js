@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Rugby Watch — screenshot runner.
+ * WatchRugby — screenshot runner.
  * Usage: node run-screenshots.js [--port PORT]
  * The static server (serve-www.js) is started inline and shut down after.
  */

@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "com.robinfarrell.rugbywatch"
+    namespace "com.robinfarrell.watchrugby"
     compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.robinfarrell.rugbywatch"
+        applicationId "com.robinfarrell.watchrugby"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

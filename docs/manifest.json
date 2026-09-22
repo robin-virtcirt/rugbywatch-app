@@ -1,6 +1,6 @@
 {
-  "name": "Rugby Watch",
-  "short_name": "Rugby Watch",
+  "name": "WatchRugby",
+  "short_name": "WatchRugby",
   "description": "Irish rugby fixtures, kick-off times, and pub watchability — all Irish teams and tournaments, including European competition.",
   "start_url": "/",
   "display": "standalone",

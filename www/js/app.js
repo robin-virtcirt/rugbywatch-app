@@ -1,7 +1,7 @@
 /**
- * Rugby Watch — www/js/app.js
+ * WatchRugby — www/js/app.js
  *
- * Cross-platform rugby watch app (iOS + Android). Ireland featured alongside
+ * Cross-platform WatchRugby app (iOS + Android). Ireland featured alongside
  * worldwide content. Locale-aware timezone conversion with pub watchability
  * relative to user's clock. Language selector drives all UI strings via the
  * locales block in data.json. Includes Flappy Rugby mini-game.
@@ -17,7 +17,7 @@
   'use strict';
 
   // ── Globals ────────────────────────────────────────────────────────
-  var APP_NAME = 'Rugby Watch';
+  var APP_NAME = 'WatchRugby';
   var DATA_PATH = '/www/js/data.json';
   var data = null;
   var currentLocale = 'en';
@@ -107,7 +107,7 @@
   }
 
   function restoreLocale() {
-    var saved = localStorage.getItem('rugbywatch-locale');
+    var saved = localStorage.getItem('watchrugby-locale');
     if (saved && data && data.locales && data.locales[saved]) {
       currentLocale = saved;
     }
@@ -1005,7 +1005,7 @@
 
   function loadPlanning() {
     try {
-      var s = localStorage.getItem('rugbywatch-planning');
+      var s = localStorage.getItem('watchrugby-planning');
       if (s) planningData = JSON.parse(s);
     } catch (e) {
       planningData = [];

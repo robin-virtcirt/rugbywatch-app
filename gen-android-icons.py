@@ -112,7 +112,7 @@ try:
     font_small = ImageFont.truetype('/System/Library/Fonts/SFNSDisplay.ttf', 40)
 except Exception:
     font_small = ImageFont.load_default()
-label = 'Rugby Watch'
+label = 'WatchRugby'
 lw = sd.textlength(label, font=font_large)
 sd.text(((1080 - lw)//2, by + ball.height + int(1920 * 0.03)), label, font=font_large, fill=OFFWHITE + (255,))
 tag = 'Irish rugby · pub watchability'

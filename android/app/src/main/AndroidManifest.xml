@@ -13,7 +13,7 @@
 
         <activity
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|locale|fontScale|keyboardLayout|density|uiOptions"
-            android:name="com.robinfarrell.rugbywatch.MainActivity"
+            android:name="com.robinfarrell.watchrugby.MainActivity"
             android:theme="@style/AppTheme"
             android:label="@string/app_name"
             android:exported="true"
@@ -34,7 +34,7 @@
         <!-- AdMob consent opt-out (optional; GDPR gate is in-app) -->
         <meta-data
             android:name="com.google.android.gms.ads.AD_ACTIVITY"
-            android:value="com.robinfarrell.rugbywatch.MainActivity"/>
+            android:value="com.robinfarrell.watchrugby.MainActivity"/>
 
     </application>
 

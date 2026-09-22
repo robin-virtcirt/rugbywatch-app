@@ -1,4 +1,4 @@
-package com.robinfarrell.rugbywatch;
+package com.robinfarrell.watchrugby;
 
 import android.os.Bundle;
 import com.getcapacitor.android.App;

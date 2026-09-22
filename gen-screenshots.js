@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Rugby Watch — screenshot + icon generation script.
+ * WatchRugby — screenshot + icon generation script.
  *
  * Generates:
  * - assets/preview.png          (live site preview, 390×844 iPhone)

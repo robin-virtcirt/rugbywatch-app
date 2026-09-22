@@ -1,34 +1,34 @@
-# Rugby Watch — final build notes and submission checklist
+# WatchRugby — final build notes and submission checklist
 #
 # This file is the master checklist for submitting the app to the stores.
 # Keep it with the app; update it as you go.
 #
 # --- App identity ---
-# App name (both stores): "Rugby Watch"
-# Bundle ID / package name: com.robinfarrell.rugbywatch
+# App name (both stores): "WatchRugby"
+# Bundle ID / package name: com.robinfarrell.watchrugby
 # (Matches capacitor.config.ts:appId)
 #
 # --- Where the live web app is (until domain is live) ---
 # Site URL: https://robin-virtcirt.github.io/
 # Privacy policy on site: https://robin-virtcirt.github.io/privacy.html
-# (Once rugbywatch.ie is live, point both at rugbywatch.ie and update
+# (Once watchrugby.ie is live, point both at watchrugby.ie and update
 #  the store metadata (privacy URL, support URL, promotional text) to the
 #  new domain.)
 #
 # --- Domain status ---
-# Target domain: rugbywatch.ie
+# Target domain: watchrugby.ie
 # Registrar: Maxer (cheapest reliable .ie — €18.49 + VAT/year first year,
 #   €19.49 + VAT/year renewal; IE-accredited; buy at maxer.com)
 # You do the purchase. Once bought:
 #   1. Point DNS at GitHub Pages (CNAME → robin-virtcirt.github.io) OR
 #      set an A record to GitHub Pages IPs (185.199.108.153,
 #      185.199.109.153, 185.199.110.153, 185.199.111.153).
-#   2. Add a CNAME file to the repo root: rugbywatch.ie
+#   2. Add a CNAME file to the repo root: watchrugby.ie
 #   3. In the GitHub repo Settings → Pages → Custom domain, set
-#      rugbywatch.ie, and enable HTTPS.
+#      watchrugby.ie, and enable HTTPS.
 #   4. Wait for the domain to be live (can take up to 24h).
 #   5. Update the app's privacy URL, support URL, and the store listings
-#      to use https://rugbywatch.ie/...
+#      to use https://watchrugby.ie/...
 #
 # --- AdMob ---
 # - AdMob App ID for ANDROID: replace the placeholder in
@@ -86,7 +86,7 @@
 #   fixture data before submission, or regenerate after you update the data.
 #
 # --- Store listings (both stores) ---
-# App name: Rugby Watch
+# App name: WatchRugby
 # Description (short): Irish rugby fixtures, kick-off times, and pub
 #   watchability — for all the Irish teams and tournaments, including
 #   European competition. Free, no login.
@@ -100,12 +100,12 @@
 #   sport). If the store asks for a more detailed rating, complete it.
 #
 # Privacy policy URL: https://robin-virtcirt.github.io/privacy.html
-#   (or https://rugbywatch.ie/privacy.html once live)
+#   (or https://watchrugby.ie/privacy.html once live)
 # Support URL: https://robin-virtcirt.github.io/ (or the new domain)
 # Marketing URL: (optional — leave blank for now)
 #
 # --- Store submission checklist ---
-# [ ] Buy rugbywatch.ie at Maxer, point at GitHub Pages, enable HTTPS.
+# [ ] Buy watchrugby.ie at Maxer, point at GitHub Pages, enable HTTPS.
 # [ ] Create AdMob app (or use an existing one) and get the Android + iOS
 #     App IDs. Replace the placeholders in the code.
 # [ ] Replace the app icons with real icons (Android + iOS).

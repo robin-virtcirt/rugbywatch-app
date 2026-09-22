@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Rugby Watch — start local server + verify app renders.
+ * WatchRugby — start local server + verify app renders.
  *
  * Starts serve-www.js (port 3980 by default) in the background,
  * waits for it to be ready, opens the home tab in a headless browser,

@@ -1,4 +1,4 @@
-# Rugby Watch — iOS setup notes (for you)
+# WatchRugby — iOS setup notes (for you)
 #
 # This machine has no CocoaPods and no working Xcode project, so the iOS
 # build can't be completed here. Here's exactly what to do on a Mac with
@@ -42,7 +42,7 @@
 # --- Submitting ---
 # 1. Open App.xcworkspace in Xcode.
 # 2. Select the "App" scheme, set the signing team under Signing & Capabilities,
-#    and set the bundle identifier to com.robinfarrell.rugbywatch (matches
+#    and set the bundle identifier to com.robinfarrell.watchrugby (matches
 #    capacitor.config.ts).
 # 3. In the Signing & Capabilities tab, add the "App Tracking Transparency"
 #    capability if you use any advertising or analytics that requires ATT.
@@ -55,7 +55,7 @@
 #
 # --- GDPR / privacy on iOS ---
 # - The privacy policy URL in App Store Connect must match the one in the app
-#   (www/privacy.html on your live site, e.g. https://rugbywatch.ie/privacy.html
+#   (www/privacy.html on your live site, e.g. https://watchrugby.ie/privacy.html
 #   once the domain is live, or https://robin-virtcirt.github.io/privacy.html
 #   until then).
 # - If you use AdMob, fill in the "Privacy — Data Collection" section in App

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Rugby Watch — icon generation script.
+WatchRugby — icon generation script.
 Generates:
   - iOS universal AppIcon set (20@2x, 20@3x, 29@2x, 29@3x, 40@2x, 40@3x,
     60@2x, 60@3x, 76@2x, 76@3x, 83.5@2x, 1024, 512@2x) into
@@ -157,7 +157,7 @@ for density, px in ANDROID_FOREGROUND_DENSITIES.items():
 
 # ── Android splash foreground PNG (1 drawable) ────────────────────────────
 # The splash is a full-screen image; we'll make a 1080×1920 vertical splash
-# with green background and rugby ball centred, plus a small "Rugby Watch" label
+# with green background and rugby ball centred, plus a small "WatchRugby" label
 print('Generating Android splash...')
 splash_w, splash_h = 1080, 1920
 splash = Image.new('RGBA', (splash_w, splash_h), GREEN + (255,))
@@ -167,7 +167,7 @@ ball = draw_ball(int(splash_w * 0.38))
 bx = (splash_w - ball.width) // 2
 by = (splash_h - ball.height) // 2 - int(splash_h * 0.05)
 splash.paste(ball, (bx, by), ball)
-# Label: "Rugby Watch" in white, attempt to use a system font
+# Label: "WatchRugby" in white, attempt to use a system font
 try:
     font_large = ImageFont.truetype('/System/Library/Fonts/SFNSDisplay.ttf', 72)
 except Exception:
@@ -177,7 +177,7 @@ try:
 except Exception:
     font_small = ImageFont.load_default()
 
-label = 'Rugby Watch'
+label = 'WatchRugby'
 label_w = sd.textlength(label, font=font_large)
 label_x = (splash_w - label_w) // 2
 label_y = by + ball.height + int(splash_h * 0.03)

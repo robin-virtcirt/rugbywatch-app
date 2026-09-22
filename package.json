@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "private": true,
-  "name": "rugby-with-friends",
-  "displayName": "Rugby With Friends",
+  "name": "watchrugby",
+  "displayName": "WatchRugby",
   "description": "Irish rugby fixtures, kick-off times, and pub watchability — all Irish teams and tournaments, including European competition. Free, no login. Android + iOS.",
   "repository": {
     "type": "git",
@@ -15,7 +15,7 @@
     "fixtures",
     "kick-off times",
     "watchability",
-    "rugbywithfriends",
+    "WatchRugby",
     "ireland rugby",
     "six nations",
     "rugby world cup",

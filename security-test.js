@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Rugby Watch — security + debug test.
+ * WatchRugby — security + debug test.
  * Hits the live server and checks for common problems: XSS reflection,
  * missing content types, directory traversal, console errors, world content.
  */
@@ -41,7 +41,7 @@ async function main() {
     else { failed++; results.push(`  ✗ ${name}${detail ? ' — ' + detail : ''}`); }
   }
 
-  console.log('=== Rugby Watch — Security & Debug Test ===\n');
+  console.log('=== WatchRugby — Security & Debug Test ===\n');
 
   // ── 1. HTTP routing ──────────────────────────────────────
   const routes = [
@@ -187,7 +187,7 @@ async function main() {
     check('Live site serves HTML', https.headers['content-type']?.includes('text/html'), '');
     const liveBody = https.body;
     check('Live site has World tab mention', liveBody.includes('World'), '');
-    check('Live site has locale indicator markup', liveBody.includes('locale-indicator') || liveBody.includes('rugbywatch'), '');
+    check('Live site has locale indicator markup', liveBody.includes('locale-indicator') || liveBody.includes('watchrugby'), '');
   } catch (e) {
     check('Live site HTTPS loads', false, e.message);
   }

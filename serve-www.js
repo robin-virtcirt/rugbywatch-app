@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Rugby Watch — static server for www/ (used by screenshot scripts).
+ * WatchRugby — static server for www/ (used by screenshot scripts).
  * Usage: node serve-www.js [port]
  * Default port: 3980
  */
@@ -48,10 +48,10 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, '127.0.0.1', () => {
-  console.log(`Rugby Watch static server running at http://127.0.0.1:${PORT}/`);
+  console.log(`WatchRugby static server running at http://127.0.0.1:${PORT}/`);
   console.log(`Serving ${WWW}`);
   console.log('Press Ctrl-C to stop.');
 });
 
-process.on('SIGINT', () => { server.close(() => process.exit(0)); });
-process.on('SIGTERM', () => { server.close(() => process.exit(0)); });
+process.on('SIGINT', () => { server.kill('SIGTERM'); });
+process.on('SIGTERM', () => { server.kill('SIGTERM'); });

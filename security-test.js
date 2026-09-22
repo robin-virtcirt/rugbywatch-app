@@ -8,10 +8,10 @@ const http = require('http');
 
 function request(path, method = 'GET') {
   return new Promise((resolve, reject) => {
-    const parsed = new URL(path, 'http://127.0.0.1:3977');
+    const parsed = new URL(path, 'http://127.0.0.1:3979');
     const opts = {
       hostname: '127.0.0.1',
-      port: 3977,
+      port: 3979,
       path: parsed.pathname + parsed.search,
       method,
       headers: { 'User-Agent': 'RugbyWatch-security-test/1.0' },

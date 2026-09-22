@@ -1,971 +1,1094 @@
 /**
  * Rugby Watch — app.js
- * Drives the worldwide Irish rugby web app.
- * - Builds team/tournament/club lists from data.json
- * - Locale-aware time conversion and pub watchability
- * - GDPR consent for ads
- * - Group planning grid (localStorage)
- * - AdMob placeholders
- * - World teams and tournaments
+ * One app, both stores. Locale-aware timezone conversion, pub watchability
+ * relative to user's clock, language selector, Ireland featured alongside
+ * worldwide teams/tournaments, GDPR consent, planning grid, Flappy Rugby.
+ *
+ * Source of truth: www/js/data.json  (locales block primary; top-level
+ * teams/tournaments/provinces/clubs are English fallbacks).
  */
+"use strict";
 
-(function () {
-  'use strict';
+var http       = require("http");
+var fs         = require("fs");
+var DATA_RAW   = require("./www/js/data.json");
+var data       = DATA_RAW;
 
-  const TABS = document.querySelectorAll('.tab');
-  const SECTIONS = {
-    home: document.getElementById('section-home'),
-    ireland: document.getElementById('section-ireland'),
-    provinces: document.getElementById('section-provinces'),
-    clubs: document.getElementById('section-clubs'),
-    tournaments: document.getElementById('section-tournaments'),
-    europe: document.getElementById('section-europe'),
-    world: document.getElementById('section-world'),
-    planning: document.getElementById('section-planning'),
-    privacy: document.getElementById('section-privacy'),
-  };
+var SERVER_PORT = 3977;
+var MIME = {
+  ".html": "text/html; charset=utf-8",
+  ".js":  "application/javascript; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".svg": "image/svg+xml",
+  ".webp": "image/webp",
+  ".json": "application/json",
+  ".ico": "image/x-icon",
+  ".xml": "application/xml",
+  ".txt": "text/plain",
+  ".woff": "font/woff",
+  ".woff2": "font/woff2",
+  ".ttf": "font/ttf"
+};
+var DOC_ROOT = __dirname + "/www";
 
-  // ── Tab switching ───────────────────────────────────────
-  function switchTab(tabId) {
-    TABS.forEach(t => {
-      const isActive = t.dataset.tab === tabId;
-      t.classList.toggle('active', isActive);
-    });
-    Object.entries(SECTIONS).forEach(([id, el]) => {
-      if (el) el.classList.toggle('active', id === tabId);
-    });
+function extOf(path) { var i = path.lastIndexOf("."); return i >= 0 ? path.slice(i).toLowerCase() : ""; }
+function contentTypeFor(path) { return MIME[extOf(path)] || "application/octet-stream"; }
+function tryStat(p) { try { return fs.statSync(p); } catch(e) { return null; } }
+
+function corsHeaders(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Origin, Accept, Content-Type");
+  res.setHeader("Access-Control-Max-Age", "86400");
+  if (req.method === "OPTIONS") { res.writeHead(204); res.end(); return true; }
+  return false;
+}
+
+function serveFile(path, contentType, req, res) {
+  var stat = tryStat(path);
+  if (!stat) { res.writeHead(404, { "Content-Type": "text/plain" }); res.end("Not found"); return; }
+  res.writeHead(200, {
+    "Content-Type": contentType,
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    "Pragma": "no-cache",
+    "Expires": "0"
+  });
+  fs.createReadStream(path).pipe(res);
+}
+
+function serve(req, res) {
+  var uri = (req.url || "/").split("?")[0];
+  if (corsHeaders(req, res)) return;
+  if (uri === "/" || uri === "/index.html") {
+    serveFile(DOC_ROOT + "/index.html", "text/html; charset=utf-8", req, res);
+    return;
   }
+  var filePath = DOC_ROOT + uri;
+  var stat = tryStat(filePath);
+  if (!stat) {
+    var altPath = DOC_ROOT + uri + ".html";
+    stat = tryStat(altPath);
+    if (stat) { serveFile(altPath, "text/html; charset=utf-8", req, res); return; }
+    res.writeHead(404, { "Content-Type": "text/plain" });
+    res.end("Not found: " + uri);
+    return;
+  }
+  res.writeHead(200, {
+    "Content-Type": contentTypeFor(filePath),
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    "Pragma": "no-cache",
+    "Expires": "0"
+  });
+  var fstream = null;
+  try { fstream = fs.createReadStream(filePath); } catch(e) {
+    res.writeHead(500, { "Content-Type": "text/plain" }); res.end("Internal server error"); return;
+  }
+  fstream.on("error", function() { res.writeHead(500); res.end(); });
+  fstream.pipe(res);
+}
 
-  TABS.forEach(tab => {
-    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+function bootServer() {
+  http.createServer(serve).listen(SERVER_PORT, function() {
+    console.log("Rugby Watch dev server listening on http://localhost:" + SERVER_PORT);
+  });
+}
+
+// ---- locale helpers ----
+var currentLocale = "en";
+var currentDict = data.locales.en.dict;
+var currentTeams = data.locales.en.teams || {};
+var currentTournaments = data.locales.en.tournaments || {};
+var currentProvinces = data.locales.en.provinces || {};
+var currentClubs = data.locales.en.clubs || [];
+var cachedTZ = null;
+
+function preferredLocale() {
+  var nav = typeof navigator !== "undefined" ? navigator : null;
+  if (nav && nav.language) {
+    var code = nav.language.toLowerCase();
+    if (data.locales[code]) return code;
+    if (code.startsWith("en")) return "en";
+    if (code.startsWith("cy")) return "cy";
+    if (code.startsWith("fr")) return "fr";
+    if (code.startsWith("es")) return "es";
+    if (code.startsWith("it")) return "it";
+    if (code.startsWith("de")) return "de";
+    if (code.startsWith("pt")) return "pt";
+    if (code.startsWith("ja")) return "ja";
+  }
+  return "en";
+}
+
+function detectLocale() {
+  try {
+    var dtf = new Intl.DateTimeFormat();
+    var opts = dtf.resolvedOptions();
+    cachedTZ = opts.timeZone || "Europe/Dublin";
+  } catch(e) { cachedTZ = "Europe/Dublin"; }
+  var nav = typeof navigator !== "undefined" ? navigator : null;
+  var newLocale = preferredLocale();
+  if (newLocale !== currentLocale) setLocale(newLocale);
+}
+
+function setLocale(code) {
+  if (!data.locales[code]) return;
+  currentLocale = code;
+  currentDict = data.locales[code].dict || {};
+  currentTeams = data.locales[code].teams || {};
+  currentTournaments = data.locales[code].tournaments || {};
+  currentProvinces = data.locales[code].provinces || {};
+  currentClubs = data.locales[code].clubs || [];
+  localStorage.setItem("rw-locale", code);
+}
+
+function localeField(obj, key, fallback) {
+  if (!obj) return fallback;
+  var v = obj[key];
+  return (v !== undefined && v !== "") ? v : fallback;
+}
+function localeTeamDisplay(teamId) {
+  if (currentTeams[teamId]) return currentTeams[teamId].name || data.teams[teamId].name;
+  if (data.teams[teamId]) return data.teams[teamId].name;
+  return teamId;
+}
+function localeTournamentDisplay(tid) {
+  if (currentTournaments && currentTournaments[tid]) return currentTournaments[tid].name || data.tournaments[tid].name;
+  if (data.tournaments && data.tournaments[tid]) return data.tournaments[tid].name;
+  return tid;
+}
+function localeProvinceDisplay(code) {
+  if (currentProvinces[code]) return currentProvinces[code].name || data.provinces[code].name;
+  if (data.provinces[code]) return data.provinces[code].name;
+  return code;
+}
+
+function t(key) {
+  if (currentDict[key] !== undefined) return currentDict[key];
+  if (data.locales.en && data.locales.en.dict[key] !== undefined) return data.locales.en.dict[key];
+  return key;
+}
+
+// ---- timezone conversion ----
+function toUserTime(text, tz) {
+  if (!text) return "";
+  tz = tz || cachedTZ || "Europe/Dublin";
+  try {
+    var parser = new Intl.DateTimeFormat("en-US", {
+      timeZone: tz, hour: "2-digit", minute: "2-digit",
+      second: "2-digit", hour12: false
+    });
+    var iso = text.replace(/Z$/, "");
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return text;
+    return parser.format(d);
+  } catch(e) { return text; }
+}
+
+function toUserTimeSlot(dateStr, timeStr, tz) {
+  tz = tz || cachedTZ || "Europe/Dublin";
+  if (!dateStr || !timeStr) return "";
+  try {
+    var combined = dateStr + "T" + timeStr + ":00";
+    var d = new Date(combined);
+    if (isNaN(d.getTime())) return dateStr + " " + timeStr;
+    var parser = new Intl.DateTimeFormat("en-US", {
+      timeZone: tz, month: "short", day: "numeric",
+      hour: "2-digit", minute: "2-digit", hour12: false, timeZoneName: "short"
+    });
+    return parser.format(d);
+  } catch(e) { return dateStr + " " + timeStr; }
+}
+
+function pubWatchability(timeStr) {
+  if (!timeStr) return t("watch.unknown");
+  var h = parseInt(timeStr, 10);
+  if (isNaN(h)) return t("watch.unknown");
+  if (h >= 16 && h <= 22) return t("watch.pub");
+  if (h >= 12 && h < 16) return t("watch.early");
+  if (h >= 8 && h < 12) return t("watch.tooearly");
+  return t("watch.unknown");
+}
+
+// ---- rendered HTML cache ----
+var rendered = {};
+
+// ---- locale indicator ----
+function localeFlag(code) {
+  var flags = { en:"🏴", cy:"🏴", fr:"🇫🇷", es:"🇪🇸", it:"🇮🇹", de:"🇩🇪", pt:"🇵🇹", ja:"🇯🇵" };
+  return flags[code] || "🏉";
+}
+
+function renderLocaleSelector() {
+  var sel = '<select id="locale-selector" aria-label="Language">';
+  Object.keys(data.locales).forEach(function(code) {
+    var l = data.locales[code];
+    var label = (l && l.label) ? l.label : code;
+    var selAttr = (code === currentLocale) ? ' selected="selected"' : "";
+    sel += '<option value="' + code + '"' + selAttr + '>' + label + '</option>';
+  });
+  sel += "</select>";
+  return sel;
+}
+
+function renderLocaleIndicator() {
+  var el = document.getElementById("locale-indicator");
+  if (!el) return;
+  var tzLabel = cachedTZ ? cachedTZ.replace(/_/g, " ") : "Europe/Dublin";
+  var localeLabel = currentLocale.toUpperCase();
+  var flag = localeFlag(currentLocale);
+  el.innerHTML =
+    '<div class="locale-indicator">' +
+      '<span class="locale-flag">' + flag + '</span>' +
+      '<span class="locale-code">' + localeLabel + '</span>' +
+      '<span class="locale-sep">·</span>' +
+      '<span class="locale-tz">' + tzLabel + '</span>' +
+    "</div>";
+}
+
+// ---- home ----
+function renderHome() {
+  var html =
+    '<div class="section" id="section-home">' +
+      '<h2>' + t("home.title") + "</h2>" +
+      '<p class="section-intro">' + t("home.intro") + "</p>" +
+      '<div class="badge-row">' +
+        '<span class="badge">' + t("badge.sixnations") + "</span>" +
+        '<span class="badge">' + t("badge.rwc") + "</span>" +
+        '<span class="badge">' + t("badge.urc") + "</span>" +
+        '<span class="badge">' + t("badge.champions") + "</span>" +
+        '<span class="badge">' + t("badge.challenge") + "</span>" +
+        '<span class="badge">' + t("badge.provinces") + "</span>" +
+        '<span class="badge important">' + t("badge.timezone") + "</span>" +
+      "</div>" +
+      '<div id="what-list"></div>' +
+      '<div class="card">' +
+        '<h3>' + t("home.pub.h3") + "</h3>" +
+        '<p>' + t("home.pub.p1") + "</p>" +
+        '<p>' + t("home.pub.p2") + "</p>" +
+      "</div>" +
+      '<div class="card warn">' +
+        '<h3>' + t("home.datanote.h3") + "</h3>" +
+        '<p>' + t("home.datanote.p") + "</p>" +
+      "</div>" +
+      '<div class="card green">' +
+        '<h3>' + t("home.privacy.h3") + "</h3>" +
+        '<p>' + t("home.privacy.p") + "</p>" +
+      "</div>" +
+    "</div>";
+  rendered["home"] = html;
+}
+
+// ---- world teams ----
+function renderWorldTeams() {
+  var html = '<div class="section" id="section-world">' +
+    '<h2>' + t("section.world.title") + '</h2>' +
+    '<p class="section-intro">' + t("section.world.intro") + '</p>' +
+    '<div class="world-teams-group">';
+
+  Object.keys(data.teams).forEach(function(id) {
+    var team = data.teams[id];
+    if (!team) return;
+    var displayed = localeTeamDisplay(id);
+    var short = localeField(currentTeams[id], "short", localeField(team, "short", ""));
+    var union = localeField(currentTeams[id], "union", localeField(team, "union", ""));
+    var jersey = localeField(currentTeams[id], "jersey", localeField(team, "jersey", ""));
+    var pubNote = (currentTeams[id] && currentTeams[id].pubNote) ? currentTeams[id].pubNote : (team.pubNote || "");
+    var featured = team.featured ? " featured" : "";
+    var badge = team.featured ? '<span class="badge badge-featured">' + t("badge.featured") + '</span>' : "";
+
+    html += '<div class="team-card' + featured + '">' +
+      '<div class="team-header">' +
+        '<div class="team-flag">🏉</div>' +
+        '<div class="team-meta">' +
+          '<span class="team-name">' + displayed + '</span>' +
+          (short ? '<span class="team-short">' + short + '</span>' : "") +
+        '</div>' +
+        badge +
+      '</div>' +
+      '<div class="team-detail">' +
+        (union ? '<div class="team-row"><span class="row-label">' + t("team.union") + ':</span> <span>' + union + '</span></div>' : "") +
+        (jersey ? '<div class="team-row"><span class="row-label">' + t("team.jersey") + ':</span> <span>' + jersey + '</span></div>' : "") +
+        '<div class="team-pub">' + pubNote + '</div>' +
+      '</div>' +
+    '</div>';
   });
 
-  // ── Load data ───────────────────────────────────────────
-  const DATA = {};
+  html += "</div></div>";
+  rendered["world"] = html;
+}
 
-  function loadData() {
-    if (Object.keys(DATA).length > 0) return Promise.resolve(DATA);
-    return fetch('/js/data.json')
-      .then(r => r.json())
-      .then(json => {
-        Object.assign(DATA, json);
-        return json;
-      })
-      .catch(() => {
-        console.warn('data.json fetch failed, using inline fallback');
-        return inlineFallback();
-      });
-  }
+// ---- timezone converter ----
+function renderTimezoneConverter() {
+  var tz = cachedTZ || "Europe/Dublin";
+  var intro = t("tzconverter.intro");
+  var foot = t("tzconverter.foot").replace("{locale}", currentLocale.toUpperCase()).replace("{tz}", tz);
 
-  function inlineFallback() {
-    return {
-      teams: {
-        'ireland-mens': { name: "Ireland Men's Senior", short: 'Ireland Men', group: 'Ireland National Teams', competitions: ['Six Nations','Autumn Internationals','Summer Tour','Rugby World Cup'], homeStadium: 'Aviva Stadium, Dublin', pubNote: 'Ireland home games at Aviva are pub-friendly. Away Six Nations games kick off midday–evening Irish time.', featured: true },
-        'ireland-womens': { name: "Ireland Women's Senior", short: 'Ireland Women', group: 'Ireland National Teams', competitions: ["Women's Six Nations","Women's Rugby World Cup"], homeStadium: 'Various', pubNote: "Women's Six Nations kick off midday–evening Irish time.", featured: true },
-        'ireland-u20-mens': { name: 'Ireland U20 Men', short: 'Ireland U20 Men', group: 'Ireland National Teams', competitions: ['U20 Six Nations'], homeStadium: 'Various', pubNote: 'U20 Six Nations kick off midday–evening Irish time.', featured: true },
-        'ireland-sevens': { name: 'Ireland Sevens', short: 'Ireland Sevens', group: 'Ireland National Teams', competitions: ['Sevens World Series','Sevens World Cup'], homeStadium: 'Various', pubNote: 'Dublin Sevens is pub-friendly. Away stops in Europe are morning Irish time.', featured: true },
-        'south-africa-mens': { name: "South Africa Men's Senior", short: 'South Africa', group: 'World National Teams', union: 'SARU', competitions: ['Rugby Championship','Autumn Internationals','Summer Tour','Rugby World Cup'], homeStadium: 'various', jersey: 'Green and Gold', pubNote: 'Springboks play in the Rugby Championship — evening local kick-offs are morning Irish time.', featured: false },
-        'new-zealand-mens': { name: "New Zealand Men's Senior", short: 'New Zealand', group: 'World National Teams', union: 'NZR', competitions: ['Rugby Championship','Autumn Internationals','Summer Tour','Rugby World Cup'], homeStadium: 'various', jersey: 'All Blacks (Black)', pubNote: 'All Blacks play in the Rugby Championship — evening local kick-offs are morning Irish time.', featured: false },
-        'australia-mens': { name: "Australia Men's Senior", short: 'Australia', group: 'World National Teams', union: 'ARU', competitions: ['Rugby Championship','Autumn Internationals','Summer Tour','Rugby World Cup'], homeStadium: 'various', jersey: 'Green and Gold', pubNote: 'Wallabies play in the Rugby Championship — evening local (east coast) = morning Irish time.', featured: false },
-        'argentina-mens': { name: "Argentina Men's Senior", short: 'Argentina', group: 'World National Teams', union: 'UAR', competitions: ['Rugby Championship','Autumn Internationals','Summer Tour','Rugby World Cup'], homeStadium: 'various', jersey: 'White with blue (Los Pumas)', pubNote: 'Los Pumas play in the Rugby Championship — evening local = early morning Irish time.', featured: false },
-        'france-mens': { name: "France Men's Senior", short: 'France', group: 'World National Teams', union: 'FFR', competitions: ['Six Nations','Autumn Internationals','Summer Tour','Rugby World Cup'], homeStadium: 'various', jersey: 'Blue, white, red', pubNote: 'France in Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly).', featured: false },
-        'england-mens': { name: "England Men's Senior", short: 'England', group: 'World National Teams', union: 'RFU', competitions: ['Six Nations','Autumn Internationals','Summer Tour','Rugby World Cup'], homeStadium: 'various', jersey: 'White', pubNote: 'England in Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly).', featured: false },
-        'scotland-mens': { name: "Scotland Men's Senior", short: 'Scotland', group: 'World National Teams', union: 'SRU', competitions: ['Six Nations','Autumn Internationals','Summer Tour','Rugby World Cup'], homeStadium: 'various', jersey: 'Blue', pubNote: 'Scotland in Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly).', featured: false },
-        'wales-mens': { name: "Wales Men's Senior", short: 'Wales', group: 'World National Teams', union: 'WRU', competitions: ['Six Nations','Autumn Internationals','Summer Tour','Rugby World Cup'], homeStadium: 'various', jersey: 'Red', pubNote: 'Wales in Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly).', featured: false },
-        'italy-mens': { name: "Italy Men's Senior", short: 'Italy', group: 'World National Teams', union: 'FIR', competitions: ['Six Nations','Autumn Internationals','Summer Tour','Rugby World Cup'], homeStadium: 'various', jersey: 'Blue (Azzurri)', pubNote: 'Italy in Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly).', featured: false },
-        'japan-mens': { name: "Japan Men's Senior", short: 'Australia', group: 'World National Teams', union: 'Japan rugby-football union', competitions: ['Japan rugby league','Autumn Internationals','Rugby World Cup'], homeStadium: 'various', jersey: 'Red', pubNote: 'Japan is 8–9 hours ahead of Ireland — morning Irish time for evening local kick-offs.', featured: false },
-        'georgia-mens': { name: "Georgia Men's Senior", short: 'Georgia', group: 'World National Teams', union: 'Georgia rugby union', competitions: ['Rugby Europe Championship','Autumn Internationals','Rugby World Cup'], homeStadium: 'various', jersey: 'White with red', pubNote: 'Georgia is 2–3 hours ahead of Ireland — morning Irish time for evening local kick-offs.', featured: false },
-        'fiji-mens': { name: "Fiji Men's Senior", short: 'Fiji', group: 'World National Teams', union: 'RFC', competitions: ['Pacific Nations Cup','Autumn Internationals','Rugby World Cup','Sevens World Series'], homeStadium: 'various', jersey: 'White with black', pubNote: 'Fiji is 10–12 hours ahead of Ireland — early morning Irish time for evening local kick-offs.', featured: false },
-        'samoa-mens': { name: "Samoa Men's Senior", short: 'Samoa', group: 'World National Teams', union: 'SRU', competitions: ['Pacific Nations Cup','Autumn Internationals','Rugby World Cup','Sevens World Series'], homeStadium: 'various', jersey: 'Red with blue', pubNote: 'Samoa is 10–12 hours ahead of Ireland — early morning Irish time for evening local kick-offs.', featured: false },
-        'tonga-mens': { name: "Tonga Men's Senior", short: 'Tonga', group: 'World National Teams', union: 'Tonga rugby union', competitions: ['Pacific Nations Cup','Autumn Internationals','Rugby World Cup','Sevens World Series'], homeStadium: 'various', jersey: 'Red with white', pubNote: 'Tonga is 10–12 hours ahead of Ireland — early morning Irish time for evening local kick-offs.', featured: false },
-        'england-womens': { name: "England Women's Senior", short: 'England Women', group: "World Women's Teams", union: 'RFU', competitions: ["Women's Six Nations","Women's Rugby World Cup"], homeStadium: 'various', jersey: 'White', pubNote: "England Women in Women's Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly).", featured: false },
-        'france-womens': { name: "France Women's Senior", short: 'France Women', group: "World Women's Teams", union: 'FFR', competitions: ["Women's Six Nations","Women's Rugby World Cup"], homeStadium: 'various', jersey: 'Blue', pubNote: "France Women in Women's Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly).", featured: false },
-        'scotland-womens': { name: "Scotland Women's Senior", short: 'Scotland Women', group: "World Women's Teams", union: 'SRU', competitions: ["Women's Six Nations","Women's Rugby World Cup"], homeStadium: 'various', jersey: 'Blue', pubNote: "Scotland Women in Women's Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly).", featured: false },
-        'wales-womens': { name: "Wales Women's Senior", short: 'Wales Women', group: "World Women's Teams", union: 'WRU', competitions: ["Women's Six Nations","Women's Rugby World Cup"], homeStadium: 'various', jersey: 'Red', pubNote: "Wales Women in Women's Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly).", featured: false },
-        'italy-womens': { name: "Italy Women's Senior", short: 'Italy Women', group: "World Women's Teams", union: 'FIR', competitions: ["Women's Six Nations","Women's Rugby World Cup"], homeStadium: 'various', jersey: 'Blue', pubNote: "Italy Women in Women's Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly).", featured: false },
-        'new-zealand-womens': { name: "New Zealand Women's Senior", short: 'New Zealand Women', group: "World Women's Teams", union: 'NZR', competitions: ["Women's Rugby World Cup","Women's Pacific Nations Cup"], homeStadium: 'various', jersey: 'Black (Black Ferns)', pubNote: 'Black Ferns — evening local kick-offs are morning Irish time.', featured: false },
-        'australia-womens': { name: "Australia Women's Senior", short: 'Australia Women', group: "World Women's Teams", union: 'ARU', competitions: ["Women's Rugby World Cup","Women's Pacific Nations Cup"], homeStadium: 'various', jersey: 'Green and Gold (Wallaroos)', pubNote: 'Wallaroos — evening local (east coast) = morning Irish time.', featured: false },
-        'south-africa-womens': { name: "South Africa Women's Senior", short: 'South Africa Women', group: "World Women's Teams", union: 'SARU', competitions: ["Women's Rugby World Cup","Women's Pacific Nations Cup"], homeStadium: 'various', jersey: 'Green and Gold (Springbok Women)', pubNote: 'Springbok Women — evening local kick-offs are morning Irish time.', featured: false },
-        'argentina-womens': { name: "Argentina Women's Senior", short: 'Argentina Women', group: "World Women's Teams", union: 'UAR', competitions: ["Women's Rugby World Cup","Women's South American Championship"], homeStadium: 'various', jersey: 'White with blue (Las Pumas)', pubNote: 'Las Pumas — evening local kick-offs are early morning Irish time.', featured: false }
-      },
-      provinces: {
-        'leinster': { name: 'Leinster', short: 'Leinster', group: 'Provinces', competitions: ['United Rugby Championship','European Champions Cup','European Challenge Cup','Leinster Senior Cup'], homeStadium: 'Aviva Stadium, Dublin', pubNote: 'Leinster home games at Aviva are pub-friendly. European away games in France/England/Italy/Scotland/Wales kick off in Irish afternoon — pub-friendly.' },
-        'munster': { name: 'Munster', short: 'Munster', group: 'Provinces', competitions: ['United Rugby Championship','European Champions Cup','European Challenge Cup','Munster Senior Cup'], homeStadium: 'Thomond Park, Limerick', pubNote: 'Munster home games at Thomond Park are pub-friendly. European away games kick off in Irish afternoon.' },
-        'ulster': { name: 'Ulster', short: 'Ulster', group: 'Provinces', competitions: ['United Rugby Championship','European Champions Cup','European Challenge Cup','Ulster Senior Cup'], homeStadium: 'Kingspan Stadium, Belfast', pubNote: 'Ulster home games at Ravenhill are pub-friendly. European away games kick off in Irish afternoon.' },
-        'connacht': { name: 'Connacht', short: 'Connacht', group: 'Provinces', competitions: ['United Rugby Championship','European Champions Cup','European Challenge Cup','Connacht Senior Cup'], homeStadium: 'Atlantic Park, Galway', pubNote: 'Connacht home games at Atlantic Park are pub-friendly. European away games kick off in Irish afternoon.' }
-      },
-      clubs: [
-        { name: "St Mary's College RFC", province: 'Leinster', tier: 'AIL Tier 1' },
-        { name: 'Blackrock College RFC', province: 'Leinster', tier: 'AIL Tier 1' },
-        { name: 'UCD RFC', province: 'Leinster', tier: 'AIL Tier 1' },
-        { name: 'Garryowen RFC', province: 'Munster', tier: 'AIL Tier 1' },
-        { name: 'UCC RFC', province: 'Munster', tier: 'AIL Tier 1' },
-        { name: 'City of Derry RFC', province: 'Ulster', tier: 'AIL Tier 1' },
-        { name: 'Galway Corinthians RFC', province: 'Connacht', tier: 'AIL Tier 1' }
-      ],
-      tournaments: {
-        'six-nations': { name: 'Six Nations', short: 'Six Nations', group: 'Tournaments', teams: ['Ireland','England','France','Italy','Scotland','Wales'], pubNote: 'Away games kick off midday–evening Irish time — pub-friendly. Home games at Aviva are pub-friendly.' },
-        'rugby-world-cup': { name: 'Rugby World Cup', short: 'RWC', group: 'Tournaments', pubNote: 'Pool games against Southern Hemisphere touring sides = morning Irish time (watch at home, meet later). Final 2027 Sydney ~9am Irish time.' },
-        'urc': { name: 'United Rugby Championship', short: 'URC', group: 'Tournaments', pubNote: 'Most URC games kick off in Irish time. Away games in South Africa/Argentina = early morning Irish time.' },
-        'european-champions-cup': { name: 'European Champions Cup', short: 'Champions Cup', group: 'Tournaments', pubNote: 'Away games in Western Europe = morning Irish time — pub-friendly if up early. Final usually evening Irish time.' },
-        'european-challenge-cup': { name: 'European Challenge Cup', short: 'Challenge Cup', group: 'Tournaments', pubNote: 'Similar to Champions Cup — morning Irish time for Western Europe away games.' },
-        'rugby-championship': { name: 'Rugby Championship', short: 'Rugby Championship', group: 'World Tournaments', teams: ['New Zealand','South Africa','Australia','Argentina'], pubNote: 'Southern Hemisphere tournament — evening local kick-offs are early morning Irish time. Watch at home, meet later.' },
-        'pacific-nations-cup': { name: 'Pacific Nations Cup', short: 'Pacific Nations Cup', group: 'World Tournaments', teams: ['Fiji','Samoa','Tonga','Japan'], pubNote: 'Pacific teams — evening local kick-offs are early morning Irish time. Watch at home, meet later.' },
-        'rugby-europe-championship': { name: 'Rugby Europe Championship', short: 'Rugby Europe Championship', group: 'World Tournaments', teams: ['Georgia','Romania','Spain','Portugal'], pubNote: 'Eastern European teams — evening local kick-offs are morning Irish time (1–3 hours ahead).' }
-      }
-    };
-  }
+  var regions = [
+    { name: "Europe/Dublin",     label: "Ireland (Dublin)" },
+    { name: "Europe/London",     label: "UK (London)" },
+    { name: "Europe/Paris",      label: "France (Paris)" },
+    { name: "Europe/Madrid",     label: "Spain (Madrid)" },
+    { name: "Europe/Rome",       label: "Italy (Rome)" },
+    { name: "Europe/Berlin",     label: "Germany (Berlin)" },
+    { name: "Europe/Lisbon",     label: "Portugal (Lisbon)" },
+    { name: "Europe/Warsaw",     label: "Poland (Warsaw)" },
+    { name: "Europe/Prague",     label: "Czech (Prague)" },
+    { name: "Europe/Amsterdam",  label: "Netherlands (Amsterdam)" },
+    { name: "Europe/Brussels",   label: "Belgium (Brussels)" },
+    { name: "Europe/Stockholm",  label: "Sweden (Stockholm)" },
+    { name: "Europe/Oslo",       label: "Norway (Oslo)" },
+    { name: "Europe/Copenhagen", label: "Denmark (Copenhagen)" },
+    { name: "Europe/Helsinki",   label: "Finland (Helsinki)" },
+    { name: "Europe/Athens",     label: "Greece (Athens)" },
+    { name: "Europe/Istanbul",   label: "Turkey (Istanbul)" },
+    { name: "Europe/Riga",       label: "Latvia (Riga)" },
+    { name: "Europe/Vilnius",    label: "Lithuania (Vilnius)" },
+    { name: "Europe/Sofia",      label: "Bulgaria (Sofia)" },
+    { name: "Europe/Bucharest",  label: "Romania (Bucharest)" },
+    { name: "Europe/Budapest",   label: "Hungary (Budapest)" },
+    { name: "Europe/Zagreb",     label: "Croatia (Zagreb)" },
+    { name: "Europe/Ljubljana",  label: "Slovenia (Ljubljana)" },
+    { name: "Europe/Sarajevo",   label: "Bosnia (Sarajevo)" },
+    { name: "Europe/Minsk",      label: "Belarus (Minsk)" },
+    { name: "Europe/Kiev",       label: "Ukraine (Kiev)" },
+    { name: "America/New_York",      label: "USA (New York)" },
+    { name: "America/Chicago",       label: "USA (Chicago)" },
+    { name: "America/Denver",        label: "USA (Denver)" },
+    { name: "America/Los_Angeles",   label: "USA (Los Angeles)" },
+    { name: "America/Anchorage",     label: "USA (Anchorage)" },
+    { name: "America/Honolulu",      label: "USA (Honolulu)" },
+    { name: "Pacific/Auckland",      label: "New Zealand (Auckland)" },
+    { name: "Pacific/Chatham",       label: "New Zealand (Chatham)" },
+    { name: "Australia/Sydney",      label: "Australia (Sydney)" },
+    { name: "Australia/Melbourne",   label: "Australia (Melbourne)" },
+    { name: "Australia/Brisbane",    label: "Australia (Brisbane)" },
+    { name: "Australia/Perth",       label: "Australia (Perth)" },
+    { name: "Australia/Adelaide",    label: "Australia (Adelaide)" },
+    { name: "Australia/Darwin",      label: "Australia (Darwin)" },
+    { name: "Asia/Tokyo",            label: "Japan (Tokyo)" },
+    { name: "Asia/Osaka",            label: "Japan (Osaka)" },
+    { name: "Asia/Seoul",            label: "South Korea (Seoul)" },
+    { name: "Asia/Shanghai",         label: "China (Shanghai)" },
+    { name: "Asia/Hong_Kong",        label: "Hong Kong" }
+  ];
 
-  // ── Locale detection ────────────────────────────────────
-  let userLocale = 'en-IE';
-  let userTimeZone = 'Europe/Dublin';
+  var rows = [];
+  regions.forEach(function(r) {
+    var kickOff16 = toUserTimeSlot("2026-03-15", "16:00", r.name);
+    var kickOff19 = toUserTimeSlot("2026-03-15", "19:00", r.name);
+    var watch16 = pubWatchability(kickOff16);
+    var watch19 = pubWatchability(kickOff19);
+    var watchCombined = watch16 === watch19 ? watch16 : (watch16 + " / " + watch19);
+    if (!kickOff16) watchCombined = t("watch.unknown");
+    rows.push("<tr>" +
+      '<td class="tz-region">' + r.label + "</td>" +
+      '<td class="tz-names">' + r.name + "</td>" +
+      '<td class="tz-kick16">' + kickOff16 + "</td>" +
+      '<td class="tz-kick19">' + kickOff19 + "</td>" +
+      '<td class="tz-watch">' + watchCombined + "</td>" +
+    "</tr>");
+  });
 
-  function detectLocale() {
-    try {
-      const lang = navigator.language || navigator.userLanguage || 'en-IE';
-      userLocale = lang;
+  var bodyRows = rows.join("");
+  rendered["tz"] =
+    '<div class="section" id="section-tz-converter">' +
+      '<h2>' + t("tzconverter.title") + "</h2>" +
+      '<p class="section-intro">' + intro + "</p>" +
+      '<p>Your locale: ' + currentLocale.toUpperCase() + ' · Your timezone: ' + tz + '</p>' +
+      '<table class="tz-table">' +
+        '<thead><tr>' +
+          '<th>' + t("tzconverter.region") + '</th>' +
+          '<th>Region name</th>' +
+          '<th>16:00 local → your TZ</th>' +
+          '<th>19:00 local → your TZ</th>' +
+          '<th>' + t("tzconverter.watchability") + '</th>' +
+        "</tr></thead>" +
+        '<tbody>' + bodyRows + "</tbody>" +
+      "</table>" +
+      '<div class="tz-table-foot">' + foot + "</div>" +
+    "</div>";
+}
 
-      let tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      if (tz && tz.length > 0) {
-        userTimeZone = tz;
-      } else {
-        userTimeZone = 'Europe/Dublin';
-      }
-    } catch (e) {
-      userLocale = 'en-IE';
-      userTimeZone = 'Europe/Dublin';
-    }
-  }
+// ---- tab navigation ----
+function switchTab(tabId) {
+  Object.keys(rendered).forEach(function(k) {
+    var el = document.getElementById("section-" + k);
+    if (el) el.classList.remove("active");
+  });
+  var target = document.getElementById("section-" + tabId);
+  if (target) target.classList.add("active");
+  document.querySelectorAll(".tab-bar .tab").forEach(function(t) {
+    t.classList.toggle("active", t.getAttribute("data-tab") === tabId);
+  });
+  window.scrollTo(0, 0);
+}
 
-  // ── Time conversion ─────────────────────────────────────
-  function toUserTime(isoString) {
-    const d = new Date(isoString);
-    if (isNaN(d.getTime())) return null;
+// ---- club list ----
+function renderClubs() {
+  var container = document.getElementById("clubs-section");
+  if (!container) return;
+  var clubList = data.clubs || [];
+  var pubNote18 = pubWatchability(toUserTime("18:00", cachedTZ));
 
-    try {
-      const formatter = new Intl.DateTimeFormat('en-US', {
-        timeZone: userTimeZone,
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-        weekday: 'short',
-        month: 'short',
-        day: 'numeric',
-      });
-      const parts = formatter.formatToParts(d);
-      const hour = parts.find(p => p.type === 'hour')?.value || '12';
-      const minute = parts.find(p => p.type === 'minute')?.value || '00';
-      const dayPeriod = parts.find(p => p.type === 'dayPeriod')?.value || 'AM';
-      const month = parts.find(p => p.type === 'month')?.value || '';
-      const day = parts.find(p => p.type === 'day')?.value || '';
-      const weekday = parts.find(p => p.type === 'weekday')?.value || '';
+  var rows = clubList.map(function(club) {
+    var provinceName = localeProvinceDisplay(club.province);
+    return "<tr>" +
+      '<td class="club-name">' + club.name + "</td>" +
+      '<td class="club-province">' + provinceName + "</td>" +
+      '<td class="club-tier">' + club.tier + "</td>" +
+    "</tr>";
+  }).join("");
 
-      return {
-        date: `${month} ${day}`,
-        time: `${hour}:${minute} ${dayPeriod}`,
-        full: `${weekday} ${month} ${day}, ${hour}:${minute} ${dayPeriod}`,
-        hour24: parseInt(hour, 10) + (dayPeriod.toUpperCase() === 'PM' && parseInt(hour, 10) !== 12 ? 12 : 0),
-        locale: userLocale,
-        timezone: userTimeZone,
-      };
-    } catch (e) {
-      return null;
-    }
-  }
+  container.innerHTML =
+    '<h2>' + t("section.clubs.title") + "</h2>" +
+    '<p class="section-intro">' + t("section.clubs.intro") + "</p>" +
+    (clubList.length ? "" : '<p class="clubs-empty">' + t("clubs.none") + "</p>") +
+    '<table class="club-table">' +
+      '<thead><tr><th>' + t("team.home") + '</th><th>Province</th><th>Tier</th></tr></thead>' +
+      '<tbody>' + rows + '</tbody>' +
+    "</table>" +
+    '<div class="club-pub-note">' +
+      t("home.pub.p1").replace(/18:00/, pubNote18) +
+    "</div>";
+}
 
-  function formatUserTime(isoString) {
-    return toUserTime(isoString);
-  }
+// ---- tournaments list ----
+function renderTournaments() {
+  var container = document.getElementById("tournaments-section");
+  if (!container) return;
+  var series = [
+    { id: "sixnations", nameKey: "tournament.sixnations" },
+    { id: "rwc",       nameKey: "tournament.rwc" },
+    { id: "urc",       nameKey: "tournament.urc" },
+    { id: "champions", nameKey: "tournament.champions" },
+    { id: "challenge", nameKey: "tournament.challenge" }
+  ];
+  var cells = series.map(function(s) {
+    var label = t(s.nameKey);
+    var detail = t(s.nameKey + ".detail");
+    return '<div class="tournament-cell">' +
+             '<h3>' + label + "</h3>" +
+             '<p>' + detail + "</p>" +
+           "</div>";
+  });
+  container.innerHTML = '<h2>' + t("section.tournaments.title") + "</h2>" +
+    '<p class="section-intro">' + t("section.tournaments.intro") + '</p>' +
+    '<div class="tournaments-grid">' + cells.join("") + "</div>";
+}
 
-  function toIrishTime(isoString) {
-    const d = new Date(isoString);
-    if (isNaN(d.getTime())) return null;
+// ---- app header / TOC ----
+function renderAppHeader() {
+  var container = document.getElementById("app-toc");
+  if (!container) return;
+  var tabs = [
+    { id: "home",        label: t("tab.home") },
+    { id: "ireland",     label: t("tab.ireland") },
+    { id: "provinces",   label: t("tab.provinces") },
+    { id: "clubs",       label: t("tab.clubs"),      noteKey: "section.clubs.intro" },
+    { id: "tournaments", label: t("tab.tournaments") },
+    { id: "europe",      label: t("tab.europe") },
+    { id: "world",       label: t("tab.world") },
+    { id: "planning",    label: t("tab.planning") },
+    { id: "privacy",     label: t("tab.privacy") }
+  ];
+  container.innerHTML = tabs.map(function(tab) {
+    var extra = tab.noteKey ? "<p class=\"toc-note\">" + t(tab.noteKey) + "</p>" : "";
+    return '<button class="toc-item" data-tab="' + tab.id + '">' +
+      '<span class="toc-label">' + tab.label + '</span>' + extra + "</button>";
+  }).join("");
+}
 
-    const year = d.getUTCFullYear();
-    const month = d.getUTCMonth();
-    const day = d.getUTCDate();
+// ---- rebuild home "what we cover" list ----
+function rebuildHomeWhat() {
+  var whatList = document.getElementById("what-list");
+  if (!whatList) return;
+  var items = [
+    "<li>" + t("home.what.ireland") + "</li>",
+    "<li>" + t("home.what.provinces") + "</li>",
+    "<li>" + t("home.what.clubs") + "</li>",
+    "<li>" + t("home.what.tournaments") + "</li>",
+    "<li>" + t("home.what.europe") + "</li>",
+    "<li>" + t("home.what.world") + "</li>",
+    "<li>" + t("home.what.planning") + "</li>"
+  ];
+  whatList.innerHTML = items.join("");
+}
 
-    const isDST = isIrishDST(year, day, month);
-    const offsetMinutes = isDST ? 60 : 0;
-    const irishMs = d.getTime() + (offsetMinutes * 60000);
-    const irishDate = new Date(irishMs);
+// ---- consent section ----
+function renderConsent() {
+  var container = document.getElementById("consent-section");
+  if (!container) return;
+  var denied = localStorage.getItem("rw-pub") === "denied";
+  var accepted = localStorage.getItem("rw-pub") === "accepted";
+  container.innerHTML =
+    '<div class="consent-section' + (denied ? " consent-denied" : (accepted ? " consent-accepted" : " consent-pending")) + '">' +
+      '<h2>' + t("consent.title") + "</h2>" +
+      '<p class="section-intro">' + t("consent.intro") + "</p>" +
+      '<div class="consent-options">' +
+        '<button class="consent-btn" id="consent-accept">' +
+          '<span class="consent-btn-label">' + t("consent.accept") + '</span>' +
+          '<span class="consent-btn-desc">' + t("consent.accept.desc") + '</span>' +
+        "</button>" +
+        '<button class="consent-btn" id="consent-reject">' +
+          '<span class="consent-btn-label">' + t("consent.reject") + '</span>' +
+          '<span class="consent-btn-desc">' + t("consent.reject.desc") + '</span>' +
+        "</button>" +
+      "</div>" +
+      (denied
+        ? '<div class="consent-status"><span class="consent-status-icon">✕</span> ' + t("consent.rejected") + '<br><span class="consent-status-desc">' + t("consent.rejected.desc") + '</span></div>'
+        : (accepted
+          ? '<div class="consent-status"><span class="consent-status-icon">✓</span> ' + t("consent.accepted") + '<br><span class="consent-status-desc">' + t("consent.accepted.desc") + '</span></div>'
+          : "")) +
+      '<button class="consent-change-btn" id="consent-change" style="display:' + (denied || accepted ? "inline-block" : "none") + '\">' + t("consent.change") + "</button>" +
+    "</div>";
 
-    try {
-      const formatter = new Intl.DateTimeFormat('en-IE', {
-        timeZone: 'Europe/Dublin',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-      });
-      const parts = formatter.formatToParts(irishDate);
-      const hour = parts.find(p => p.type === 'hour')?.value || '12';
-      const minute = parts.find(p => p.type === 'minute')?.value || '00';
-      const dayPeriod = parts.find(p => p.type === 'dayPeriod')?.value || 'AM';
+  var acceptBtn = document.getElementById("consent-accept");
+  if (acceptBtn) acceptBtn.addEventListener("click", function() {
+    localStorage.setItem("rw-pub", "accepted");
+    renderConsent();
+    applyPubDenialState();
+  });
+  var rejectBtn = document.getElementById("consent-reject");
+  if (rejectBtn) rejectBtn.addEventListener("click", function() {
+    localStorage.setItem("rw-pub", "denied");
+    renderConsent();
+    applyPubDenialState();
+  });
+  var changeBtn = document.getElementById("consent-change");
+  if (changeBtn) changeBtn.addEventListener("click", function() { renderConsent(); });
+}
 
-      return {
-        date: irishDate.toISOString().split('T')[0],
-        time: `${hour}:${minute} ${dayPeriod}`,
-        full: `${irishDate.toISOString().split('T')[0]} ${hour}:${minute} ${dayPeriod}`,
-        hour24: parseInt(hour, 10) + (dayPeriod.toUpperCase() === 'PM' && parseInt(hour, 10) !== 12 ? 12 : 0),
-      };
-    } catch (e) {
-      return null;
-    }
-  }
+// ---- data note ----
+function renderDataNote() {
+  var container = document.getElementById("data-note");
+  if (!container) return;
+  container.innerHTML =
+    '<div class="data-note">' +
+      '<h3>' + t("home.datanote.h3") + "</h3>" +
+      '<p>' + t("home.datanote.p") + "</p>" +
+    "</div>";
+}
 
-  function isIrishDST(year, day, month) {
-    if (month < 2 || month > 9) return false;
-    if (month > 2 && month < 9) return true;
+// ---- privacy section ----
+function renderPrivacy() {
+  var container = document.getElementById("privacy-section");
+  if (!container) return;
+  container.innerHTML =
+    '<div class="privacy-section">' +
+      '<h2>' + t("section.privacy.title") + "</h2>" +
+      '<p class="section-intro">' + t("section.privacy.intro") + "</p>" +
+      '<div class="privacy-links"><a href="/www/privacy.html" class="privacy-link">' + t("section.privacy.title") + '</a></div>' +
+    "</div>";
+}
 
-    if (month === 2) {
-      const lastDayMarch = new Date(Date.UTC(year, 3, 0));
-      const lastSunMarchDay = lastDayMarch.getUTCDay();
-      const lastSunMarch = lastDayMarch.getUTCDate() - (lastSunMarchDay === 0 ? 0 : lastSunMarchDay);
-      return day >= lastSunMarch;
-    }
+// ---- planning section ----
+function renderPlanning() {
+  var container = document.getElementById("planning-section");
+  if (!container) return;
+  var people = [];
+  try {
+    var raw = localStorage.getItem("rw-planning");
+    if (raw) people = JSON.parse(raw);
+  } catch(e) { people = []; }
 
-    if (month === 9) {
-      const lastDayOct = new Date(Date.UTC(year, 10, 0));
-      const lastSunOctDay = lastDayOct.getUTCDay();
-      const lastSunOct = lastDayOct.getUTCDate() - (lastSunOctDay === 0 ? 0 : lastSunOctDay);
-      return day <= lastSunOct;
-    }
+  var items = people.map(function(p, idx) {
+    return '<div class="planning-row">' +
+      '<div class="planning-name">' + (p.name || "???") + "</div>" +
+      '<div class="planning-sixnations">' + (p.sixnations || "") + ' <span class="planning-tag">' + t("planning.field.sixnations") + '</span></div>' +
+      '<div class="planning-rwc">' + (p.rwc || "") + ' <span class="planning-tag">' + t("planning.field.rwc") + '</span></div>' +
+      '<div class="planning-notes">' + (p.notes || "") + ' <span class="planning-tag">' + t("planning.field.notes") + '</span></div>' +
+      '<button class="planning-remove" data-idx="' + idx + '">✕</button>' +
+    "</div>";
+  }).join("");
 
-    return false;
-  }
+  var emptyMsg = "<p class=\"planning-empty\">" + t("planning.empty") + "</p>";
 
-  // ── Locale-relative watchability ────────────────────────
-  function pubWatchability(userTimeStr) {
-    const m = userTimeStr.match(/(\d+):(\d+) (AM|PM)/i);
-    if (!m) return { label: 'Check time', tag: 'tag-warn' };
+  container.innerHTML =
+    '<div class="planning-section">' +
+      '<h2>' + t("section.planning.title") + "</h2>" +
+      '<p class="section-intro">' + t("section.planning.intro") + "</p>" +
+      '<form id="planning-form" class="planning-form">' +
+        '<div class="planning-row planning-add-row">' +
+          '<input class="planning-input" name="name" placeholder="' + t("planning.field.name.ph") + '">' +
+          '<input class="planning-input" name="sixnations" placeholder="' + t("planning.field.sixnations.ph") + '">' +
+          '<input class="planning-input" name="rwc" placeholder="' + t("planning.field.rwc.ph") + '">' +
+          '<input class="planning-input" name="notes" placeholder="' + t("planning.field.notes.ph") + '">' +
+          '<button class="planning-add-btn" type="submit">+ ' + t("planning.field.name") + "</button>" +
+        "</div>" +
+      "</form>" +
+      (people.length ? "<div class=\"planning-list\">" + items + "</div>" : emptyMsg) +
+      '<button class="planning-clear-btn" id="planning-clear" style="display:' + (people.length ? "inline-block" : "none") + '">Clear all</button>' +
+    "</div>";
 
-    let hour = parseInt(m[1], 10);
-    if (m[3].toUpperCase() === 'PM' && hour !== 12) hour += 12;
-    if (m[3].toUpperCase() === 'AM' && hour === 12) hour = 0;
-
-    const hour24 = hour;
-
-    if (hour24 >= 11 && hour24 < 23) {
-      return { label: 'Pub-friendly', tag: 'tag-yes' };
-    } else if (hour24 >= 7 && hour24 < 11) {
-      return { label: 'Early — pub if opens early', tag: 'tag-warn' };
-    } else {
-      return { label: 'Too early — home watch', tag: 'tag-no' };
-    }
-  }
-
-  function pubWatchabilityIrish(irishTimeStr) {
-    const m = irishTimeStr.match(/(\d+):(\d+) (am|pm)/i);
-    if (!m) return { label: 'Check time', tag: 'tag-warn' };
-
-    let hour = parseInt(m[1], 10);
-    if (m[3].toLowerCase() === 'pm' && hour !== 12) hour += 12;
-    if (m[3].toLowerCase() === 'am' && hour === 12) hour = 0;
-
-    if (hour >= 11 && hour < 23) {
-      return { label: 'Pub-friendly', tag: 'tag-yes' };
-    } else if (hour >= 7 && hour < 11) {
-      return { label: 'Early — pub if opens early', tag: 'tag-warn' };
-    } else {
-      return { label: 'Too early — home watch', tag: 'tag-no' };
-    }
-  }
-
-  // ── Render locale indicator ─────────────────────────────
-  function renderLocaleIndicator() {
-    const container = document.getElementById('locale-indicator');
-    if (!container) return;
-
-    const lang = userLocale.split('-')[0].toUpperCase();
-    const tz = userTimeZone.split('/').pop().replace(/_/g, ' ');
-
-    container.innerHTML = `
-      <div class="locale-badge">
-        <span class="locale-lang">${lang}</span>
-        <span class="locale-sep">·</span>
-        <span class="locale-tz">${tz}</span>
-      </div>
-      <div class="locale-label">Times shown in your local timezone</div>
-    `;
-  }
-
-  // ── Render timezone converter ───────────────────────────
-  function renderTimezoneConverter() {
-    const container = document.getElementById('timezone-converter');
-    if (!container) return;
-
-    const zones = DATA.worldTimezones?.zones || [];
-
-    let html = `
-      <div class="converter-header">
-        <h3>Timezone converter</h3>
-        <p class="small">Kick-off times are shown in <strong>your local timezone</strong> (${userTimeZone.split('/').pop().replace(/_/g, ' ')}). Use this reference to see how local kick-offs translate to Irish time for pub watchability.</p>
-      </div>
-      <div class="tz-table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Region</th>
-              <th>Offset vs Irish time</th>
-              <th>Pub watchability</th>
-            </tr>
-          </thead>
-          <tbody>
-    `;
-
-    zones.forEach(z => {
-      const offsetClean = z.offset.replace(/^[/+]/, '');
-      let watchability = 'Check time';
-      let tagClass = 'tag-warn';
-
-      if (offsetClean.includes('+00') || offsetClean.includes('+01')) {
-        watchability = 'Pub-friendly (afternoon/evening)';
-        tagClass = 'tag-yes';
-      } else if (offsetClean.includes('+02') || offsetClean.includes('+03')) {
-        watchability = 'Pub-friendly if up early, or home watch';
-        tagClass = 'tag-warn';
-      } else if (offsetClean.includes('+04') || offsetClean.includes('+08') || offsetClean.includes('+09')) {
-        watchability = 'Early morning Irish — home watch, meet later';
-        tagClass = 'tag-no';
-      } else if (offsetClean.includes('+12') || offsetClean.includes('+13') || offsetClean.includes('+14')) {
-        watchability = 'Early morning Irish — home watch, meet later';
-        tagClass = 'tag-no';
-      } else if (offsetClean.includes('-03')) {
-        watchability = 'Morning Irish — pub if opens early';
-        tagClass = 'tag-warn';
-      }
-
-      html += `
-            <tr>
-              <td>${z.region}</td>
-              <td>${z.offset}</td>
-              <td><span class="tag ${tagClass}">${watchability}</span></td>
-            </tr>
-          `;
-    });
-
-    html += `
-          </tbody>
-        </table>
-      </div>
-      <p class="small" style="margin-top:8px;">Your locale: <strong>${userLocale}</strong> · Your timezone: <strong>${userTimeZone}</strong>. Kick-off times in the app are shown in your local time. Pub watchability is assessed relative to your local clock — a 6pm kick-off in your timezone is pub-friendly wherever you are.</p>
-    `;
-
-    container.innerHTML = html;
-  }
-
-  // ── Render team list ────────────────────────────────────
-  function renderIrishTeams() {
-    const container = document.getElementById('irish-team-list');
-    if (!container) return;
-    container.innerHTML = '';
-
-    const groups = ['Ireland National Teams'];
-    const teams = DATA.teams || {};
-
-    groups.forEach(groupName => {
-      const items = Object.entries(teams)
-        .filter(([k, v]) => v.group === groupName)
-        .sort((a, b) => a[1].name.localeCompare(b[1].name));
-
-      if (items.length === 0) return;
-
-      const groupDiv = document.createElement('div');
-      groupDiv.style.marginBottom = '14px';
-
-      const groupTitle = document.createElement('h3');
-      groupTitle.style.margin = '0 0 8px 0';
-      groupTitle.style.color = '#16722e';
-      groupTitle.style.fontSize = '15px';
-      groupTitle.textContent = groupName;
-      groupDiv.appendChild(groupTitle);
-
-      items.forEach(([key, team]) => {
-        const row = document.createElement('div');
-        row.className = team.featured ? 'team-card featured' : 'team-card';
-        row.style.background = '#fff';
-        row.style.borderRadius = '10px';
-        row.style.padding = '10px 12px';
-        row.style.marginBottom = '8px';
-        row.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)';
-        if (team.featured) {
-          row.style.borderLeft = '4px solid #16722e';
-        }
-
-        const nameEl = document.createElement('div');
-        nameEl.style.fontSize = '15px';
-        nameEl.style.fontWeight = '600';
-        nameEl.style.color = '#16722e';
-        nameEl.textContent = team.name;
-        if (team.featured) {
-          nameEl.innerHTML += ' <span class="badge important">Featured</span>';
-        }
-
-        const compEl = document.createElement('div');
-        compEl.style.fontSize = '12.5px';
-        compEl.style.color = '#666';
-        compEl.style.marginBottom = '6px';
-        compEl.textContent = team.competitions.join(' · ');
-
-        const homeEl = document.createElement('div');
-        homeEl.style.fontSize = '12.5px';
-        homeEl.style.color = '#666';
-        homeEl.textContent = 'Home: ' + (team.homeStadium || 'Various');
-
-        const pubEl = document.createElement('div');
-        pubEl.style.fontSize = '12.5px';
-        pubEl.style.color = '#16722e';
-        pubEl.style.fontWeight = '500';
-        pubEl.style.marginTop = '4px';
-        pubEl.textContent = 'Pub watchability: ' + (team.pubNote || 'See tournament notes');
-
-        row.appendChild(nameEl);
-        row.appendChild(compEl);
-        row.appendChild(homeEl);
-        row.appendChild(pubEl);
-        groupDiv.appendChild(row);
-      });
-
-      container.appendChild(groupDiv);
+  var form = document.getElementById("planning-form");
+  if (form) {
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      var fd = new FormData(form);
+      var name = fd.get("name");
+      var sixnations = fd.get("sixnations");
+      var rwc = fd.get("rwc");
+      var notes = fd.get("notes");
+      if (!name || !name.trim()) return;
+      people.push({ name: name.trim(), sixnations: sixnations.trim(), rwc: rwc.trim(), notes: notes.trim() });
+      try { localStorage.setItem("rw-planning", JSON.stringify(people)); } catch(e) {}
+      renderPlanning();
     });
   }
-
-  // ── Render world teams ──────────────────────────────────
-  function renderWorldTeams() {
-    const container = document.getElementById('world-team-list');
-    if (!container) return;
-    container.innerHTML = '';
-
-    const worldGroups = [
-      'World National Teams',
-      "World Women's Teams",
-    ];
-    const teams = DATA.teams || {};
-
-    worldGroups.forEach(groupName => {
-      const items = Object.entries(teams)
-        .filter(([k, v]) => v.group === groupName)
-        .sort((a, b) => a[1].name.localeCompare(b[1].name));
-
-      if (items.length === 0) return;
-
-      const groupDiv = document.createElement('div');
-      groupDiv.style.marginBottom = '14px';
-
-      const groupTitle = document.createElement('h3');
-      groupTitle.style.margin = '0 0 8px 0';
-      groupTitle.style.color = '#1f3864';
-      groupTitle.style.fontSize = '15px';
-      groupTitle.textContent = groupName.replace('World ', '');
-      groupDiv.appendChild(groupTitle);
-
-      items.forEach(([key, team]) => {
-        const row = document.createElement('div');
-        row.className = 'team-card';
-        row.style.background = '#fff';
-        row.style.borderRadius = '10px';
-        row.style.padding = '10px 12px';
-        row.style.marginBottom = '8px';
-        row.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)';
-        row.style.borderLeft = '4px solid #1f3864';
-
-        const nameEl = document.createElement('div');
-        nameEl.style.fontSize = '15px';
-        nameEl.style.fontWeight = '600';
-        nameEl.style.color = '#1f3864';
-        nameEl.textContent = team.name;
-
-        if (team.union) {
-          const unionEl = document.createElement('div');
-          unionEl.style.fontSize = '11.5px';
-          unionEl.style.color = '#999';
-          unionEl.style.marginBottom = '4px';
-          unionEl.textContent = 'Union: ' + team.union;
-          row.appendChild(unionEl);
-        }
-
-        const compEl = document.createElement('div');
-        compEl.style.fontSize = '12.5px';
-        compEl.style.color = '#666';
-        compEl.style.marginBottom = '6px';
-        compEl.textContent = team.competitions.join(' · ');
-
-        const homeEl = document.createElement('div');
-        homeEl.style.fontSize = '12.5px';
-        homeEl.style.color = '#666';
-        homeEl.textContent = 'Home: ' + (team.homeStadium || 'Various');
-        if (team.jersey) {
-          homeEl.textContent += ' · Jersey: ' + team.jersey;
-        }
-
-        const pubEl = document.createElement('div');
-        pubEl.style.fontSize = '12.5px';
-        pubEl.style.color = '#16722e';
-        pubEl.style.fontWeight = '500';
-        pubEl.style.marginTop = '4px';
-        pubEl.textContent = 'Pub watchability: ' + (team.pubNote || 'See tournament notes');
-
-        row.appendChild(nameEl);
-        row.appendChild(compEl);
-        row.appendChild(homeEl);
-        row.appendChild(pubEl);
-        groupDiv.appendChild(row);
-      });
-
-      container.appendChild(groupDiv);
+  var clearBtn = document.getElementById("planning-clear");
+  if (clearBtn) {
+    clearBtn.addEventListener("click", function() {
+      if (!confirm(t("planning.clear.confirm"))) return;
+      people = [];
+      try { localStorage.setItem("rw-planning", JSON.stringify(people)); } catch(e) {}
+      renderPlanning();
     });
   }
-
-  // ── Render provinces ────────────────────────────────────
-  function renderProvinces() {
-    const container = document.getElementById('province-list');
-    if (!container) return;
-    container.innerHTML = '';
-
-    const items = Object.entries(DATA.provinces || {})
-      .sort((a, b) => a[1].name.localeCompare(b[1].name));
-
-    items.forEach(([key, prov]) => {
-      const row = document.createElement('div');
-      row.className = 'team-card';
-      row.style.background = '#fff';
-      row.style.borderRadius = '10px';
-      row.style.padding = '10px 12px';
-      row.style.marginBottom = '8px';
-      row.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)';
-
-      const nameEl = document.createElement('div');
-      nameEl.style.fontSize = '15px';
-      nameEl.style.fontWeight = '600';
-      nameEl.style.color = '#16722e';
-      nameEl.textContent = prov.name;
-
-      const compEl = document.createElement('div');
-      compEl.style.fontSize = '12.5px';
-      compEl.style.color = '#666';
-      compEl.style.marginBottom = '6px';
-      compEl.textContent = prov.competitions.join(' · ');
-
-      const homeEl = document.createElement('div');
-      homeEl.style.fontSize = '12.5px';
-      homeEl.style.color = '#666';
-      homeEl.textContent = 'Home: ' + (prov.homeStadium || 'Various');
-
-      const pubEl = document.createElement('div');
-      pubEl.style.fontSize = '12.5px';
-      pubEl.style.color = '#16722e';
-      pubEl.style.fontWeight = '500';
-      pubEl.style.marginTop = '4px';
-      pubEl.textContent = 'Pub watchability: ' + (prov.pubNote || 'See tournament notes');
-
-      row.appendChild(nameEl);
-      row.appendChild(compEl);
-      row.appendChild(homeEl);
-      row.appendChild(pubEl);
-      container.appendChild(row);
+  document.querySelectorAll(".planning-remove").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var idx = parseInt(btn.getAttribute("data-idx"), 10);
+      if (isNaN(idx)) return;
+      people.splice(idx, 1);
+      try { localStorage.setItem("rw-planning", JSON.stringify(people)); } catch(e) {}
+      renderPlanning();
     });
-  }
+  });
+}
 
-  // ── Render clubs ────────────────────────────────────────
-  function renderClubs() {
-    const container = document.getElementById('club-list');
-    if (!container) return;
-    container.innerHTML = '';
+// ---- pub denial state ----
+function applyPubDenialState() {
+  var denied = localStorage.getItem("rw-pub") === "denied";
+  document.querySelectorAll(".pub-banner, .pub-banner-anchored").forEach(function(el) {
+    el.style.display = denied ? "none" : "";
+  });
+  document.querySelectorAll(".home-pub-note, .pub-note-inline").forEach(function(el) {
+    if (denied) { el.style.opacity = "0.4"; el.title = "Ad/monetisation restricted by user consent"; }
+    else { el.style.opacity = ""; el.title = ""; }
+  });
+  var adBanner = document.getElementById("ad-mobile-banner");
+  if (adBanner) adBanner.style.display = denied ? "none" : "";
+  var interstitial = document.getElementById("ad-interstitial-slot");
+  if (interstitial) interstitial.style.display = denied ? "none" : "";
+}
 
-    const items = (DATA.clubs || []).sort((a, b) => {
-      if (a.province !== b.province) return a.province.localeCompare(b.province);
-      return a.name.localeCompare(b.name);
-    });
-
-    if (items.length === 0) {
-      container.innerHTML = '<p class="small">No clubs loaded.</p>';
-      return;
+// ---- detect pub consent from localStorage ----
+function detectPubOption() {
+  try {
+    if (localStorage.getItem("rw-pub") === "denied") {
+      document.querySelectorAll(".pub-banner").forEach(function(el) { el.style.display = "none"; });
     }
+  } catch(e) {}
+}
 
-    const ul = document.createElement('ul');
-    items.forEach(club => {
-      const li = document.createElement('li');
-      li.style.fontSize = '13.5px';
-      li.style.marginBottom = '4px';
-      li.style.listStyle = 'none';
-      li.innerHTML = `<strong>${club.name}</strong> <span style="color:#666;">· ${club.province} · ${club.tier}</span>`;
-      ul.appendChild(li);
-    });
-    container.appendChild(ul);
+// ---- main setup ----
+function setup() {
+  detectLocale();
+  detectPubOption();
+  var knewLocale = localStorage.getItem("rw-locale");
+  if (knewLocale && data.locales[knewLocale]) setLocale(knewLocale);
 
-    const search = document.getElementById('club-search');
-    if (search) {
-      search.addEventListener('input', () => {
-        const q = search.value.toLowerCase();
-        const filtered = items.filter(c =>
-          c.name.toLowerCase().includes(q) ||
-          c.province.toLowerCase().includes(q)
-        );
-        ul.innerHTML = '';
-        if (filtered.length === 0) {
-          const li = document.createElement('li');
-          li.style.fontSize = '13px';
-          li.style.color = '#666';
-          li.textContent = 'No clubs matching "' + q + '"';
-          ul.appendChild(li);
-        } else {
-          filtered.forEach(c => {
-            const li = document.createElement('li');
-            li.style.fontSize = '13.5px';
-            li.style.marginBottom = '4px';
-            li.style.listStyle = 'none';
-            li.innerHTML = `<strong>${c.name}</strong> <span style="color:#666;">· ${c.province} · ${c.tier}</span>`;
-            ul.appendChild(li);
-          });
-        }
-      });
-    }
-  }
-
-  // ── Render tournaments ──────────────────────────────────
-  function renderTournaments() {
-    const container = document.getElementById('section-tournaments');
-    if (!container) return;
-
-    const existing = container.querySelector('.tournament-list');
-    if (existing) existing.remove();
-
-    const list = document.createElement('div');
-    list.className = 'tournament-list';
-
-    const items = Object.entries(DATA.tournaments || {})
-      .sort((a, b) => a[1].name.localeCompare(b[1].name));
-
-    items.forEach(([key, t]) => {
-      const card = document.createElement('div');
-      card.className = t.group === 'World Tournaments' ? 'card blue' : 'card green';
-      card.style.marginBottom = '8px';
-
-      const nameEl = document.createElement('h3');
-      nameEl.style.margin = '0 0 4px 0';
-      nameEl.style.color = t.group === 'World Tournaments' ? '#1f3864' : '#16722e';
-      nameEl.style.fontSize = '15px';
-      nameEl.textContent = t.name;
-
-      const shortEl = document.createElement('div');
-      shortEl.style.fontSize = '12.5px';
-      shortEl.style.color = '#666';
-      shortEl.style.marginBottom = '6px';
-      shortEl.textContent = (t.short || t.name) + ' · ' + (t.group || 'Tournaments');
-
-      const descEl = document.createElement('p');
-      descEl.style.fontSize = '13px';
-      descEl.style.margin = '0 0 6px 0';
-      if (t.teams) {
-        descEl.textContent = 'Teams: ' + (Array.isArray(t.teams) ? t.teams.join(', ') : t.teams);
-      } else if (t.season) {
-        descEl.textContent = (t.season || '');
-      } else {
-        descEl.textContent = t.pubNote || '';
-      }
-
-      const pubEl = document.createElement('p');
-      pubEl.style.fontSize = '13px';
-      pubEl.style.color = t.group === 'World Tournaments' ? '#1f3864' : '#16722e';
-      pubEl.style.fontWeight = '500';
-      pubEl.style.margin = '0';
-      pubEl.textContent = 'Pub watchability: ' + (t.pubNote || 'See team notes');
-
-      card.appendChild(nameEl);
-      card.appendChild(shortEl);
-      card.appendChild(descEl);
-      card.appendChild(pubEl);
-      list.appendChild(card);
-    });
-
-    container.appendChild(list);
-  }
-
-  // ── GDPR Consent ────────────────────────────────────────
-  const CONSENT_KEY = 'rugbywatch_consent';
-  let consent = null;
-
-  function loadConsent() {
-    try {
-      const raw = localStorage.getItem(CONSENT_KEY);
-      if (raw === 'accept' || raw === 'reject') {
-        consent = raw;
-      }
-      return consent;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  function saveConsent(val) {
-    try {
-      localStorage.setItem(CONSENT_KEY, val);
-      consent = val;
-    } catch (e) { /* ignore */ }
-  }
-
-  function renderConsentUI() {
-    const box = document.querySelector('.consent-box');
-    if (!box) return;
-
-    if (consent === 'accept') {
-      box.innerHTML = `
-        <h3 style="color:#1f6b1f; margin:0 0 8px 0; font-size:15px;">✓ Non-essential adverts accepted</h3>
-        <p style="font-size:13px; margin-bottom:12px;">You've allowed non-essential adverts to support the app. You can change this at any time.</p>
-        <button class="btn btn-outline btn-block" id="toggle-consent-btn">Change advert preference</button>
-      `;
-      const btn = document.getElementById('toggle-consent-btn');
-      if (btn) btn.addEventListener('click', () => showConsentDialog());
-    } else if (consent === 'reject') {
-      box.innerHTML = `
-        <h3 style="color:#c00000; margin:0 0 8px 0; font-size:15px;">✕ Non-essential adverts rejected</h3>
-        <p style="font-size:13px; margin-bottom:12px;">Non-essential adverts are off. Only essential service adverts, where required by law, will appear. You can change this at any time.</p>
-        <button class="btn btn-outline btn-block" id="toggle-consent-btn">Change advert preference</button>
-      `;
-      const btn = document.getElementById('toggle-consent-btn');
-      if (btn) btn.addEventListener('click', () => showConsentDialog());
-    } else {
-      showConsentDialog();
-    }
-  }
-
-  function showConsentDialog() {
-    const existing = document.querySelector('.consent-dialog');
-    if (existing) existing.remove();
-
-    const dialog = document.createElement('div');
-    dialog.className = 'consent-dialog';
-    dialog.style.cssText = `
-      position: fixed; bottom: 0; left: 0; right: 0; top: 0;
-      background: rgba(0,0,0,0.5); display: flex; align-items: center;
-      justify-content: center; z-index: 1000; padding: 20px;
-    `;
-
-    const card = document.createElement('div');
-    card.style.cssText = `
-      background: white; border-radius: 14px; padding: 20px; max-width: 400px; width: 100%;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-    `;
-
-    card.innerHTML = `
-      <h3 style="color:#16722e; margin:0 0 8px 0; font-size:16px;">Adverts &amp; your privacy</h3>
-      <p style="font-size:13.5px; color:#444; margin-bottom:12px;">Rugby Watch is a free app supported by adverts. Before we show you non-essential adverts, you can choose:</p>
-      <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
-        <label class="consent-opt" style="display:flex; align-items:center; gap:10px; padding:10px; background:white; border:1px solid #bbb; border-radius:8px; cursor:pointer; font-size:13.5px;">
-          <input type="radio" name="consent" value="accept" id="accept-opt" style="width:18px; height:18px; accent-color:#16722e;">
-          <span><strong>Accept non-essential adverts</strong><br><span style="font-size:12px; color:#666;">Allow personalised/non-essential adverts to support the app</span></span>
-        </label>
-        <label class="consent-opt" style="display:flex; align-items:center; gap:10px; padding:10px; background:white; border:1px solid #bbb; border-radius:8px; cursor:pointer; font-size:13.5px;">
-          <input type="radio" name="consent" value="reject" id="reject-opt" checked style="width:18px; height:18px; accent-color:#16722e;">
-          <span><strong>Reject non-essential adverts</strong><br><span style="font-size:12px; color:#666;">Only essential service adverts, where required by law</span></span>
-        </label>
-      </div>
-      <div style="font-size:12px; color:#666; border-top:1px solid #ccc; padding-top:8px; margin-bottom:14px;">
-        Your choice is saved on this device only. You can change it in the app at any time.
-      </div>
-      <button class="btn btn-primary btn-block" id="consent-ok" style="width:100%; padding:12px; font-size:14px;">Save choice</button>
-    `;
-
-    dialog.appendChild(card);
-    document.body.appendChild(dialog);
-
-    document.getElementById('consent-ok').addEventListener('click', () => {
-      const selected = dialog.querySelector('input[name="consent"]:checked');
-      if (!selected) {
-        alert('Please choose an option.');
-        return;
-      }
-      saveConsent(selected.value);
-      dialog.remove();
-      renderConsentUI();
-      loadAds();
-    });
-  }
-
-  // ── Ads (placeholder — real AdMob integration) ────────
-  function loadAds() {
-    if (consent === 'reject') {
-      hideAdSlots();
-      return;
-    }
-    showAdPlaceholders();
-  }
-
-  function showAdPlaceholders() {
-    const existing = document.querySelector('.ad-banner-placeholder');
-    if (!existing) {
-      const banner = document.createElement('div');
-      banner.className = 'ad-banner-placeholder';
-      banner.style.cssText = `
-        position: fixed; bottom: 0; left: 0; right: 0;
-        background: #f0f0f0; border-top: 1px solid #ccc;
-        height: 50px; display: flex; align-items: center; justify-content: center;
-        font-size: 11px; color: #999; z-index: 50;
-      `;
-      banner.textContent = 'AdMob banner — placeholder (real AdMob ad loads here)';
-      document.body.appendChild(banner);
-    }
-
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        if (consent === 'accept') {
-          showInterstitialPlaceholder();
-        }
-      });
-    });
-  }
-
-  function hideAdSlots() {
-    const banner = document.querySelector('.ad-banner-placeholder');
-    if (banner) banner.remove();
-  }
-
-  function showInterstitialPlaceholder() {
-    const toast = document.createElement('div');
-    toast.style.cssText = `
-      position: fixed; top: 60px; left: 50%; transform: translateX(-50%);
-      background: #1f3864; color: white; padding: 8px 16px; border-radius: 20px;
-      font-size: 12px; opacity: 0.9; z-index: 200;
-    `;
-    toast.textContent = 'AdMob interstitial — placeholder';
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 2500);
-  }
-
-  // ── Group planning ──────────────────────────────────────
-  const PLAN_KEY = 'rugbywatch_plan';
-  let plan = [];
-
-  function loadPlan() {
-    try {
-      const raw = localStorage.getItem(PLAN_KEY);
-      if (raw) {
-        plan = JSON.parse(raw);
-        if (!Array.isArray(plan)) plan = [];
-      }
-    } catch (e) { plan = []; }
-    return plan;
-  }
-
-  function savePlan() {
-    try {
-      localStorage.setItem(PLAN_KEY, JSON.stringify(plan));
-    } catch (e) { /* ignore */ }
-  }
-
-  function renderPlan() {
-    const grid = document.getElementById('plan-grid');
-    if (!grid) return;
-    grid.innerHTML = '';
-
-    if (plan.length === 0) {
-      grid.innerHTML = `
-        <div style="text-align:center; padding:20px; color:#666; font-size:13px; background:#fafafa; border-radius:8px; border:1px dashed #ccc;">
-          No one added yet. Tap "+ Add person" to start the list.
-        </div>`;
-      return;
-    }
-
-    plan.forEach((row, i) => {
-      const div = document.createElement('div');
-
-      const isWide = window.innerWidth >= 600;
-      div.style.display = 'grid';
-      div.style.gridTemplateColumns = isWide ? '1fr 1fr 1fr 1fr' : '1fr 1fr';
-      div.style.gap = '8px';
-      div.style.marginBottom = '8px';
-      div.style.alignItems = 'start';
-
-      const fields = [
-        { label: 'Name', key: 'name', placeholder: 'Your name' },
-        { label: 'Which Ireland games', key: 'sixnations', placeholder: 'e.g. All Ireland games, England & France…' },
-        { label: 'RWC interest', key: 'rwc', placeholder: 'e.g. Pool games, final, not interested…' },
-        { label: 'Notes', key: 'notes', placeholder: 'Pub preference, travel…' }
-      ];
-
-      fields.forEach(f => {
-        const label = document.createElement('span');
-        label.style.cssText = 'font-size:11px; font-weight:600; color:#666; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:2px; display:block;';
-        label.textContent = f.label;
-
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.placeholder = f.placeholder;
-        input.value = row[f.key] || '';
-        input.style.cssText = 'width:100%; padding:10px; border:1px solid #bbb; border-radius:8px; font-size:13px; background:white;';
-        input.addEventListener('input', () => {
-          row[f.key] = input.value;
-          savePlan();
-        });
-
-        div.appendChild(label);
-        div.appendChild(input);
-      });
-
-      grid.appendChild(div);
-    });
-  }
-
-  function addRow() {
-    plan.push({ name: '', sixnations: '', rwc: '', notes: '' });
-    savePlan();
-    renderPlan();
-
-    const rows = document.querySelectorAll('#plan-grid > div');
-    const lastRow = rows[rows.length - 1];
-    if (lastRow) {
-      const firstInput = lastRow.querySelector('input');
-      if (firstInput) {
-        setTimeout(() => firstInput.focus(), 200);
-      }
-    }
-  }
-
-  function clearAll() {
-    if (plan.length === 0) return;
-    if (!confirm("Clear everyone from the list? This can't be undone.")) return;
-    plan = [];
-    savePlan();
-    renderPlan();
-  }
-
-  // ── Initialize ──────────────────────────────────────────
-  function init() {
-    detectLocale();
-    renderLocaleIndicator();
-    renderTimezoneConverter();
-
-    TABS.forEach(tab => {
-      tab.addEventListener('click', () => switchTab(tab.dataset.tab));
-    });
-
-    loadData().then(() => {
-      renderIrishTeams();
-      renderProvinces();
+  var sel = document.getElementById("locale-selector");
+  if (sel) {
+    sel.value = currentLocale;
+    sel.addEventListener("change", function(e) {
+      setLocale(e.target.value);
+      renderWorldTeams();
+      renderTimezoneConverter();
+      rebuildHomeWhat();
       renderClubs();
       renderTournaments();
-      renderWorldTeams();
+      renderLocaleIndicator();
+      renderAppHeader();
+      renderConsent();
+      renderPlanning();
+      renderDataNote();
+      renderPrivacy();
     });
+  }
 
-    loadConsent();
-    renderConsentUI();
+  renderLocaleIndicator();
+  renderAppHeader();
+  if (!rendered["home"]) renderHome();
+  if (!rendered["world"]) renderWorldTeams();
+  if (!rendered["tz"]) renderTimezoneConverter();
+  if (!rendered["clubs"]) renderClubs();
+  if (!rendered["tournaments"]) renderTournaments();
+  if (!rendered["consent"]) renderConsent();
+  if (!rendered["planning"]) renderPlanning();
+  if (!rendered["data-note"]) renderDataNote();
+  if (!rendered["privacy"]) renderPrivacy();
+  rebuildHomeWhat();
+}
 
-    if (consent !== 'reject') {
-      loadAds();
+// ---- tab click handlers ----
+function bindTabs() {
+  document.querySelectorAll(".tab-bar .tab").forEach(function(tab) {
+    tab.addEventListener("click", function() {
+      var tabId = tab.getAttribute("data-tab");
+      if (tabId) switchTab(tabId);
+    });
+  });
+  document.querySelectorAll(".toc-item").forEach(function(item) {
+    item.addEventListener("click", function() {
+      var tabId = item.getAttribute("data-tab");
+      if (tabId) switchTab(tabId);
+    });
+  });
+}
+
+// ---- Flappy Rugby (silly mini-game) ----
+function flappyInit() {
+  var canvas = document.getElementById("flappy-canvas");
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+  var W = canvas.width, H = canvas.height;
+  var overlay = document.getElementById("flappy-overlay");
+  var gameover = document.getElementById("flappy-gameover");
+  var scoreEl = document.getElementById("flappy-score");
+  var startBtn = document.getElementById("flappy-start");
+  var restartBtn = document.getElementById("flappy-restart");
+
+  var state = "idle";
+  var bird = { x: 60, y: H / 2, r: 14, vy: 0, rot: 0 };
+  var g = 0.45;
+  var flapV = -7.2;
+  var pipes = [];
+  var pipeGap = 130;
+  var pipeWidth = 38;
+  var pipeSpeed = 2.6;
+  var spawnInterval = 95;
+  var frame = 0;
+  var score = 0;
+  var highScore = 0;
+  try { highScore = parseInt(localStorage.getItem("rw-flappy-high"), 10) || 0; } catch(e) {}
+  var deaths = 0;
+  var maxDeaths = 3;
+  var wingFlap = 0;
+
+  var BODY = "#16722e";
+  var BODY_DARK = "#0f5a1f";
+  var BALL_WHITE = "#f5f5f0";
+  var POST_RED = "#c0392b";
+  var POST_WHITE = "#ffffff";
+  var SKY_TOP = "#87CEEB";
+  var SKY_BOT = "#cce6f0";
+  var GROUND = "#6b8e4e";
+
+  function reset() {
+    bird.y = H / 2;
+    bird.vy = 0;
+    bird.rot = 0;
+    pipes = [];
+    frame = 0;
+    score = 0;
+    deaths = 0;
+    state = "playing";
+    overlay.style.display = "none";
+    gameover.style.display = "none";
+    if (scoreEl) scoreEl.textContent = "Score: 0";
+  }
+
+  function flap() {
+    if (state !== "playing") return;
+    bird.vy = flapV;
+    wingFlap = 0;
+  }
+
+  function drawBall(cx, cy, r, rot) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rot);
+
+    ctx.beginPath();
+    ctx.ellipse(0, 0, r * 1.35, r * 0.85, 0, 0, Math.PI * 2);
+    ctx.fillStyle = BODY;
+    ctx.fill();
+    ctx.strokeStyle = BODY_DARK;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.strokeStyle = BALL_WHITE;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(0, -r * 0.15, r * 0.9, r * 0.35, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(0, r * 0.15, r * 0.9, r * 0.35, 0, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = "rgba(255,255,255,0.5)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(-r * 1.2, 0);
+    ctx.quadraticCurveTo(0, -r * 0.6, r * 1.2, 0);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-r * 1.2, 0);
+    ctx.quadraticCurveTo(0, r * 0.6, r * 1.2, 0);
+    ctx.stroke();
+
+    var wingUp = Math.sin(wingFlap * 0.4) * 0.45 + 0.5;
+    ctx.fillStyle = "#e8a030";
+    ctx.beginPath();
+    ctx.moveTo(-r * 0.5, -r * 0.3);
+    ctx.quadraticCurveTo(-r * 1.7, -r * 0.8 - wingUp * r * 0.5, -r * 1.1, -r * 0.1);
+    ctx.quadraticCurveTo(-r * 1.5, r * 0.1, -r * 0.5, r * 0.1);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "#b87810";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(r * 0.5, -r * 0.3);
+    ctx.quadraticCurveTo(r * 1.7, -r * 0.8 - wingUp * r * 0.5, r * 1.1, -r * 0.1);
+    ctx.quadraticCurveTo(r * 1.5, r * 0.1, r * 0.5, r * 0.1);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = "#111";
+    ctx.beginPath();
+    ctx.arc(r * 0.4, -r * 0.25, r * 0.18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.arc(r * 0.45, -r * 0.3, r * 0.07, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#e8a030";
+    ctx.beginPath();
+    ctx.moveTo(r * 0.7, -r * 0.15);
+    ctx.lineTo(r * 1.0, -r * 0.05);
+    ctx.lineTo(r * 0.7, r * 0.05);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function drawPipe(topH) {
+    var px = W - pipeWidth;
+    ctx.fillStyle = BODY;
+    ctx.fillRect(px, 0, pipeWidth, topH);
+    ctx.strokeStyle = BODY_DARK;
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(px, 0, pipeWidth, topH);
+    ctx.fillStyle = POST_WHITE;
+    ctx.fillRect(px - 2, topH - 10, pipeWidth + 4, 6);
+
+    var botY = topH + pipeGap;
+    var botH = H - botY;
+    ctx.fillStyle = BODY;
+    ctx.fillRect(px, botY, pipeWidth, botH);
+    ctx.strokeStyle = BODY_DARK;
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(px, botY, pipeWidth, botH);
+    ctx.fillStyle = POST_WHITE;
+    ctx.fillRect(px - 2, botY, pipeWidth + 4, 6);
+
+    ctx.fillStyle = POST_RED;
+    ctx.fillRect(px + pipeWidth - 6, 0, 6, 14);
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(px + pipeWidth - 4, 3, 2, 6);
+  }
+
+  function drawBackground() {
+    var grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, SKY_TOP);
+    grad.addColorStop(1, SKY_BOT);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    for (var i = 0; i < 3; i++) {
+      var cx = (i * 130 + frame * 0.2) % (W + 100) - 50;
+      var cy = 40 + i * 30;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, 30, 18, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(cx - 20, cy + 5, 22, 14, 0, 0, Math.PI * 2);
+      ctx.fill();
     }
 
-    loadPlan();
-    renderPlan();
-
-    const addBtn = document.getElementById('btn-add-row');
-    const clearBtn = document.getElementById('btn-clear');
-    if (addBtn) addBtn.addEventListener('click', addRow);
-    if (clearBtn) clearBtn.addEventListener('click', clearAll);
+    ctx.fillStyle = GROUND;
+    ctx.fillRect(0, H - 20, W, 20);
+    ctx.strokeStyle = "#4a6b30";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, H - 20);
+    ctx.lineTo(W, H - 20);
+    ctx.stroke();
+    ctx.strokeStyle = "#3a5a20";
+    for (var i = 0; i < 12; i++) {
+      var gx = i * 30 + (frame * 0.5) % 30;
+      ctx.beginPath();
+      ctx.moveTo(gx, H - 20);
+      ctx.lineTo(gx - 3, H - 26);
+      ctx.moveTo(gx + 5, H - 20);
+      ctx.lineTo(gx + 8, H - 27);
+      ctx.stroke();
+    }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
+  function drawPosts() {
+    ctx.strokeStyle = "rgba(255,255,255,0.3)";
+    ctx.lineWidth = 3;
+    var postX = W - 80;
+    ctx.beginPath();
+    ctx.moveTo(postX, 20); ctx.lineTo(postX, 70);
+    ctx.moveTo(postX - 15, 20); ctx.lineTo(postX + 15, 20);
+    ctx.stroke();
+    postX = W - 160;
+    ctx.beginPath();
+    ctx.moveTo(postX, 15); ctx.lineTo(postX, 65);
+    ctx.moveTo(postX - 12, 15); ctx.lineTo(postX + 12, 15);
+    ctx.stroke();
   }
-})();
+
+  function draw() {
+    drawBackground();
+    drawPosts();
+    pipes.forEach(function(p) { drawPipe(p.topH); });
+    wingFlap++;
+    drawBall(bird.x, bird.y, bird.r, bird.rot);
+
+    ctx.fillStyle = "rgba(0,0,0,0.5)";
+    ctx.fillRect(0, 0, W, 30);
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 16px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Score: " + score, W / 2, 20);
+
+    for (var i = 0; i < maxDeaths; i++) {
+      ctx.fillStyle = i < deaths ? "#c0392b" : "#888";
+      ctx.beginPath();
+      ctx.arc(16 + i * 22, 15, 6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function update() {
+    if (state !== "playing") return;
+    frame++;
+    bird.vy += g;
+    bird.y += bird.vy;
+    bird.rot += bird.vy * 0.04;
+    bird.rot = Math.max(-0.5, Math.min(1.2, bird.rot));
+
+    if (frame % spawnInterval === 0) {
+      var minTop = 40;
+      var maxTop = H - pipeGap - 60;
+      var topH = minTop + Math.random() * (maxTop - minTop);
+      pipes.push({ x: W, topH: topH, scored: false });
+    }
+
+    pipes.forEach(function(p) { p.x -= pipeSpeed; });
+    pipes = pipes.filter(function(p) { return p.x + pipeWidth > -10; });
+
+    var hit = false;
+    if (bird.y + bird.r > H - 20 || bird.y - bird.r < 0) hit = true;
+
+    pipes.forEach(function(p) {
+      var bx = bird.x, by = bird.y, br = bird.r;
+      var px = p.x, pw = pipeWidth;
+      var topH = p.topH;
+      var botY = topH + pipeGap;
+      if (bx + br > px && bx - br < px + pw) {
+        if (by - br < topH) hit = true;
+        if (by + br > botY) hit = true;
+      }
+      if (!p.scored && p.x + pw < bx - br) {
+        p.scored = true;
+        score++;
+        if (scoreEl) scoreEl.textContent = "Score: " + score;
+      }
+    });
+
+    if (hit) {
+      deaths++;
+      if (deaths >= maxDeaths) {
+        state = "over";
+        if (score > highScore) {
+          highScore = score;
+          try { localStorage.setItem("rw-flappy-high", String(highScore)); } catch(e) {}
+        }
+        if (scoreEl) scoreEl.textContent = "Score: " + score + " (best: " + highScore + ")";
+        overlay.style.display = "none";
+        gameover.style.display = "block";
+      } else {
+        bird.y = H / 2;
+        bird.vy = 0;
+        bird.rot = 0;
+      }
+    }
+  }
+
+  function loop() {
+    if (state === "playing") update();
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  function onFlap(e) {
+    if (e) e.preventDefault();
+    if (state === "idle" || state === "over") { reset(); return; }
+    flap();
+  }
+  canvas.addEventListener("mousedown", onFlap);
+  canvas.addEventListener("touchstart", onFlap, { passive: false });
+  document.addEventListener("keydown", function(e) {
+    if (e.code === "Space" || e.code === "ArrowUp") {
+      e.preventDefault();
+      onFlap();
+    }
+  });
+  if (startBtn) startBtn.addEventListener("click", function(e) { e.preventDefault(); reset(); });
+  if (restartBtn) restartBtn.addEventListener("click", function(e) { e.preventDefault(); reset(); });
+
+  state = "idle";
+  loop();
+}
+
+// ---- boot ----
+if (typeof document !== "undefined") {
+  document.addEventListener("DOMContentLoaded", function() {
+    setup();
+    flappyInit();
+    document.addEventListener("visibilitychange", function() {
+      if (!document.hidden) {
+        detectLocale();
+        renderLocaleIndicator();
+        renderWorldTeams();
+        renderTimezoneConverter();
+        rebuildHomeWhat();
+      }
+    });
+  });
+}
+
+// Expose helpers for tests
+module.exports = {
+  renderAll: setup,
+  switchTab: switchTab,
+  setLocale: setLocale,
+  currentLocale: function() { return currentLocale; },
+  currentDict: function() { return currentDict; },
+  applyPubDenialState: applyPubDenialState,
+  detectLocale: detectLocale,
+  detectPubOption: detectPubOption,
+  toUserTime: toUserTime,
+  toUserTimeSlot: toUserTimeSlot,
+  pubWatchability: pubWatchability,
+  localeFlag: localeFlag,
+  buildTimeZoneTable: null,
+  pubWatchabilityForLabel: null
+};
+
+// Boot the server when run directly
+if (require.main === module) {
+  bootServer();
+}

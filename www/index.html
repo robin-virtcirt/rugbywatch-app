@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="description" content="Rugby Watch — Irish rugby fixtures, results, kick-off times, and pub watchability. Six Nations, Rugby World Cup, URC, European Champions Cup, Challenge Cup, and all Irish teams.">
+<meta name="description" content="Rugby Watch — Irish rugby fixtures, kick-off times, and pub watchability. Six Nations, Rugby World Cup, URC, European Champions Cup, Challenge Cup, and all Irish teams.">
 <meta name="theme-color" content="#16722e">
 <title>Rugby Watch — Irish Rugby</title>
 <link rel="manifest" href="/manifest.json">
@@ -52,6 +52,34 @@
   }
   .header h1 { font-size: 26px; line-height: 1.15; margin-bottom: 4px; }
   .header p { font-size: 15px; opacity: 0.92; font-weight: 400; }
+
+  /* Locale indicator */
+  .locale-indicator-wrap {
+    background: var(--green-light);
+    color: var(--green-dark);
+    padding: 8px 14px;
+    margin-bottom: 14px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .locale-indicator { display: flex; align-items: center; gap: 4px; }
+  .locale-flag { font-size: 18px; }
+  .locale-code { font-weight: 600; text-transform: uppercase; }
+  .locale-sep { color: var(--muted); }
+  .locale-tz { color: var(--muted); }
+  #locale-selector {
+    margin-left: auto;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: white;
+    font-size: 13px;
+    cursor: pointer;
+  }
 
   /* Tab bar */
   .tabs {
@@ -114,6 +142,7 @@
     display: inline-block;
   }
   .badge.important { background: #fff2cc; color: #8b6914; font-weight: 600; }
+  .badge-featured { background: #caffca; color: var(--green-dark); }
 
   /* Cards */
   .card {
@@ -127,7 +156,6 @@
   .card.warn { border-left: 4px solid var(--warn); }
   .card.no { border-left: 4px solid var(--no); }
   .card.blue { border-left: 4px solid var(--navy); }
-
   .card h3 { font-size: 15px; color: var(--navy); margin: 0 0 6px 0; }
   .card p { font-size: 13.5px; margin: 3px 0; }
 
@@ -228,7 +256,9 @@
     font-size: 12.5px;
     border-top: 1px solid var(--border);
     margin-top: 14px;
+    line-height: 1.5;
   }
+  .footer a { color: var(--green); text-decoration: none; }
 
   @media (max-width: 420px) {
     .header h1 { font-size: 21px; }
@@ -243,12 +273,29 @@
 
 <!-- Header -->
 <div class="header">
-  <h1>🏉 Rugby Watch</h1>
-  <p>Irish rugby fixtures, kick-off times, and pub watchability — for all the Irish teams and tournaments, including European competition.</p>
+  <h1>🏉 Flappy Rugby Watch</h1>
+  <p>Rugby fixtures, kick-off times, and pub watchability — for all the Irish teams and tournaments, including European competition.</p>
 </div>
 
 <!-- Locale indicator -->
-<div class="locale-indicator-wrap" id="locale-indicator"></div>
+<div class="locale-indicator-wrap" id="locale-indicator-wrap">
+  <div class="locale-indicator">
+    <span class="locale-flag" id="locale-flag">🏉</span>
+    <span class="locale-code" id="locale-code">EN</span>
+    <span class="locale-sep">·</span>
+    <span class="locale-tz" id="locale-tz">Europe/Dublin</span>
+  </div>
+  <select id="locale-selector" aria-label="Language">
+    <option value="en">English</option>
+    <option value="cy">Cymraeg</option>
+    <option value="fr">Français</option>
+    <option value="es">Español</option>
+    <option value="it">Italiano</option>
+    <option value="de">Deutsch</option>
+    <option value="pt">Português</option>
+    <option value="ja">日本語</option>
+  </select>
+</div>
 
 <!-- Tabs -->
 <div class="tabs" id="tabs">
@@ -310,16 +357,17 @@
 <div class="section" id="section-ireland">
   <h2>Ireland Teams</h2>
   <p>The Irish national teams. Click a team to see its fixtures. All kick-off times are converted to your local timezone for pub watchability.</p>
-
   <div id="irish-team-list"></div>
   <p class="small" style="margin-top:8px;">Fixtures are scheduled kick-offs where known. Tours and autumn internationals are usually scheduled well in advance; summer tour fixtures may be confirmed closer to the tour. Always check the IRFU for the final word.</p>
-</div>
+  <div id="irish-team-list"></div>
+  <div class="badge-row" style="margin-top:8px;">
+  <span class="badge badge-featured">Featured — Irish teams</span>
+  </div>
 
 <!-- Provinces -->
 <div class="section" id="section-provinces">
   <h2>Provinces</h2>
   <p>The four Irish provinces — Leinster, Munster, Ulster, Connacht. Their URC fixtures and European competition (Champions Cup, Challenge Cup). Provinces enter European competition when they qualify.</p>
-
   <div id="province-list"></div>
   <p class="small" style="margin-top:8px;">European qualification: top teams in the URC and the previous season's Champions/Challenge Cup standings qualify for the European cups. The exact qualification spots change each season.</p>
 </div>
@@ -414,7 +462,6 @@
 
   <h3>World national teams</h3>
   <p class="small">Every national team that competes in world rugby. Kick-off times shown in your local timezone. Pub watchability assessed relative to your local clock.</p>
-
   <div id="world-team-list"></div>
 
   <h3>World tournaments</h3>
@@ -463,6 +510,26 @@
     <button class="btn btn-secondary" id="btn-clear" style="flex:0 0 auto; padding:12px 20px;">Clear all</button>
   </div>
   <p class="small" style="margin-top:8px;">Saves automatically to this phone. If you share the app, each person's device saves their own version.</p>
+</div>
+
+<!-- Flappy Rugby -->
+<div class="section" id="section-flappy">
+  <h2>🏉 Flappy Rugby</h2>
+  <p>Tap, click, or press Space/↑ to flap. Keep the rugby ball with wings between the posts. Miss three times and you're sin-binned.</p>
+  <div class="flappy-wrap">
+    <canvas id="flappy-canvas" width="320" height="480"></canvas>
+    <div class="flappy-overlay" id="flappy-overlay">
+      <div class="flappy-title">🏉 Flappy Rugby</div>
+      <p class="flappy-sub">Tap / click / space to flap</p>
+      <button class="btn btn-primary flappy-start-btn" id="flappy-start">Play</button>
+    </div>
+    <div class="flappy-gameover" id="flappy-gameover" style="display:none;">
+      <div class="flappy-title">Sin-binned!</div>
+      <p class="flappy-score" id="flappy-score">Score: 0</p>
+      <button class="btn btn-primary" id="flappy-restart">Try again</button>
+    </div>
+  </div>
+  <p class="small" style="margin-top:8px;">Just a silly bit of fun while you wait for the next kick-off. High score saved on this device.</p>
 </div>
 
 <!-- Privacy -->

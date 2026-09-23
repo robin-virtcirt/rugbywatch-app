@@ -1,7 +1,7 @@
 /**
  * WatchRugby — www/js/app.js
  *
- * Cross-platform WatchRugby app (iOS + Android). Ireland featured alongside
+ * Cross-platform WatchRugby app (iOS + Android). All national teams, worldwide.
  * worldwide content. Locale-aware timezone conversion with pub watchability
  * relative to user's clock. Language selector drives all UI strings via the
  * locales block in data.json. Includes Flappy Rugby mini-game.
@@ -28,6 +28,7 @@
   var $$ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
 
   var localeSelector = $('#locale-selector');
+  var countrySelector = $('#country-selector');
   var localeIndicator = $('#locale-indicator');
   var tabButtons = $$('.tab');
   var sections = $$('.section');
@@ -38,7 +39,9 @@
   // ── Init ───────────────────────────────────────────────────────────
   loadData(function () {
     bindLocaleSelector();
+    bindCountrySelector();
     restoreLocale();
+    restoreCountry();
     bindTabs();
     renderAllTabs();
     bindSearch();
@@ -70,6 +73,58 @@
       }
     };
     xhr.send();
+  }
+
+  // ── Country selector ────────────────────────────────────────────────
+  var currentCountry = 'all';
+  var countryTeamMap = {
+    'all':        null,            // show all teams
+    'ie':        'National Team',
+    'nz':        'New Zealand',
+    'sa':        'South Africa',
+    'au':        'Australia',
+    'ar':        'Argentina',
+    'fr':        'France',
+    'en':        'England',
+    'sc':        'Scotland',
+    'wal':       'Wales',
+    'it':        'Italy',
+    'jp':        'Japan',
+    'ge':        'Georgia',
+    'fi':        'Fiji',
+    'sm':        'Samoa',
+    'to':        'Tonga'
+  };
+
+  function bindCountrySelector() {
+    if (!countrySelector) return;
+    countrySelector.addEventListener('change', onCountryChange);
+    Array.prototype.forEach.call(countrySelector.options, function (opt) {
+      opt.addEventListener('click', onCountryChange);
+    });
+  }
+
+  function onCountryChange() {
+    var checked = countrySelector.querySelector('option:checked');
+    if (!checked) return;
+    currentCountry = checked.value || checked.getAttribute('data-country') || 'all';
+    if (data) renderAllTabs();
+    persistCountry();
+  }
+
+  function restoreCountry() {
+    var saved = localStorage.getItem('watchrugby-country');
+    if (saved && countrySelector) {
+      for (var i = 0; i < countrySelector.options.length; i++) {
+        var opt = countrySelector.options[i];
+        if (opt.value === saved) { opt.selected = true; break; }
+      }
+      currentCountry = saved;
+    }
+  }
+
+  function persistCountry() {
+    try { localStorage.setItem('watchrugby-country', currentCountry); } catch (e) {}
   }
 
   // ── Locale ─────────────────────────────────────────────────────────
@@ -170,6 +225,7 @@
     return dict && dict[dictKey] ? dict[dictKey] : dictKey;
   }
 
+  
   // ── Tabs ───────────────────────────────────────────────────────────
   function bindTabs() {
     Array.prototype.forEach.call(tabButtons, function (btn) {
@@ -191,7 +247,7 @@
     });
 
     // Re-render that tab's dynamic content if needed
-    if (id === 'ireland') renderIrelandTeams();
+    if (id === 'nations') renderNations();
     if (id === 'provinces') renderProvinces();
     if (id === 'clubs') renderClubs();
     if (id === 'tournaments') renderTournaments();
@@ -791,14 +847,30 @@
   }
   cacheFlappyRefs();
 
-  // ── Ireland Teams ────────────────────────────────────────────────────
-  function renderIrelandTeams() {
-    var container = $('#irish-team-list');
+  // ── Nations ──────────────────────────────────────────────────────
+  function renderNations() {
+    var container = $('#national-team-list');
     if (!container || !data) return;
     container.innerHTML = '';
-    var teams = data.teams && data.teams.ireland ? data.teams.ireland : [];
+    var allTeams = data.teams || {};
+    var teams = [];
+    for (var tk in allTeams) {
+      var t = allTeams[tk];
+      if (!t) continue;
+      // Show all national teams (men's, women's, U20, sevens — all groups)
+      if (t.group && t.group.indexOf('National') !== -1) {
+        if (currentCountry === 'all') {
+          teams.push(t);
+        } else {
+          // Filter by countryCode
+          if (t.countryCode && t.countryCode === currentCountry) {
+            teams.push(t);
+          }
+        }
+      }
+    }
     if (!teams.length) {
-      container.innerHTML = '<p class="small">No teams loaded.</p>';
+      container.innerHTML = '<p class="small">No teams found for this country.</p>';
       return;
     }
     teams.forEach(function (team) {
@@ -1018,6 +1090,11 @@
   }
 
   // ── Helpers ──────────────────────────────────────────────────────────
+  function getSelectedCountry() {
+    if (countrySelector) return countrySelector.value || 'ie';
+    return 'ie';
+  }
+
   function escapeHtml(s) {
     if (typeof s !== 'string') return '';
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -1034,7 +1111,7 @@
   function renderAllTabs() {
     if (!data) return;
     // Re-render content for each visible/active tab
-    if (data.teams && data.teams.ireland) renderIrelandTeams();
+    renderNations();
     if (data.provinces) renderProvinces();
     if (data.clubs) renderClubs();
     if (data.tournaments) renderTournaments();
@@ -1057,6 +1134,33 @@
     if (searchInput) {
       var ph = textFor(currentLocale, 'searchTeams');
       if (ph) searchInput.setAttribute('placeholder', ph);
+    }
+    // Update country label
+    if (countrySelector) {
+      var opt = countrySelector.options[countrySelector.selectedIndex];
+      if (opt) {
+        var countryNames = {
+          'all': 'All countries',
+          'ie': 'Ireland', 'nz': 'New Zealand', 'sa': 'South Africa',
+          'au': 'Australia', 'ar': 'Argentina', 'fr': 'France',
+          'en': 'England', 'sc': 'Scotland', 'wal': 'Wales',
+          'it': 'Italy', 'jp': 'Japan', 'ge': 'Georgia',
+          'fi': 'Fiji', 'sm': 'Samoa', 'to': 'Tonga'
+        };
+        if (countryNames[currentCountry]) {
+          // Just update the indicator area with country info
+          var indicator = document.querySelector('.locale-indicator-wrap');
+          if (indicator) {
+            var existing = indicator.querySelector('.country-label');
+            if (existing) existing.remove();
+            var span = document.createElement('span');
+            span.className = 'country-label';
+            span.style.cssText = 'margin-left:8px; font-size:12.5px; color:var(--muted);';
+            span.textContent = '🇨: ' + countryNames[currentCountry];
+            indicator.appendChild(span);
+          }
+        }
+      }
     }
   }
 

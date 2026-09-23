@@ -3,7 +3,7 @@
   "private": true,
   "name": "watchrugby",
   "displayName": "WatchRugby",
-  "description": "Irish rugby fixtures, kick-off times, and pub watchability — all Irish teams and tournaments, including European competition. Free, no login. Android + iOS.",
+  "description": "Rugby fixtures, kick-off times, and pub watchability — all national teams and tournaments, including European competition. Free, no login. Android + iOS.",
   "repository": {
     "type": "git",
     "url": "https://github.com/robin-virtcirt/rugbywatch-app"
@@ -16,16 +16,14 @@
     "kick-off times",
     "watchability",
     "WatchRugby",
-    "ireland rugby",
     "six nations",
     "rugby world cup",
     "urc",
     "champions cup",
     "challenge cup",
-    "leinster",
-    "munster",
-    "ulster",
-    "connacht"
+    "national rugby",
+    "rugby nations",
+    "world rugby"
   ],
   "author": "Robin Farrell",
   "license": "UNLICENSED",

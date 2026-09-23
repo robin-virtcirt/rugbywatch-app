@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="description" content="WatchRugby — Irish rugby fixtures, kick-off times, and pub watchability. Six Nations, Rugby World Cup, URC, European Champions Cup, Challenge Cup, and all Irish teams.">
+<meta name="description" content="WatchRugby — Rugby fixtures, kick-off times, and pub watchability. Six Nations, Rugby World Cup, URC, European Champions Cup, Challenge Cup, and all national teams.">
 <meta name="theme-color" content="#16722e">
-<title>WatchRugby — Irish Rugby</title>
+<meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains; preload">
+<title>WatchRugby — Rugby</title>
 <link rel="manifest" href="/manifest.json">
 <style>
   :root {
@@ -274,7 +275,7 @@
 <!-- Header -->
 <div class="header">
   <h1>🏉⚽ WatchRugby</h1>
-  <p>Rugby fixtures, kick-off times, and pub watchability — for all the Irish teams and tournaments, including European competition.</p>
+  <p>Rugby fixtures, kick-off times, and pub watchability — for all the national teams and tournaments, including European competition.</p>
 </div>
 
 <!-- Locale indicator -->
@@ -295,12 +296,31 @@
     <option value="pt">Português</option>
     <option value="ja">日本語</option>
   </select>
+
+<!-- Country selector -->
+<select id="country-selector" aria-label="Country" style="margin-left:8px; padding:4px 8px; border-radius:6px; border:1px solid var(--border); background:white; font-size:13px; cursor:pointer;">
+  <option value="ie">Ireland</option>
+  <option value="nz">New Zealand</option>
+  <option value="sa">South Africa</option>
+  <option value="au">Australia</option>
+  <option value="ar">Argentina</option>
+  <option value="fr">France</option>
+  <option value="en">England</option>
+  <option value="sc">Scotland</option>
+  <option value="wal">Wales</option>
+  <option value="it">Italy</option>
+  <option value="jp">Japan</option>
+  <option value="ge">Georgia</option>
+  <option value="fi">Fiji</option>
+  <option value="sm">Samoa</option>
+  <option value="to">Tonga</option>
+</select>
 </div>
 
 <!-- Tabs -->
 <div class="tabs" id="tabs">
   <button class="tab active" data-tab="home">Home</button>
-  <button class="tab" data-tab="ireland">Ireland Teams</button>
+  <button class="tab" data-tab="nations">National Teams</button>
   <button class="tab" data-tab="provinces">Provinces</button>
   <button class="tab" data-tab="clubs">Clubs &amp; Cups</button>
   <button class="tab" data-tab="tournaments">Tournaments</button>
@@ -312,7 +332,7 @@
 <!-- Home -->
 <div class="section active" id="section-home">
   <h2>Home</h2>
-  <p><strong>WatchRugby</strong> covers all the Irish rugby teams and tournaments — national teams, provinces, clubs, the big cups, and European competition — with kick-off times shown in your local timezone and notes on whether a match is watchable from a pub near you.</p>
+  <p><strong>WatchRugby</strong> covers all the rugby national teams and tournaments — national teams, provinces/franchises, clubs, the big cups, and European competition — with kick-off times shown in your local timezone and notes on whether a match is watchable from a pub near you.</p>
   <p>This is the free app version of the site at <strong>WatchRugby.app</strong> (once the domain is live). It installs on your phone like an app — no login, no account, no subscription to use the fixture lists.</p>
 
   <div class="badge-row">
@@ -327,12 +347,12 @@
 
   <h3>What's here</h3>
   <ul>
-    <li><strong>Ireland teams</strong> — men's senior, women's senior, U20, sevens — national fixtures, tours, autumn internationals, World Cup</li>
+    <li><strong>National teams</strong> — men's senior, women's senior, U20, sevens — national fixtures, tours, autumn internationals, World Cup</li>
     <li><strong>Provinces</strong> — Leinster, Munster, Ulster, Connacht — their URC fixtures and European competition (Champions Cup, Challenge Cup)</li>
     <li><strong>Clubs &amp; Cups</strong> — domestic cups (Leinster Senior Cup, Munster Senior Cup, Ulster Senior Cup, Connacht Senior Cup) and a browseable clubs list</li>
     <li><strong>Tournaments</strong> — Six Nations, Rugby World Cup, URC, European Champions Cup, Challenge Cup, Women's Six Nations, Women's Rugby World Cup</li>
-    <li><strong>Europe</strong> — how Irish teams fit into European competition (URC is cross-border; Champions/Challenge Cup is the main European club competition Irish provinces enter)</li>
-    <li><strong>World</strong> — the global tournaments the Irish teams play in, plus all the world national teams — Southern Hemisphere, Pacific, Europe</li>
+    <li><strong>Europe</strong> — how teams fit into European competition (URC is cross-border; Champions/Challenge Cup is the main European club competition provinces enter)</li>
+    <li><strong>World</strong> — the global tournaments, plus all the world national teams — Southern Hemisphere, Pacific, Europe</li>
     <li><strong>Planning</strong> — add the people in your group, note what they're watching; saves to your device</li>
   </ul>
 
@@ -353,13 +373,13 @@
   </div>
 </div>
 
-<!-- Ireland Teams -->
-<div class="section" id="section-ireland">
-  <h2>Ireland Teams</h2>
-  <p>The Irish national teams. Click a team to see its fixtures. All kick-off times are converted to your local timezone for pub watchability.</p>
-  <div id="irish-team-list"></div>
+<!-- National Teams -->
+<div class="section" id="section-nations">
+  <h2>National Teams</h2>
+  <p>Your national teams. Click a team to see its fixtures. All kick-off times are converted to your local timezone for pub watchability.</p>
+  <div id="national-team-list"></div>
   <div class="badge-row" style="margin-top:8px;">
-    <span class="badge badge-featured">Featured — Irish teams</span>
+    <span class="badge badge-featured">Featured teams</span>
   </div>
   <p class="small" style="margin-top:8px;">Fixtures are scheduled kick-offs where known. Tours and autumn internationals are usually scheduled well in advance; summer tour fixtures may be confirmed closer to the tour. Always check the IRFU for the final word.</p>
 </div>
@@ -367,7 +387,7 @@
 <!-- Provinces -->
 <div class="section" id="section-provinces">
   <h2>Provinces</h2>
-  <p>The four Irish provinces — Leinster, Munster, Ulster, Connacht. Their URC fixtures and European competition (Champions Cup, Challenge Cup). Provinces enter European competition when they qualify.</p>
+  <p>The provinces — Leinster, Munster, Ulster, Connacht. Their URC fixtures and European competition (Champions Cup, Challenge Cup). Provinces enter European competition when they qualify.</p>
   <div id="province-list"></div>
   <p class="small" style="margin-top:8px;">European qualification: top teams in the URC and the previous season's Champions/Challenge Cup standings qualify for the European cups. The exact qualification spots change each season.</p>
 </div>
@@ -385,7 +405,7 @@
   </div>
   <div class="card">
     <h3>Munster Senior Cup</h3>
-    <p>Top Munster clubs. One of the strongest domestic cups in Ireland.</p>
+    <p>Top Munster clubs. One of the strongest domestic cups.</p>
   </div>
   <div class="card">
     <h3>Ulster Senior Cup</h3>
@@ -408,12 +428,12 @@
 <!-- Tournaments -->
 <div class="section" id="section-tournaments">
   <h2>Tournaments</h2>
-  <p>The main tournaments Irish teams play in. Each tournament card links to the teams and fixtures.</p>
+  <p>The main tournaments. Each tournament card links to the teams and fixtures.</p>
 
   <div class="card green">
     <h3>Six Nations</h3>
-    <p>Annual round-robin tournament: Ireland, England, France, Italy, Scotland, Wales. Usually Feb–Mar. Ireland play 5 matches. Away games kick off midday–evening Irish time — pub-friendly.</p>
-    <p class="small">See the Ireland men's team tab for the Ireland fixtures.</p>
+    <p>Annual round-robin tournament: the six participating nations. Usually Feb–Mar. Each team plays 5 matches. Away games kick off midday–evening local time — pub-friendly.</p>
+    <p class="small">See the National Teams tab for the fixtures.</p>
   </div>
   <div class="card green">
     <h3>Women's Six Nations</h3>
@@ -421,44 +441,44 @@
   </div>
   <div class="card green">
     <h3>Rugby World Cup</h3>
-    <p>Every four years (next: 2027, Australia). Ireland men's and women's teams enter. Ireland men drawn in Pool D (Scotland, Uruguay, Portugal) for 2027.</p>
-    <p class="small">World Cup pool games are usually in the morning Irish time for Australian evening kick-offs — see the World tab.</p>
+    <p>Every four years (next: 2027, Australia). Men's and women's teams enter. Men's Pool D for 2027 (co-hosts, plus teams drawn from the rest of the world).</p>
+    <p class="small">Pool games are usually in the morning local time for Australian evening kick-offs — see the World tab.</p>
   </div>
   <div class="card green">
     <h3>Women's Rugby World Cup</h3>
-    <p>Every four years (next: 2027). Ireland women's team.</p>
+    <p>Every four years (next: 2027). Women's teams enter.</p>
   </div>
   <div class="card">
     <h3>United Rugby Championship (URC)</h3>
-    <p>Cross-border professional club competition: Ireland (Leinster, Munster, Ulster, Connacht), Scotland (4), Wales (4), Italy (4), South Africa (4). Season runs Sep–May.</p>
-    <p class="small">Provinces tab has the Irish province fixtures. Kick-offs in Irish time for most games — a few European away games may be morning Irish time.</p>
+    <p>Cross-border professional club competition: the provinces (Leinster, Munster, Ulster, Connacht), four Scottish, four Welsh, four Italian, and four South African teams. Season runs Sep–May.</p>
+    <p class="small">Provinces tab has the province fixtures. Kick-offs in local time for most games — a few European away games may be morning local time.</p>
   </div>
   <div class="card">
     <h3>European Champions Cup</h3>
-    <p>Top URC and other European league teams qualify. One of the two EPCR European club competitions. Irish provinces enter when qualified.</p>
+    <p>Top URC and other European league teams qualify. One of the two EPCR European club competitions. Provinces enter when qualified.</p>
   </div>
   <div class="card">
     <h3>European Challenge Cup</h3>
-    <p>Second EPCR European club competition. A wider set of teams qualify. Irish provinces/clubs enter when qualified.</p>
+    <p>Second EPCR European club competition. A wider set of teams qualify. Provinces/clubs enter when qualified.</p>
   </div>
 </div>
 
 <!-- Europe -->
 <div class="section" id="section-europe">
-  <h2>Europe — how Irish teams fit in</h2>
-  <p>Irish teams compete in Europe mainly through the provinces in two ways:</p>
+  <h2>Europe — how teams fit in</h2>
+  <p>Teams compete in Europe mainly through the provinces in two ways:</p>
   <ul>
-    <li><strong>United Rugby Championship (URC)</strong> — a cross-border professional league that includes Irish provinces alongside Scottish, Welsh, Italian, and South African teams. It's the main day-to-day competition for the provinces. Most URC games are in Irish time (afternoon/evening Irish kick-offs).</li>
-    <li><strong>European club competitions (EPCR)</strong> — the European Champions Cup and European Challenge Cup. These are the two EPCR competitions. The top URC teams (and other European league top teams) qualify for the Champions Cup; a wider set qualify for the Challenge Cup. Irish provinces enter when qualified.</li>
+    <li><strong>United Rugby Championship (URC)</strong> — a cross-border professional league that includes provinces from Ireland, Scotland, Wales, Italy, and South Africa. It's the main day-to-day competition for the provinces. Most URC games kick off in local time (afternoon/evening local).</li>
+    <li><strong>European club competitions (EPCR)</strong> — the European Champions Cup and European Challenge Cup. These are the two EPCR competitions. The top URC teams (and other European league top teams) qualify for the Champions Cup; a wider set qualify for the Challenge Cup. Provinces enter when qualified.</li>
   </ul>
-  <p><strong>Kick-off times in Europe:</strong> most European away games kick off in the afternoon in the host country, which is usually morning Irish time (for games in France/England/Italy/Scotland/Wales — a few hours ahead). Some late European kick-offs are early evening Irish time. Pacific / far-ahead games (not relevant to Europe) would be early morning Irish time.</p>
-  <p><strong>Pub watchability for European games:</strong> a typical Champions Cup Saturday game in France kicking off at 18:00 local = about 17:00 Irish time — pub-friendly. A midday game in Cardiff = about 12:00 Irish time — pub-friendly. A late Saturday French game at 20:00 local = about 19:00 Irish time — pub-friendly.</p>
+  <p><strong>Kick-off times in Europe:</strong> most European away games kick off in the afternoon in the host country, which is usually morning local time (for games in France/England/Italy/Scotland/Wales — a few hours ahead). Some late European kick-offs are early evening local time. Pacific / far-ahead games (not relevant to Europe) would be early morning local time.</p>
+  <p><strong>Pub watchability for European games:</strong> a typical Champions Cup Saturday game in France kicking off at 18:00 local = about 17:00 local time — pub-friendly. A midday game in Cardiff = about 12:00 local time — pub-friendly. A late Saturday French game at 20:00 local = about 19:00 local time — pub-friendly.</p>
 </div>
 
 <!-- World -->
 <div class="section" id="section-world">
   <h2>World — global tournaments &amp; world teams</h2>
-  <p>The global tournaments the Irish teams play in, plus all the world national teams — Southern Hemisphere, Pacific, Europe.</p>
+  <p>The global tournaments, plus all the world national teams — Southern Hemisphere, Pacific, Europe.</p>
 
   <h3>World national teams</h3>
   <p class="small">Every national team that competes in world rugby. Kick-off times shown in your local timezone. Pub watchability assessed relative to your local clock.</p>
@@ -467,31 +487,31 @@
   <h3>World tournaments</h3>
   <div class="card blue">
     <h3>Rugby Championship</h3>
-    <p>Annual Southern Hemisphere round-robin: New Zealand, South Africa, Australia, Argentina. July–August. Evening local kick-offs = early morning Irish time — watch at home, meet later. Northern Hemisphere touring sides in Irish summer fall in Irish afternoon/evening — pub-friendly.</p>
+    <p>Annual Southern Hemisphere round-robin: New Zealand, South Africa, Australia, Argentina. July–August. Evening local kick-offs = early morning local time — watch at home, meet later. Northern Hemisphere touring sides in local summer fall in local afternoon/evening — pub-friendly.</p>
   </div>
   <div class="card blue">
     <h3>Pacific Nations Cup</h3>
-    <p>Fiji, Samoa, Tonga, and guest teams (Japan). July–August. Evening local kick-offs = early morning Irish time — watch at home, meet later.</p>
+    <p>Fiji, Samoa, Tonga, and guest teams (Japan). July–August. Evening local kick-offs = early morning local time — watch at home, meet later.</p>
   </div>
   <div class="card blue">
     <h3>Rugby Europe Championship</h3>
-    <p>Georgia, Romania, Spain, Portugal. February–June. Evening local kick-offs = morning Irish time (1–3 hours ahead) — pub-friendly if up early, or home watch.</p>
+    <p>Georgia, Romania, Spain, Portugal. February–June. Evening local kick-offs = morning local time (1–3 hours ahead) — pub-friendly if up early, or home watch.</p>
   </div>
   <div class="card blue">
     <h3>Rugby World Cup 2027</h3>
-    <p>1 Oct – 13 Nov 2027, Australia. 24 teams (men's). Ireland men drawn in Pool D (Scotland, Uruguay, Portugal). Australia is 11 hours ahead (east coast) — evening Australian kick-off = morning Irish time. Final 13 Nov 2027, 20:00 AEDT = 9:00am Irish time — early morning pub possible.</p>
+    <p>1 Oct – 13 Nov 2027, Australia. 24 teams (men's). Australia is 11 hours ahead (east coast) — evening Australian kick-off = morning local time. Final 13 Nov 2027, 20:00 AEDT = early morning local time — early morning pub possible.</p>
   </div>
   <div class="card blue">
     <h3>Women's Rugby World Cup 2027</h3>
-    <p>2027 in Ireland (hosts: Ireland, together with Scotland, Wales, Northern Ireland). All Ireland games are in Irish time and pub-friendly. If elsewhere, depends on timezone.</p>
+    <p>2027 co-hosted by Ireland, Scotland, Wales, and Northern Ireland. Games in the host countries are in local time and pub-friendly. If elsewhere, depends on timezone.</p>
   </div>
   <div class="card blue">
     <h3>Rugby World Cup Sevens</h3>
-    <p>Every four years. 2025 in Saudi Arabia — evening local time = early morning Irish time.</p>
+    <p>Every four years. 2025 in Saudi Arabia — evening local time = early morning local time.</p>
   </div>
   <div class="card blue">
     <h3>Sevens World Series</h3>
-    <p>Series of 15-a-side sevens tournaments worldwide. October/November–May. Dublin Sevens stop is pub-friendly. Away stops in Europe are morning Irish time — pub-friendly if up early. Stops in Asia/Americas are early morning Irish time.</p>
+    <p>Series of 15-a-side sevens tournaments worldwide. October/November–May. Local Sevens stops are pub-friendly. Away stops in Europe are morning local time — pub-friendly if up early. Stops in Asia/A Americ|as are early morning local time.</p>
   </div>
 
   <h3>Timezone converter</h3>
@@ -557,7 +577,7 @@
 
 <!-- Footer -->
 <div class="footer">
-  WatchRugby · Irish rugby fixtures &amp; pub watchability<br>
+  WatchRugby · Rugby fixtures &amp; pub watchability<br>
   Free app. Ads support it. GDPR: your choices are saved on your device. Data is a guide — check official sources.
 </div>
 

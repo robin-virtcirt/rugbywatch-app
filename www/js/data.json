@@ -8,23 +8,23 @@
         "home.title": "Home",
         "home.intro": "<p><strong>WatchRugby</strong> covers all the rugby teams and tournaments — national teams, provinces/franchises, clubs, the big cups, and European competition — with kick-off times shown in your local timezone and notes on whether a match is watchable from a pub near you.</p><p>This is the free app version of the site at <strong>watchrugby.ie</strong> (once the domain is live). It installs on your phone like an app — no login, no account, no subscription to use the fixture lists.</p>",
         "tab.home": "Home",
-        "tab.ireland": "Ireland Teams",
+        "tab.ireland": "National Teams",
         "tab.provinces": "Provinces",
         "tab.clubs": "Clubs & Cups",
         "tab.tournaments": "Tournaments",
         "tab.europe": "Europe",
         "tab.world": "World",
         "tab.planning": "Planning",
-        "section.ireland.title": "Ireland Teams",
-        "section.ireland.intro": "The Ireland national teams. All kick-off times are converted to your local timezone for pub watchability.",
+        "section.ireland.title": "National Teams",
+        "section.ireland.intro": "Your national teams. All kick-off times are converted to your local timezone for pub watchability.",
         "section.provinces.title": "Provinces",
-        "section.provinces.intro": "The four Irish provinces — Leinster, Munster, Ulster, Connacht. Their URC fixtures and European competition (Champions Cup, Challenge Cup).",
+        "section.provinces.intro": "The provinces — Leinster, Munster, Ulster, Connacht. Their URC fixtures and European competition (Champions Cup, Challenge Cup).",
         "section.clubs.title": "Clubs & Domestic Cups",
         "section.clubs.intro": "The big domestic cups and a browseable clubs list. Club rugby is organised at provincial level.",
         "section.tournaments.title": "Tournaments",
-        "section.tournaments.intro": "The main tournaments Irish teams play in. Each tournament card links to the teams and fixtures.",
+        "section.tournaments.intro": "The main tournaments teams play in. Each tournament card links to the teams and fixtures.",
         "section.europe.title": "Europe",
-        "section.europe.intro": "Irish teams compete in Europe mainly through the provinces in two ways:",
+        "section.europe.intro": "teams compete in Europe mainly through the provinces in two ways:",
         "section.world.title": "World",
         "section.world.intro": "The global tournaments, plus all the world national teams — Southern Hemisphere, Pacific, Europe.",
         "section.planning.title": "Group Planning",
@@ -59,17 +59,17 @@
         "watch.tooearly": "Too early — home watch",
         "watch.unknown": "Check time",
         "tzconverter.title": "Timezone converter",
-        "tzconverter.intro": "Kick-off times are shown in your local timezone. Use this reference to see how local kick-offs translate to Irish time for pub watchability.",
+        "tzconverter.intro": "Kick-off times are shown in your local timezone. Use this reference to see how local kick-offs translate to your local time for pub watchability.",
         "tzconverter.region": "Region",
-        "tzconverter.offset": "Offset vs Irish time",
+        "tzconverter.offset": "Offset vs your local time",
         "tzconverter.watchability": "Pub watchability",
         "tzconverter.foot": "Your locale: {locale} · Your timezone: {tz}. Pub watchability is assessed relative to your local clock — a 6pm kick-off in your timezone is pub-friendly wherever you are.",
         "planning.empty": "No one added yet. Tap \"+ Add person\" to start the list.",
         "planning.clear.confirm": "Clear everyone from the list? This can't be undone.",
         "planning.field.name": "Name",
         "planning.field.name.ph": "Your name",
-        "planning.field.sixnations": "Which Ireland games",
-        "planning.field.sixnations.ph": "e.g. All Ireland games, England & France…",
+        "planning.field.sixnations": "Which games you follow",
+        "planning.field.sixnations.ph": "e.g. all home games, England & France…",
         "planning.field.rwc": "RWC interest",
         "planning.field.rwc.ph": "e.g. Pool games, final, not interested…",
         "planning.field.notes": "Notes",
@@ -90,12 +90,12 @@
         "consent.save": "Save choice",
         "ad.placeholder": "AdMob banner — placeholder (real AdMob ad loads here)",
         "ad.interstitial": "AdMob interstitial — placeholder",
-        "home.what.ireland": "<strong>Ireland teams</strong> — men's senior, women's senior, U20, sevens — national fixtures, tours, autumn internationals, World Cup",
+        "home.what.ireland": "<strong>your country teams</strong> — men's senior, women's senior, U20, sevens — national fixtures, tours, autumn internationals, World Cup",
         "home.what.provinces": "<strong>Provinces</strong> — Leinster, Munster, Ulster, Connacht — their URC fixtures and European competition (Champions Cup, Challenge Cup)",
         "home.what.clubs": "<strong>Clubs & Cups</strong> — domestic cups (Leinster Senior Cup, Munster Senior Cup, Ulster Senior Cup, Connacht Senior Cup) and a browseable clubs list",
         "home.what.tournaments": "<strong>Tournaments</strong> — Six Nations, Rugby World Cup, URC, European Champions Cup, Challenge Cup, Women's Six Nations, Women's Rugby World Cup",
-        "home.what.europe": "<strong>Europe</strong> — how Irish teams fit into European competition (URC is cross-border; Champions/Challenge Cup is the main European club competition Irish provinces enter)",
-        "home.what.world": "<strong>World</strong> — the global tournaments the Irish teams play in, plus all the world national teams — Southern Hemisphere, Pacific, Europe",
+        "home.what.europe": "<strong>Europe</strong> — how teams fit into European competition (URC is cross-border; Champions/Challenge Cup is the main European club competition provinces enter)",
+        "home.what.world": "<strong>World</strong> — the global tournaments the teams play in, plus all the world national teams — Southern Hemisphere, Pacific, Europe",
         "home.what.planning": "<strong>Planning</strong> — add the people in your group, note what they're watching; saves to your device"
       }
     },
@@ -107,23 +107,23 @@
         "home.title": "Dyddiol",
         "home.intro": "<p><strong>WatchRugby</strong> yn gorchuddio pob tîm ragbi a throeon — tîm cenedlaethol, sêr/provenecs, clubiau, y cups mawr, a chydweithrediad Ewropeaidd — gyda amseroedd dechrau yn dyddiol eich cyfnod amser eich hun a nodi a yw pêl galluadwy o pub gennych.</p><p>Dyffmed y fersiwn ap rhydd y gweithdy yma ar <strong>watchrugby.ie</strong> (pan fydd y domain yn byw). Mae'n myned ar eich ffôn fel ap — dim mewngofnod, dim cyfrif, dim tocynnau.</p>",
         "tab.home": "Dyddiol",
-        "tab.ireland": "Tîm Iwerddon",
+        "tab.ireland": "Tîm Cenedlaethol",
         "tab.provinces": "Provenecs",
         "tab.clubs": "Clubiau & Cups",
         "tab.tournaments": "Troeon",
         "tab.europe": "Eropa",
         "tab.world": "Byd",
         "tab.planning": "Cynllunio",
-        "section.ireland.title": "Tîm Iwerddon",
-        "section.ireland.intro": "Y tîm cenedlaethol Iwerddon. Mae amseroedd dechrau wedi'u trosi i dyddiol eich cyfnod amser eich hun.",
+        "section.ireland.title": "Tîm Cenedlaethol",
+        "section.ireland.intro": "Y tîm cenedlaethol. Mae amseroedd dechrau wedi'u trosi i dyddiol eich cyfnod amser eich hun.",
         "section.provinces.title": "Provenecs",
-        "section.provinces.intro": "Y peferthau Iwerddon — Leinster, Munster, Ulster, Connacht. Eu pellanolfannau URC a chydweithrediad Ewropeaidd (Champions Cup, Challenge Cup).",
+        "section.provinces.intro": "Y proves — Leinster, Munster, Ulster, Connacht. Eu pellanolfannau URC a chydweithrediad Ewropeaidd (Champions Cup, Challenge Cup).",
         "section.clubs.title": "Clubiau & Cups Gwladol",
         "section.clubs.intro": "Y cups gwladol mawr a rhestr clubiau y gellir eu Browse. Mae ragbi clubiau wedi'i drefnu ar lefel threfn.",
         "section.tournaments.title": "Troeon",
-        "section.tournaments.intro": "Y troeon mwyaf y mae tîm Iwerddon yn chwarae. Mae pob card troeon yn cysylltu â'r tîm a'r pellanolfannau.",
+        "section.tournaments.intro": "Y troeon fwyaf. Mae pob card troeon yn cysylltu â'r tîm a'r pellanolfannau.",
         "section.europe.title": "Eropa",
-        "section.europe.intro": "Mae tîm Iwerddon yn cystadlu yn Europa yn bennaf trwy'r sêr mewn dau ffordd:",
+        "section.europe.intro": "Mae tîm yn cystadlu yn Ewrop yn bennaf trwy'r proves mewn dau ffordd:",
         "section.world.title": "Byd",
         "section.world.intro": "Y troeon global, plus pob tîm cenedlaethol byd — Caledfrod yr De, y Cefnfor Pacin, Europa.",
         "section.planning.title": "Cynllunio Grŵp",
@@ -158,17 +158,17 @@
         "watch.tooearly": "Rhy early — gwylio adref",
         "watch.unknown": "Gwirio amser",
         "tzconverter.title": "Trosi cyfnodau amser",
-        "tzconverter.intro": "Mae amseroedd dechrau'n cael eu dangos yn dyddiol eich cyfnod amser. Defnyddiwch hwn fel cyfeirio i weld sut mae dechrau lleol yn trosi i dyddiol Iwerddon am gymwysedd pub.",
+        "tzconverter.intro": "Mae amseroedd dechrau'n cael eu dangos yn dyddiol eich cyfnod amser. Defnyddiwch hwn fel cyfeirio i weld sut mae dechrau lleol yn trosi i dyddiol eich cyfnod amser am gymwysedd pub.",
         "tzconverter.region": "Rhan",
-        "tzconverter.offset": "Gwasgariad o amser Iwerddon",
+        "tzconverter.offset": "Gwasgariad o amser lleol",
         "tzconverter.watchability": "Cydweddiad pub",
         "tzconverter.foot": "Eich cyfnod: {locale} · Eich cyfnod amser: {tz}. Mae cydweddiad pub yn cael ei asesu o'i gymharu â'r cloc leol — mae dechrau 6yp yn dyddiol eich cyfnod amser yn gymwys ar gyfer pub lle ydych chi.",
         "planning.empty": "Heb un ychwanegwyd eto. Cliciwch \"+ Ychwanegu person\" i ddechrau'r rhestr.",
         "planning.clear.confirm": "Clirio pawb o'r rhestr? Ni all hyn cael ei ddianc.",
         "planning.field.name": "Enw",
         "planning.field.name.ph": "Eich enw",
-        "planning.field.sixnations": "Pob pêl Iwerddon",
-        "planning.field.sixnations.ph": "e.e. Pob pêl Iwerddon, Lloegr & Ffrainc…",
+        "planning.field.sixnations": "Pob pêl",
+        "planning.field.sixnations.ph": "e.e. Pob pêl, Lloegr & Ffrainc…",
         "planning.field.rwc": "Rhyfeddod RWC",
         "planning.field.rwc.ph": "e.e. Pêl poel, y gorffen, ni ddiddori…",
         "planning.field.notes": "Nodiadau",
@@ -189,12 +189,12 @@
         "consent.save": "Cadw dewisiad",
         "ad.placeholder": "Baner AdMob — lle o bosib (adert AdMob gwir yn llwytho yma)",
         "ad.interstitial": "AdMob interstitial — lle o bosib",
-        "home.what.ireland": "<strong>Tîm Iwerddon</strong> — uchafbwynt mens, uchafbwynt benywaidd, U20, sevens — pellanolfannau cenedlaethol, troau, rhynintenodau awstunol, Copa Byd",
+        "home.what.ireland": "<strong>Tîm Cenedlaethol</strong> — uchafbwynt mens, uchafbwynt benywaidd, U20, sevens — pellanolfannau cenedlaethol, troau, rhynintenodau awstunol, Copa Byd",
         "home.what.provinces": "<strong>Provenecs</strong> — Leinster, Munster, Ulster, Connacht — eu pellanolfannau URC a chydweithrediad Ewropeaidd (Champions Cup, Challenge Cup)",
         "home.what.clubs": "<strong>Clubiau & Cups</strong> — cups gwladol (Copa U20 Senior Leinster, Copa U20 Senior Munster, Copa U20 Senior Ulster, Copa U20 Senior Connacht) a rhestr clubiau y gellir eu browser",
         "home.what.tournaments": "<strong>Troeon</strong> — Pump Cenedlaeth, Copa Byd Ragbi, URC, Copa Chwyrn Ewropeaidd, Copa Her Ewropeaidd, Pump Cenedlaeth Benywaidd, Copa Byd Benywaidd",
-        "home.what.europe": "<strong>Eropa</strong> — sut mae tîm Iwerddon yn ffitio i chydweithrediad Ewropeaidd (URC yw croes-drawes; Champions/Challenge Cup yw prif gydweithrediad clwb Ewropeaidd mae sêr Iwerddon yn mynd i mewn iddo)",
-        "home.what.world": "<strong>Byd</strong> — y troeon global y mae tîm Iwerddon yn chwarae, plus pob tîm cenedlaethol byd — Caledfrod yr De, y Cefnfor Pacin, Europa",
+        "home.what.europe": "<strong>Ewrop</strong> — sut mae tîm yn ffitio i chydweithrediad Ewropeaidd (URC yw croes-drawes; Champions/Challenge Cup yw prif gydweithrediad clwb Ewropeaidd mae proves yn mynd i mewn iddo)",
+        "home.what.world": "<strong>Byd</strong> — y troeon global, plus pob tîm cenedlaethol byd — Caledfrod yr De, y Cefnfor Pacin, Ewrop",
         "home.what.planning": "<strong>Cynllunio</strong> — ychwanegu'r bobl yn eich grŵp, nodi beth maen nhw'n ei wylio; yn cadw i'ch cyfrwng eich hun"
       }
     },
@@ -206,23 +206,23 @@
         "home.title": "Accueil",
         "home.intro": "<p><strong>WatchRugby</strong> couvre toutes les équipes et tournois de rugby — équipes nationales, provinces/franchises, clubs, les grands cups et la compétition européenne — avec les heures de coup d'envoi affichées dans votre fuseau horaire local et des notes sur la possibilité de regarder un match dans un pub près de vous.</p><p>Ceci est la version application gratuite du site <strong>watchrugby.ie</strong> (une fois le domaine actif). Elle s'installe sur votre téléphone comme une application — pas de connexion, pas de compte, pas d'abonnement pour utiliser les listes de matchs.</p>",
         "tab.home": "Accueil",
-        "tab.ireland": "Équipes d'Irlande",
+        "tab.ireland": "Equipes nationales",
         "tab.provinces": "Provinces",
         "tab.clubs": "Clubs & Cups",
         "tab.tournaments": "Tournois",
         "tab.europe": "Europe",
         "tab.world": "Monde",
         "tab.planning": "Planification",
-        "section.ireland.title": "Équipes d'Irlande",
-        "section.ireland.intro": "Les équipes nationales irlandaises. Toutes les heures de coup d'envoi sont converties dans votre fuseau horaire local pour la regardabilité pub.",
+        "section.ireland.title": "Equipes nationales",
+        "section.ireland.intro": "Vos equipes nationales. Toutes les heures de coup d'envoi sont converties dans votre fuseau horaire local pour la regardabilite pub.",
         "section.provinces.title": "Provinces",
-        "section.provinces.intro": "Les quatre provinces irlandaises — Leinster, Munster, Ulster, Connacht. Leurs matchs URC et la compétition européenne (Champions Cup, Challenge Cup).",
+        "section.provinces.intro": "Les provinces — Leinster, Munster, Ulster, Connacht. Leurs matchs URC et la competition europeenne (Champions Cup, Challenge Cup).",
         "section.clubs.title": "Clubs & Cups Nationaux",
         "section.clubs.intro": "Les grands cups nationaux et une liste de clubs parcourable. Le rugby club est organisé au niveau provincial.",
         "section.tournaments.title": "Tournois",
-        "section.tournaments.intro": "Les principaux tournois auxquels participent les équipes irlandaises. Chaque carte de tournoi renvoie aux équipes et aux matchs.",
+        "section.tournaments.intro": "Les principaux tournois. Chaque carte de tournoi renvoie aux equipes et aux matchs.",
         "section.europe.title": "Europe",
-        "section.europe.intro": "Les équipes irlandaises participent en Europe principalement à travers les provinces de deux façons :",
+        "section.europe.intro": "Les equipes competent en Europe principalement a travers les provinces de deux facons :",
         "section.world.title": "Monde",
         "section.world.intro": "Les tournois mondiaux, plus toutes les équipes nationales du monde — hémisphère sud, Pacifique, Europe.",
         "section.planning.title": "Planification de groupe",
@@ -257,17 +257,17 @@
         "watch.tooearly": "Trop tôt — regarder à la maison",
         "watch.unknown": "Vérifier l'heure",
         "tzconverter.title": "Convertisseur de fuseaux horaires",
-        "tzconverter.intro": "Les heures de coup d'envoi sont affichées dans votre fuseau horaire local. Utilisez ceci comme référence pour voir comment les coup d'envoi locaux se traduisent en heure irlandaise pour la regardabilité pub.",
+        "tzconverter.intro": "Les heures de coup d'envoi sont affichees dans votre fuseau horaire local. Utilisez ceci comme reference pour voir comment les coup d'envoi locaux se traduisent en heure locale pour la regardabilite pub.",
         "tzconverter.region": "Région",
-        "tzconverter.offset": "Décalage par rapport à l'heure irlandaise",
+        "tzconverter.offset": "Decalage par rapport a l'heure locale",
         "tzconverter.watchability": "Regardabilité pub",
         "tzconverter.foot": "Votre locale : {locale} · Votre fuseau : {tz}. La regardabilité pub est évaluée par rapport à votre horloge locale — un coup d'envoi à 18h dans votre fuseau est pub-friendly où que vous soyez.",
         "planning.empty": "Personne n'a encore été ajouté. Appuyez sur \"+ Ajouter une personne\" pour commencer la liste.",
         "planning.clear.confirm": "Effacer tout le monde de la liste ? Cela ne peut pas être annulé.",
         "planning.field.name": "Nom",
         "planning.field.name.ph": "Votre nom",
-        "planning.field.sixnations": "Quels matchs Irlande",
-        "planning.field.sixnations.ph": "ex. Tous les matchs Irlande, Angleterre & France…",
+        "planning.field.sixnations": "Quels matchs suivre",
+        "planning.field.sixnations.ph": "ex. tous les matchs a domicile, Angleterre & France…",
         "planning.field.rwc": "Intérêt RWC",
         "planning.field.rwc.ph": "ex. Matchs de poules, finale, pas intéressé…",
         "planning.field.notes": "Notes",
@@ -288,12 +288,12 @@
         "consent.save": "Sauvegarder le choix",
         "ad.placeholder": "Bannière AdMob — espace réservé (réclamation AdMob réelle se charge ici)",
         "ad.interstitial": "Interstitiel AdMob — espace réservé",
-        "home.what.ireland": "<strong>Équipes d'Irlande</strong> — senior hommes, senior femmes, U20, sevens — matchs nationaux, tournaments, internationals d'automne, Copa du Monde",
+        "home.what.ireland": "<strong>Equipes nationales</strong> — senior hommes, senior femmes, U20, sevens — matchs nationaux, tournaments, internationaux d'automne, Coupe du Monde",
         "home.what.provinces": "<strong>Provinces</strong> — Leinster, Munster, Ulster, Connacht — leurs matchs URC et la compétition européenne (Champions Cup, Challenge Cup)",
         "home.what.clubs": "<strong>Clubs & Cups</strong> — cups nationaux (Cupa Senior Leinster, Copa Senior Munster, Copa Senior Ulster, Copa Senior Connacht) et une liste de clubs parcourable",
         "home.what.tournaments": "<strong>Tournois</strong> — Cinq Nations, Copa du Monde de Rugby, URC, Copa Champions européen, Copa Challenge européen, Cinq Nations féminin, Copa du Monde féminin",
-        "home.what.europe": "<strong>Europe</strong> — comment les équipes irlandaises s'intègrent dans la compétition européenne (l'URC est transfrontalière ; Champions/Challenge Cup est la principale compétition de club européenne que les provinces irlandaises rejoignent)",
-        "home.what.world": "<strong>Monde</strong> — les tournois mondiaux auxquels les équipes irlandaises participent, plus toutes les équipes nationales du monde — hémisphère sud, Pacifique, Europe",
+        "home.what.europe": "<strong>Europe</strong> — comment les equipes s'integrent dans la competition europeenne (l'URC est transfrontaliere ; Champions/Challenge Cup est la principale competition de club europeenne que les provinces rejoignent)",
+        "home.what.world": "<strong>Monde</strong> — les tournois mondiaux, plus toutes les equipes nationales du monde — hemisphere sud, Pacifique, Europe",
         "home.what.planning": "<strong>Planification</strong> — ajoutez les personnes de votre groupe, notez ce qu'ils regardent ; se sauve sur votre appareil"
       }
     },
@@ -305,23 +305,23 @@
         "home.title": "Inicio",
         "home.intro": "<p><strong>WatchRugby</strong> cubre todos los equipos y torneos de rugby — equipos nacionales, provincias/franchises, clubes, los grandes cups y la competición europea — con las horas de desempate mostradas en tu zona horaria local y notas sobre si un encuentro se puede ver desde un pub cerca de ti.</p><p>Esta es la versión de app gratuita del sitio <strong>watchrugby.ie</strong> (una vez que el dominio esté activo). Se instala en tu teléfono como una app — sin acceso, sin cuenta, sin suscripción para usar las listas de partidos.</p>",
         "tab.home": "Inicio",
-        "tab.ireland": "Equipos de Irlanda",
+        "tab.ireland": "Equipos nacionales",
         "tab.provinces": "Provincias",
         "tab.clubs": "Clubes & Cups",
         "tab.tournaments": "Torneos",
         "tab.europe": "Europa",
         "tab.world": "Mundo",
         "tab.planning": "Planificación",
-        "section.ireland.title": "Equipos de Irlanda",
-        "section.ireland.intro": "Los equipos nacionales de Irlanda. Todas las horas de desempate se convierten a tu zona horaria local para visibilidad en pub.",
+        "section.ireland.title": "Equipos nacionales",
+        "section.ireland.intro": "Los equipos nacionales. Todas las horas de desempate se convierten a tu zona horaria local para visibilidad en pub.",
         "section.provinces.title": "Provincias",
-        "section.provinces.intro": "Las cuatro provincias irlandesas — Leinster, Munster, Ulster, Connacht. Sus partidos URC y la competición europea (Champions Cup, Challenge Cup).",
+        "section.provinces.intro": "Las provincias — Leinster, Munster, Ulster, Connacht. Sus partidos URC y la competicion europea (Champions Cup, Challenge Cup).",
         "section.clubs.title": "Clubes & Cups Nacionales",
         "section.clubs.intro": "Los grandes cups nacionales y una lista de clubes navegable. El rugby de clubes se organiza a nivel provincial.",
         "section.tournaments.title": "Torneos",
-        "section.tournaments.intro": "Los principales torneos en los que participan los equipos irlandeses. Cada tarjeta de torneo enlaza a los equipos y los partidos.",
+        "section.tournaments.intro": "Los principales torneos. Cada tarjeta de torneo enlaza a los equipos y los partidos.",
         "section.europe.title": "Europa",
-        "section.europe.intro": "Los equipos irlandeses compiten en Europa principalmente a través de las provincias de dos maneras :",
+        "section.europe.intro": "Los equipos compiten en Europa principalmente a traves de las provincias de dos maneras :",
         "section.world.title": "Mundo",
         "section.world.intro": "Los torneos globales, más todos los equipos nacionales del mundo — hemisferio sur, Pacífico, Europa.",
         "section.planning.title": "Planificación de grupo",
@@ -356,17 +356,17 @@
         "watch.tooearly": "Muy temprano — ver desde casa",
         "watch.unknown": "Verificar hora",
         "tzconverter.title": "Convertidor de zonas horarias",
-        "tzconverter.intro": "Las horas de desempate se muestran en tu zona horaria local. Usa esto como referencia para ver cómo los desempates locales se traducen a hora irlandesa para visibilidad en pub.",
+        "tzconverter.intro": "Las horas de desempate se muestran en tu zona horaria local. Usa esto como referencia para ver como los desempates locales se traducen a hora local para visibilidad en pub.",
         "tzconverter.region": "Región",
-        "tzconverter.offset": "Desplazamiento respecto a la hora irlandesa",
+        "tzconverter.offset": "Desplazamiento respecto a la hora local",
         "tzconverter.watchability": "Visibilidad en pub",
         "tzconverter.foot": "Tu locale : {locale} · Tu zona : {tz}. La visibilidad en pub se evalúa en relación con tu reloj local — un desempate a las 18:00 en tu zona es pub-friendly dondequiera que estés.",
         "planning.empty": "Todavía no se ha añadido a nadie. Toca \"+ Añadir persona\" para empezar la lista.",
         "planning.clear.confirm": "¿Borrar a todas las personas de la lista? Esto no se puede deshacer.",
         "planning.field.name": "Nombre",
         "planning.field.name.ph": "Tu nombre",
-        "planning.field.sixnations": "Qué partidos de Irlanda",
-        "planning.field.sixnations.ph": "ej. Todos los partidos de Irlanda, Inglaterra y Francia…",
+        "planning.field.sixnations": "Que partidos seguir",
+        "planning.field.sixnations.ph": "ej. todos los partidos en casa, Inglaterra y Francia…",
         "planning.field.rwc": "Interés en la RWC",
         "planning.field.rwc.ph": "ej. Partidos de fase de grupos, final, no interesado…",
         "planning.field.notes": "Notas",
@@ -387,12 +387,12 @@
         "consent.save": "Guardar elección",
         "ad.placeholder": "Banner de AdMob — marcador de posición (aquí se carga el anuncio real de AdMob)",
         "ad.interstitial": "Interstitial de AdMob — marcador de posición",
-        "home.what.ireland": "<strong>Equipos de Irlanda</strong> — senior hombres, senior mujeres, U20, sevens — partidos nacionales, torneos, internacionales de otoño, Copa del Mundo",
+        "home.what.ireland": "<strong>Equipos nacionales</strong> — senior hombres, senior mujeres, U20, sevens — juegos nacionales, torneos, internacionales de otono, Copa del Mundo",
         "home.what.provinces": "<strong>Provincias</strong> — Leinster, Munster, Ulster, Connacht — sus partidos URC y la competición europea (Champions Cup, Challenge Cup)",
         "home.what.clubs": "<strong>Clubes & Cups</strong> — cups nacionales (Copa Senior de Leinster, Copa Senior de Munster, Copa Senior de Ulster, Copa Senior de Connacht) y una lista de clubes navegable",
         "home.what.tournaments": "<strong>Torneos</strong> — Cinco Naciones, Copa del Mundo de Rugby, URC, Champions Cup europeo, Challenge Cup europeo, Cinco Naciones femenino, Copa del Mundo femenina",
-        "home.what.europe": "<strong>Europa</strong> — cómo se ajustan los equipos irlandeses a la competición europea (la URC es transfronteriza; Champions/Challenge Cup es la principal competición de clubes europea que las provincias irlandesas entran)",
-        "home.what.world": "<strong>Mundo</strong> — los torneos globales en los que participan los equipos irlandeses, más todos los equipos nacionales del mundo — hemisferio sur, Pacífico, Europa",
+        "home.what.europe": "<strong>Europa</strong> — cómo los equipos se ajustan a la competicion europea (la URC es transfrontera; Champions/Challenge Cup es la principal competicion de clubes europea que las provincias entran)",
+        "home.what.world": "<strong>Mundo</strong> — los torneos globales, mas todos los equipos nacionales del mundo — hemisphere sur, Pacifico, Europa",
         "home.what.planning": "<strong>Planificación</strong> — añade las personas de tu grupo, anota qué están viendo ; se guarda en tu dispositivo"
       }
     },
@@ -404,23 +404,23 @@
         "home.title": "Home",
         "home.intro": "<p><strong>WatchRugby</strong> copre tutte le squadre e i tornei di rugby — squadre nazionali, province/franchises, club, i grandi cups e la competizione europea — con gli orari di kick-off mostrati nel tuo fuso orario locale e note su se una partita è guardabile da un pub vicino a te.</p><p>Questa è la versione app gratuita del sito <strong>watchrugby.ie</strong> (quando il dominio sarà attivo). Si installa sul telefono come un'app — nessun accesso, nessun account, nessuna subscription per usare le liste dei partiti.</p>",
         "tab.home": "Home",
-        "tab.ireland": "Squadre d'Irlanda",
+        "tab.ireland": "Squadre nazionali",
         "tab.provinces": "Province",
         "tab.clubs": "Club & Cups",
         "tab.tournaments": "Tornei",
         "tab.europe": "Europa",
         "tab.world": "Mondo",
         "tab.planning": "Pianificazione",
-        "section.ireland.title": "Squadre d'Irlanda",
-        "section.ireland.intro": "Le squadre nazionali irlandesi. Tutti gli orari di kick-off sono convertiti nel tuo fuso orario locale per la guardabilità in pub.",
+        "section.ireland.title": "Squadre nazionali",
+        "section.ireland.intro": "Le squadre nazionali nationalesi. Tutti gli orari di kick-off sono convertiti nel tuo fuso orario locale per la guardabilità in pub.",
         "section.provinces.title": "Province",
-        "section.provinces.intro": "Le quattro province irlandesi — Leinster, Munster, Ulster, Connacht. I loro partiti URC e la competizione europea (Champions Cup, Challenge Cup).",
+        "section.provinces.intro": "Le quattro province nationalesi — Leinster, Munster, Ulster, Connacht. I loro partiti URC e la competizione europea (Champions Cup, Challenge Cup).",
         "section.clubs.title": "Club & Cups Nazionali",
         "section.clubs.intro": "I grandi cups nazionali e una lista di club navigabile. Il rugby di club è organizzato a livello provinciale.",
         "section.tournaments.title": "Tornei",
-        "section.tournaments.intro": "I principali tornei in cui partecipano le squadre irlandesi. Ogni scheda del torneo linka le squadre e i partiti.",
+        "section.tournaments.intro": "I principali tornei in cui partecipano le squadre nationalesi. Ogni scheda del torneo linka le squadre e i partiti.",
         "section.europe.title": "Europa",
-        "section.europe.intro": "Le squadre irlandesi competono in Europa principalmente attraverso le province in due modi :",
+        "section.europe.intro": "Le squadre nationalesi competono in Europa principalmente attraverso le province in due modi :",
         "section.world.title": "Mondo",
         "section.world.intro": "I tornei globali, più tutte le squadre nazionali del mondo — emisfero sud, Pacifico, Europa.",
         "section.planning.title": "Pianificazione di gruppo",
@@ -455,17 +455,17 @@
         "watch.tooearly": "Troppo presto — guarda da casa",
         "watch.unknown": "Controlla orario",
         "tzconverter.title": "Convertitore di fusori orari",
-        "tzconverter.intro": "Gli orari di kick-off sono mostrati nel tuo fuso orario locale. Usa questa riferimento per vedere come i kick-off locali si convertono in orario irlandese per la guardabilità in pub.",
+        "tzconverter.intro": "Gli orari di kick-off sono mostrati nel tuo fuso orario locale. Usa questa riferimento per vedere come i kick-off locali si convertono in orario nationalese per la guardabilità in pub.",
         "tzconverter.region": "Regione",
-        "tzconverter.offset": "Scostamento rispetto all'orario irlandese",
+        "tzconverter.offset": "Scostamento rispetto all'orario nationalese",
         "tzconverter.watchability": "Guardabilità in pub",
         "tzconverter.foot": "Tua locale : {locale} · Tuo fuso : {tz}. La guardabilità in pub è valutata in relazione al tuo orologio locale — un kick-off alle 18:00 nel tuo fuso è pub-friendly ovunque tu sia.",
         "planning.empty": "Nessuno ancora aggiunto. Tocca \"+ Aggiungi persona\" per iniziare la lista.",
         "planning.clear.confirm": "Cancellare tutti dalla lista? Questo non può essere annullato.",
         "planning.field.name": "Nome",
         "planning.field.name.ph": "Il tuo nome",
-        "planning.field.sixnations": "Quali partiti Irlanda",
-        "planning.field.sixnations.ph": "es. Tutti i partiti Irlanda, Inghilterra e Francia…",
+        "planning.field.sixnations": "Quali partiti nationalea",
+        "planning.field.sixnations.ph": "es. Tutti i partiti nationalea, Inghilterra e Francia…",
         "planning.field.rwc": "Interesse RWC",
         "planning.field.rwc.ph": "es. Partiti di fase a gironi, finale, non interessato…",
         "planning.field.notes": "Note",
@@ -486,12 +486,12 @@
         "consent.save": "Salva scelta",
         "ad.placeholder": "Banner AdMob — segnaposto (l'annuncio AdMob reale si carica qui)",
         "ad.interstitial": "Interstiziale AdMob — segnaposto",
-        "home.what.ireland": "<strong>Squadre d'Irlanda</strong> — senior uomini, senior donne, U20, sevens — partiti nazionali, tournée, internazionali autunnali, Copa del Mondo",
+        "home.what.ireland": "<strong>Squadre nazionali</strong> — senior uomini, senior donne, U20, sevens — partiti nazionali, tournée, internazionali autunnali, Copa del Mondo",
         "home.what.provinces": "<strong>Province</strong> — Leinster, Munster, Ulster, Connacht — i loro partiti URC e la competizione europea (Champions Cup, Challenge Cup)",
         "home.what.clubs": "<strong>Club & Cups</strong> — cups nazionali (Cupa Senior Leinster, Copa Senior Munster, Copa Senior Ulster, Copa Senior Connacht) e una lista di club navigabile",
         "home.what.tournaments": "<strong>Tornei</strong> — Cinco Nazioni, Copa del Mondo di Rugby, URC, Champions Cup europeo, Challenge Cup europeo, Cinco Nazioni femminile, Copa del Mondo femminile",
-        "home.what.europe": "<strong>Europa</strong> — come le squadre irlandesi si inseriscono nella competizione europea (l'URC è transfrontaliero; Champions/Challenge Cup è la principale competizione di club europea che le province irlandesi entrano)",
-        "home.what.world": "<strong>Mondo</strong> — i tornei globali in cui partecipano le squadre irlandesi, più tutte le squadre nazionali del mondo — emisfero sud, Pacifico, Europa",
+        "home.what.europe": "<strong>Europa</strong> — come le squadre nationalesi si inseriscono nella competizione europea (l'URC è transfrontaliero; Champions/Challenge Cup è la principale competizione di club europea che le province nationalesi entrano)",
+        "home.what.world": "<strong>Mondo</strong> — i tornei globali in cui partecipano le squadre nationalesi, più tutte le squadre nazionali del mondo — emisfero sud, Pacifico, Europa",
         "home.what.planning": "<strong>Pianificazione</strong> — aggiungi le persone del tuo gruppo, annota cosa stanno guardando ; si salva sul tuo dispositivo"
       }
     },
@@ -503,23 +503,23 @@
         "home.title": "Startseite",
         "home.intro": "<p><strong>WatchRugby</strong> deckt alle Rugby-Teams und Turniere ab — Nationalteams, Provinzen/Franchises, Vereine, die großen Cups und die europäische Konkurrenz — mit Abstoßzeiten in deiner lokalen Zeitzone und Hinweisen, ob ein Spiel in einer nahen Kneipe guckbar ist.</p><p>Dies ist die kostenlose App-Version der Seite <strong>watchrugby.ie</strong> (sobald die Domain freigeschaltet ist). Sie installiert sich auf dem Telefon wie eine App — keine Anmeldung, kein Konto, kein Abo, um die Spielpläne zu nutzen.</p>",
         "tab.home": "Startseite",
-        "tab.ireland": "Irland-Teams",
+        "tab.ireland": "Nationale Teams",
         "tab.provinces": "Provinzen",
         "tab.clubs": "Vereine & Cups",
         "tab.tournaments": "Turniere",
         "tab.europe": "Europa",
         "tab.world": "Welt",
         "tab.planning": "Planung",
-        "section.ireland.title": "Irland-Teams",
-        "section.ireland.intro": "Die irischen Nationalteams. Alle Abstoßzeiten werden in deine lokale Zeitzone umgewandelt für Pub-Tauglichkeit.",
+        "section.ireland.title": "Nationale Teams",
+        "section.ireland.intro": "Ihre nationalen Teams. Alle Abstosszeiten werden in Ihre lokale Zeitzone umgewandelt fur Pub-Tauglichkeit.",
         "section.provinces.title": "Provinzen",
-        "section.provinces.intro": "Die vier irischen Provinzen — Leinster, Munster, Ulster, Connacht. Ihre URC-Spiele und die europäische Konkurrenz (Champions Cup, Challenge Cup).",
+        "section.provinces.intro": "Die Provinzen — Leinster, Munster, Ulster, Connacht. Ihre URC-Spiele und die europaische Konkurrenz (Champions Cup, Challenge Cup).",
         "section.clubs.title": "Vereine & Nationale Cups",
         "section.clubs.intro": "Die großen nationalen Cups und eine durchsuchbare Vereinliste. Der Vereins-Rugby wird auf Provinzen-Ebene organisiert.",
         "section.tournaments.title": "Turniere",
-        "section.tournaments.intro": "Die wichtigsten Turniere, in denen die irischen Teams spielen. Jede Turnier-Karte verlinkt zu den Teams und Spielen.",
+        "section.tournaments.intro": "Die wichtigsten Turniere. Jede Turnier-Karte verlinkt zu den Teams und Spielen.",
         "section.europe.title": "Europa",
-        "section.europe.intro": "Irland-Teams spielen in Europa hauptsächlich über die Provinzen auf zwei Arten:",
+        "section.europe.intro": "Teams spielen in Europa hauptsachlich uber die Provinzen auf zwei Arten:",
         "section.world.title": "Welt",
         "section.world.intro": "Die globalen Turniere und alle Welt-Nationalteams — Südhalbkugel, Pazifik, Europa.",
         "section.planning.title": "Gruppenplanung",
@@ -554,17 +554,17 @@
         "watch.tooearly": "Zu früh — von zu Hause gucken",
         "watch.unknown": "Zeit prüfen",
         "tzconverter.title": "Zeitzonen-Umrechner",
-        "tzconverter.intro": "Abstoßzeiten werden in deiner lokalen Zeitzone angezeigt. Nutze dies als Referenz, um zu sehen, wie lokale Abstoßzeiten in irische Zeit für Pub-Tauglichkeit umgerechnet werden.",
+        "tzconverter.intro": "Abstosszeiten werden in Ihrer lokalen Zeitzone angezeigt. Nutze dies als Referenz, um zu sehen, wie lokale Abstosszeiten in lokale Zeit fur Pub-Tauglichkeit umgerechnet werden.",
         "tzconverter.region": "Region",
-        "tzconverter.offset": "Versatz zur irischen Zeit",
+        "tzconverter.offset": "Versatz zur lokalen Zeit",
         "tzconverter.watchability": "Pub-Tauglichkeit",
         "tzconverter.foot": "Deine Locale : {locale} · Deine Zeitzone : {tz}. Pub-Tauglichkeit wird relativ zu deiner lokalen Uhr bewertet — ein Abstoß um 18:00 in deiner Zeitzone ist Kneipe-tauglich, wo immer du bist.",
         "planning.empty": "Noch niemand hinzugefügt. Tippe auf \"+ Person hinzufügen\" um die Liste zu starten.",
         "planning.clear.confirm": "Alle von der Liste entfernen? Dies kann nicht rückgängig gemacht werden.",
         "planning.field.name": "Name",
         "planning.field.name.ph": "Dein Name",
-        "planning.field.sixnations": "Welche Irland-Spiele",
-        "planning.field.sixnations.ph": "z.B. Alle Irland-Spiele, England & Frankreich…",
+        "planning.field.sixnations": "Welche Spiele du folgst",
+        "planning.field.sixnations.ph": "z.B. alle Heimspiele, England & Frankreich…",
         "planning.field.rwc": "RWC-Interesse",
         "planning.field.rwc.ph": "z.B. Gruppen-Spiele, Finale, nicht interessiert…",
         "planning.field.notes": "Notizen",
@@ -585,12 +585,12 @@
         "consent.save": "Wahl speichern",
         "ad.placeholder": "AdMob-Banner — Platzhalter (echte AdMob-Werbung wird hier geladen)",
         "ad.interstitial": "AdMob-Interstitial — Platzhalter",
-        "home.what.ireland": "<strong>Irland-Teams</strong> — Senioren Männer, Senioren Frauen, U20, Sevens — Nationalspiele, Touren, Herbstinternationale, Rugby-Weltcup",
+        "home.what.ireland": "<strong>Nationale Teams</strong> — Senior Manner, Senior Frauen, U20, Sevens — Nationalspiele, Touren, Herbstinternationale, Rugby-Weltcup",
         "home.what.provinces": "<strong>Provinzen</strong> — Leinster, Munster, Ulster, Connacht — ihre URC-Spiele und europäische Konkurrenz (Champions Cup, Challenge Cup)",
         "home.what.clubs": "<strong>Vereine & Cups</strong> — nationale Cups (Leinster Senior Cup, Munster Senior Cup, Ulster Senior Cup, Connacht Senior Cup) und eine durchsuchbare Vereinliste",
         "home.what.tournaments": "<strong>Turniere</strong> — Fünf Nationen, Rugby-Weltcup, URC, Champions Cup Europa, Challenge Cup Europa, Fünf Nationen Frauen, Rugby-Weltcup Frauen",
-        "home.what.europe": "<strong>Europa</strong> — wie Irland-Teams in die europäische Konkurrenz passen (URC ist grenzüberschreitend; Champions/Challenge Cup ist die Haupt-European-Club-Konkurrenz, in die irische Provinzen eintreten)",
-        "home.what.world": "<strong>Welt</strong> — die globalen Turniere, in denen Irland-Teams spielen, plus alle Welt-Nationalteams — Südhalbkugel, Pazifik, Europa",
+        "home.what.europe": "<strong>Europa</strong> — wie Teams in die europaische Konkurrenz passen (URC ist grenzuberschreitend; Champions/Challenge Cup ist die Haupt-European-Club-Konkurrenz, in die Provinzen eintreten)",
+        "home.what.world": "<strong>Welt</strong> — die globalen Turniere, plus alle Welt-Nationalteams — Sudhalbkugel, Pazifik, Europa",
         "home.what.planning": "<strong>Planung</strong> — füge die Leute in deiner Gruppe hinzu, notiere was sie gucken; wird auf deinem Gerät gespeichert"
       }
     },
@@ -602,23 +602,23 @@
         "home.title": "Início",
         "home.intro": "<p><strong>WatchRugby</strong> cobre todas as equipas e torneios de rugby — equipas nacionais, províncias/franchises, clubes, os grandes cups e a competição europeia — com horários de kick-off mostrados no teu fuso horário local e notas sobre se um jogo é watchable num pub perto de ti.</p><p>Esta é a versão de app gratuita do site <strong>watchrugby.ie</strong> (quando o domínio estiver ativo). Instala-te no telemóvel como uma app — sem login, sem conta, sem subscrição para usares as listas de jogos.",
         "tab.home": "Início",
-        "tab.ireland": "Equipas da Irlanda",
+        "tab.ireland": "Equipas nacionais",
         "tab.provinces": "Províncias",
         "tab.clubs": "Clubes & Cups",
         "tab.tournaments": "Torneios",
         "tab.europe": "Europa",
         "tab.world": "Mundo",
         "tab.planning": "Planificação",
-        "section.ireland.title": "Equipas da Irlanda",
-        "section.ireland.intro": "As equipas nacionais da Irlanda. Todos os horários de kick-off são convertidos para o teu fuso horário local para watchability em pub.",
+        "section.ireland.title": "Equipas nacionais",
+        "section.ireland.intro": "As equipas nacionais. Todos os horarios de kick-off sao convertidos para o teu fuso horario local para watchability em pub.",
         "section.provinces.title": "Províncias",
-        "section.provinces.intro": "As quatro províncias irlandesas — Leinster, Munster, Ulster, Connacht. Os seus jogos URC e a competição europeia (Champions Cup, Challenge Cup).",
+        "section.provinces.intro": "As provincias — Leinster, Munster, Ulster, Connacht. Os seus jogos URC e a competicao europea (Champions Cup, Challenge Cup).",
         "section.clubs.title": "Clubes & Cups Nacionais",
         "section.clubs.intro": "Os grandes cups nacionais e uma lista de clubes navegável. O rugby de clubes é organizado a nível provincial.",
         "section.tournaments.title": "Torneios",
-        "section.tournaments.intro": "Os principais torneios em que as equipas irlandesas jogam. Cada cartão de torneio liga às equipas e jogos.",
+        "section.tournaments.intro": "Os principais torneios. Cada cartao de torneio liga as equipas e jogos.",
         "section.europe.title": "Europa",
-        "section.europe.intro": "As equipas irlandesas competem em Europa principalmente através das províncias de duas maneiras :",
+        "section.europe.intro": "As equipas competem em Europa principalmente atraves das provincias de duas maneiras :",
         "section.world.title": "Mundo",
         "section.world.intro": "Os torneios globais, mais todas as equipas nacionais do mundo — hemisfério sul, Pacífico, Europa.",
         "section.planning.title": "Planificação de grupo",
@@ -653,17 +653,17 @@
         "watch.tooearly": "Muito cedo — ver de casa",
         "watch.unknown": "Verificar hora",
         "tzconverter.title": "Conversor de fusos horários",
-        "tzconverter.intro": "Os horários de kick-off são mostrados no teu fuso horário local. Usa isto como referência para veres como os kick-offs locais se convertem para hora irlandesa para watchability em pub.",
+        "tzconverter.intro": "Os horarios de kick-off sao mostrados no teu fuso horario local. Usa isto como referencia para veres como os kick-offs locais se convertem a hora local para watchability em pub.",
         "tzconverter.region": "Região",
-        "tzconverter.offset": "Deslocação relativamente à hora irlandesa",
+        "tzconverter.offset": "Deslocacao relativamente a hora local",
         "tzconverter.watchability": "Watchability em pub",
         "tzconverter.foot": "A tua localidade : {locale} · O teu fuso : {tz}. A watchability em pub é avaliada relativamente ao teu relógio local — um kick-off às 18:00 no teu fuso é pub-friendly onde quer que estejas.",
         "planning.empty": "Ainda ninguém adicionado. Toque \"+ Adicionar pessoa\" para começar a lista.",
         "planning.clear.confirm": "Limpar todas as pessoas da lista? Isto não pode ser desfeito.",
         "planning.field.name": "Nome",
         "planning.field.name.ph": "O teu nome",
-        "planning.field.sixnations": "Quais jogos da Irlanda",
-        "planning.field.sixnations.ph": "ex. Todos os jogos da Irlanda, Inglaterra e França…",
+        "planning.field.sixnations": "Quais jogos seguires",
+        "planning.field.sixnations.ph": "ex. todos os jogos em casa, Inglaterra e Franca…",
         "planning.field.rwc": "Interesse RWC",
         "planning.field.rwc.ph": "ex. Jogos de fase de grupos, final, não interessado…",
         "planning.field.notes": "Notas",
@@ -684,12 +684,12 @@
         "consent.save": "Guardar escolha",
         "ad.placeholder": "Banner AdMob — espaço reservado (anúncio AdMob real carrega aqui)",
         "ad.interstitial": "Interstitial AdMob — espaço reservado",
-        "home.what.ireland": "<strong>Equipas da Irlanda</strong> — sénior homens, sénior mulheres, U20, sevens — jogos nacionais, turnês, internacionais de outono, Copa do Mundo",
+        "home.what.ireland": "<strong>Equipas nacionais</strong> — senior homens, senior mulheres, U20, sevens — jogos nacionais, turnes, internacionais de outono, Copa do Mundo",
         "home.what.provinces": "<strong>Províncias</strong> — Leinster, Munster, Ulster, Connacht — os seus jogos URC e a competição europeia (Champions Cup, Challenge Cup)",
         "home.what.clubs": "<strong>Clubes & Cups</strong> — cups nacionais (Copa Sénior de Leinster, Copa Sénior de Munster, Copa Sénior de Ulster, Copa Sénior de Connacht) e uma lista de clubes navegável",
         "home.what.tournaments": "<strong>Torneios</strong> — Cinco Nações, Copa do Mundo de Rugby, URC, Champions Cup europeu, Challenge Cup europeu, Cinco Nações feminino, Copa do Mundo feminina",
-        "home.what.europe": "<strong>Europa</strong> — como as equipas irlandesas se encaixam na competição europeia (a URC é transfronteiriça; Champions/Challenge Cup é a principal competição de clubes europeia que as províncias irlandesas entram)",
-        "home.what.world": "<strong>Mundo</strong> — os torneios globais em que as equipas irlandesas jogam, mais todas as equipas nacionais do mundo — hemisfério sul, Pacífico, Europa",
+        "home.what.europe": "<strong>Europa</strong> — como as equipas se encaixam na competicao europea (a URC e transfronteiriça; Champions/Challenge Cup e a principal competicao de clubos europeica que as provincias entram)",
+        "home.what.world": "<strong>Mundo</strong> — os torneios globais, mais todas as equipas nacionais do mundo — hemisphere sul, Pacifico, Europa",
         "home.what.planning": "<strong>Planificação</strong> — adiciona as pessoas no teu grupo, anota o que estão a ver ; guarda-se no teu dispositivo"
       }
     },
@@ -701,23 +701,23 @@
         "home.title": "ホーム",
         "home.intro": "<p><strong>WatchRugby</strong>は、すべてのラグビーチームと大会 — 代表チーム、州／フランチャイズ、クラブ、ビッグカップ、欧州大会 — をカバーし、キックオフ時刻をあなたのタイムゾーンで表示し、その試合が地元のパブで観戦可能かどうかのメモを提供します。</p><p>この無料アプリ版は、<strong>watchrugby.ie</strong>サイトのアプリ版です（ドメインが利用可能になり次第）。スマホにアプリのようにインストールでき、ログイン・アカウント・サブスクリプションなしで試合一覧を利用できます。</p>",
         "tab.home": "ホーム",
-        "tab.ireland": "アイルランド代表",
+        "tab.ireland": "Daihyo chamu",
         "tab.provinces": "州",
         "tab.clubs": "クラブ＆カップ",
         "tab.tournaments": "大会",
         "tab.europe": "ヨーロッパ",
         "tab.world": "世界",
         "tab.planning": "計画",
-        "section.ireland.title": "アイルランド代表チーム",
-        "section.ireland.intro": "アイルランド代表チーム。すべてのキックオフ時刻は、あなたの現地タイムゾーンに変換され、パブ視聴の可否を示します。",
+        "section.ireland.title": "Daihyo chamu",
+        "section.ireland.intro": "Daihyo chamu. Subete no kickoff jikoku wa, anata no genchi taumuzon ni henkan sare, pab shichaku no kaubi o shimesu.",
         "section.provinces.title": "州",
-        "section.provinces.intro": "アイルランドの4州 — レンスター、マンスター、アルスター、コノート。URC戦と欧州大会（チャンピオンズカップ、チャレンジカップ）。",
+        "section.provinces.intro": "Shu — Rensusuta, Mansuta, Aruta, Konooto. URC sen to yo Kudai taikai (Chanpionsu kapupu, Chanrenjipu kapupu).",
         "section.clubs.title": "クラブ＆国内カップ",
         "section.clubs.intro": "主要な国内カップと閲覧可能なクラブ一覧。クラブラグビーは州単位で組織されています。",
         "section.tournaments.title": "大会",
-        "section.tournaments.intro": "アイルランドチームが参加する主要大会。各大会カードはチーム・試合にリンクします。",
+        "section.tournaments.intro": "Shuyō taikai. Kak taikai kaado wa chimu・shiai ni rinku shimasu.",
         "section.europe.title": "ヨーロッパ",
-        "section.europe.intro": "アイルランドチームは、主に州を通じて2つの形で欧州大会に参加します。",
+        "section.europe.intro": "chimu wa, shuyū shu o tōjō shite, n” fōmu de yōkyō taikai ni sanka shimasu.",
         "section.world.title": "世界",
         "section.world.intro": "世界大会とすべての世界代表チーム — 南半球、太平洋、ヨーロッパ。",
         "section.planning.title": "グループ計画",
@@ -752,17 +752,17 @@
         "watch.tooearly": "早すぎる — 自宅で視聴",
         "watch.unknown": "時刻を確認",
         "tzconverter.title": "タイムゾーン変換表",
-        "tzconverter.intro": "キックオフ時刻はあなたの現地タイムゾーンで表示されます。現地キックオフがアイルランド時間にどう変換され、パブ視聴可否に影響するかを見るための参照表です。",
+        "tzconverter.intro": "Kickoff jikoku wa anata no genchi taumuzon de hyōji sare masu. Genchi kickoff ga anata no genchi jikan ni dō henkan sare, pab shichaku kaubi ni eikyō o ataeru ka o miru tame no shōko hyō desu.",
         "tzconverter.region": "地域",
-        "tzconverter.offset": "アイルランド時間との時差",
+        "tzconverter.offset": "Genchi jikan to no jisa",
         "tzconverter.watchability": "パブ視聴可否",
         "tzconverter.foot": "あなたのロケール: {locale} · あなたのタイムゾーン: {tz}。パブ視聴可否はあなたの時計を基準に評価 — あなたのタイムゾーンで18:00キックオフなら、どこにいてもパブフレンドリー。",
         "planning.empty": "まだ誰も追加されていません。「+ 人を追加」をタップしてリストを始めましょう。",
         "planning.clear.confirm": "リストの全員をクリアしますか？この操作は取り消せません。",
         "planning.field.name": "名前",
         "planning.field.name.ph": "あなたの名前",
-        "planning.field.sixnations": "どのアイルランド戦を見るか",
-        "planning.field.sixnations.ph": "例: 全アイルランド戦、イングランド＆フランス戦…",
+        "planning.field.sixnations": "Dona shiai o tsuisezu ka",
+        "planning.field.sixnations.ph": "rei: hoimu no subete no shiai, Ingurando & Furansa sen…",
         "planning.field.rwc": "RWC興味",
         "planning.field.rwc.ph": "例: プール戦、最終、興味なし…",
         "planning.field.notes": "メモ",
@@ -783,12 +783,12 @@
         "consent.save": "選択を保存",
         "ad.placeholder": "AdMobバナー — プレースホルダー（実際のAdMob広告がここに表示）",
         "ad.interstitial": "AdMobインタースティシャル — プレースホルダー",
-        "home.what.ireland": "<strong>アイルランド代表</strong> — シニア男子、シニア女子、U20、セブンズ — 代表試合、ツアーン、秋の国際試合、ワールドカップ",
+        "home.what.ireland": "<strong>Daihyo chamu</strong> — shiin shiai, shiin jyooshi, U20, sevenzu — daihyo shiai, tsuaān, akik no kokusai shiai, wārudo kappu",
         "home.what.provinces": "<strong>州</strong> — レンスター、マンスター、アルスター、コノート — URC戦と欧州大会（チャンピオンズカップ、チャレンジカップ）",
         "home.what.clubs": "<strong>クラブ＆カップ</strong> — 国内カップ（レンスターシニアカップ、マンスターシニアカップ、アルスターシニアカップ、コノートシニアカップ）と閲覧可能なクラブ一覧",
         "home.what.tournaments": "<strong>大会</strong> — シックスネイションズ、ワールドカップ、URC、チャンピオンズカップ、チャレンジカップ、女子シックスネイションズ、女子ワールドカップ",
-        "home.what.europe": "<strong>ヨーロッパ</strong> — アイルランドチームが欧州大会にどう関わるか（URCは越境リーグ；チャンピオンズ／チャレンジカップはアイルランド州が参加する主要欧州クラブ大会）",
-        "home.what.world": "<strong>世界</strong> — アイルランドチームが参加する世界大会と、すべての世界代表チーム — 南半球、太平洋、ヨーロッパ",
+        "home.what.europe": "<strong>Yōkyō</strong> — chīmu ga yōkyō taikai ni dono yō ni kakawaru ka (URC wa ekkyō rigu; chanpionsu／chanrenjipu kapupu wa shu ga sanka suru shuyō yōkyō kurabu taikai)",
+        "home.what.world": "<strong>Sekai</strong> — sekai taikai to, subete no sekai daihyō chīmu — minami hangengoku, taiheiyō, yōkyō",
         "home.what.planning": "<strong>計画</strong> — グループメンバーを追加し、観戦予定をメモ；デバイスに保存"
       }
     }
@@ -800,291 +800,435 @@
   },
   "teams": {
     "ireland-mens": {
-      "name": "Ireland Men's Senior",
-      "short": "Ireland Men",
-      "group": "Ireland National Teams",
+      "name": "Men's Senior National Team",
+      "short": "Men's Senior",
+      "group": "National Teams",
       "union": "IRFU",
-      "competitions": ["Six Nations", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "competitions": [
+        "Six Nations",
+        "Autumn Internationals",
+        "Summer Tour",
+        "Rugby World Cup"
+      ],
       "homeStadium": "Aviva Stadium, Dublin",
       "jersey": "Green",
       "captainNote": "Caelan Doris (2026).",
       "coachNote": "Andy Farrell (as of 2026).",
-      "pubNote": "Ireland home games at Aviva are pub-friendly. Away Six Nations games kick off midday–evening Irish time — pub-friendly. Autumn internationals depend on the opponent's timezone.",
-      "featured": true
+      "pubNote": "Home games at Aviva are pub-friendly. Away Six Nations games kick off midday–evening local time — pub-friendly. Autumn internationals depend on the opponent's timezone.",
+      "featured": true,
+      "countryCode": "ie"
     },
     "ireland-womens": {
-      "name": "Ireland Women's Senior",
-      "short": "Ireland Women",
-      "group": "Ireland National Teams",
+      "name": "Women's Senior National Team",
+      "short": "Women's Senior",
+      "group": "National Teams",
       "union": "IRFU",
-      "competitions": ["Women's Six Nations", "Women's Rugby World Cup", "Autumn Series", "Summer Tour"],
+      "competitions": [
+        "Women's Six Nations",
+        "Women's Rugby World Cup",
+        "Autumn Series",
+        "Summer Tour"
+      ],
       "homeStadium": "Various (Aviva, UCD, etc.)",
       "jersey": "Green",
-      "pubNote": "Women's Six Nations fixtures kick off midday–evening Irish time — pub-friendly. Women's RWC in Australia (2027) likely morning Irish time.",
-      "featured": true
+      "pubNote": "Women's Six Nations fixtures kick off midday–evening local time — pub-friendly. Women's RWC in Australia (2027) likely morning local time.",
+      "featured": true,
+      "countryCode": "ie"
     },
     "ireland-u20-mens": {
-      "name": "Ireland U20 Men",
-      "short": "Ireland U20 Men",
-      "group": "Ireland National Teams",
+      "name": "U20 Men's National Team",
+      "short": "U20 Men's",
+      "group": "National Teams",
       "union": "IRFU",
-      "competitions": ["U20 Six Nations", "U20 World Cup"],
+      "competitions": [
+        "U20 Six Nations",
+        "U20 World Cup"
+      ],
       "homeStadium": "Various",
       "jersey": "Green",
-      "pubNote": "U20 Six Nations kick off midday–evening Irish time. U20 World Cup in Argentina (2026) — afternoon Irish time, pub-watchable.",
-      "featured": true
+      "pubNote": "U20 Six Nations kick off midday–evening local time. U20 World Cup in Argentina (2026) — afternoon local time, pub-watchable.",
+      "featured": true,
+      "countryCode": "ie"
     },
     "ireland-u20-womens": {
-      "name": "Ireland U20 Women",
-      "short": "Ireland U20 Women",
-      "group": "Ireland National Teams",
+      "name": "U20 Women's National Team",
+      "short": "U20 Women's",
+      "group": "National Teams",
       "union": "IRFU",
-      "competitions": ["U20 Women's Six Nations", "U20 Women's Rugby World Cup"],
+      "competitions": [
+        "U20 Women's Six Nations",
+        "U20 Women's Rugby World Cup"
+      ],
       "homeStadium": "Various",
       "jersey": "Green",
-      "pubNote": "U20 Women's Six Nations kick off midday–evening Irish time.",
-      "featured": true
+      "pubNote": "U20 Women's Six Nations kick off midday–evening local time.",
+      "featured": true,
+      "countryCode": "ie"
     },
     "ireland-sevens": {
-      "name": "Ireland Sevens",
-      "short": "Ireland Sevens",
-      "group": "Ireland National Teams",
+      "name": "Sevens National Team",
+      "short": "Sevens",
+      "group": "National Teams",
       "union": "IRFU",
-      "competitions": ["Sevens World Series", "Sevens World Cup", "European Sevens", "Rugby World Cup Sevens"],
+      "competitions": [
+        "Sevens World Series",
+        "Sevens World Cup",
+        "European Sevens",
+        "Rugby World Cup Sevens"
+      ],
       "homeStadium": "Various (Dublin Sevens, etc.)",
       "jersey": "Green",
-      "pubNote": "Sevens World Series stop in Dublin is pub-friendly. Sevens World Cup in 2025/2026 — depends on host.",
-      "featured": true
+      "pubNote": "Sevens World Series stop in your city is pub-friendly. Sevens World Cup in 2025/2026 — depends on host.",
+      "featured": true,
+      "countryCode": "ie"
     },
     "south-africa-mens": {
       "name": "South Africa Men's Senior",
       "short": "South Africa",
       "group": "World National Teams",
       "union": "SARU",
-      "competitions": ["Rugby Championship", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "competitions": [
+        "Rugby Championship",
+        "Autumn Internationals",
+        "Summer Tour",
+        "Rugby World Cup"
+      ],
       "homeStadium": "various (Cape Town, Johannesburg, Durban)",
       "jersey": "Green and Gold",
-      "pubNote": "Springboks play in the Rugby Championship (Southern Hemisphere) — evening local kick-offs are morning Irish time. World Cup pool games in Southern Hemisphere = morning Irish time."
+      "pubNote": "Springboks play in the Rugby Championship (Southern Hemisphere) — evening local kick-offs are morning local time. World Cup pool games in Southern Hemisphere = morning local time.",
+      "countryCode": "sa"
     },
     "new-zealand-mens": {
       "name": "New Zealand Men's Senior",
       "short": "New Zealand",
       "group": "World National Teams",
       "union": "NZR",
-      "competitions": ["Rugby Championship", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "competitions": [
+        "Rugby Championship",
+        "Autumn Internationals",
+        "Summer Tour",
+        "Rugby World Cup"
+      ],
       "homeStadium": "various (Eden Park, etc.)",
       "jersey": "All Blacks (Black)",
-      "pubNote": "All Blacks play in the Rugby Championship — evening local kick-offs are morning Irish time. Northern Hemisphere tours fall in Irish afternoon/evening — pub-friendly."
+      "pubNote": "All Blacks play in the Rugby Championship — evening local kick-offs are morning local time. Northern Hemisphere tours fall in local afternoon/evening — pub-friendly.",
+      "countryCode": "nz"
     },
     "australia-mens": {
       "name": "Australia Men's Senior",
       "short": "Australia",
       "group": "World National Teams",
       "union": "ARU",
-      "competitions": ["Rugby Championship", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "competitions": [
+        "Rugby Championship",
+        "Autumn Internationals",
+        "Summer Tour",
+        "Rugby World Cup"
+      ],
       "homeStadium": "various (Sydney, Melbourne, Brisbane)",
       "jersey": "Green and Gold",
-      "pubNote": "Wallabies play in the Rugby Championship — evening local (east coast) = morning Irish time. 2027 RWC home games = morning Irish time (final 13 Nov 2027 ~9am Irish)."
+      "pubNote": "Wallabies play in the Rugby Championship — evening local (east coast) = morning local time. 2027 RWC home games = morning local time (final 13 Nov 2027 ~9am local).",
+      "countryCode": "au"
     },
     "argentina-mens": {
       "name": "Argentina Men's Senior",
       "short": "Argentina",
       "group": "World National Teams",
       "union": "UAR",
-      "competitions": ["Rugby Championship", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "competitions": [
+        "Rugby Championship",
+        "Autumn Internationals",
+        "Summer Tour",
+        "Rugby World Cup"
+      ],
       "homeStadium": "various (Buenos Aires, etc.)",
       "jersey": "White with blue (Los Pumas)",
-      "pubNote": "Los Pumas play in the Rugby Championship — evening local = early morning Irish time. 2026 U20 World Cup in Argentina — afternoon Irish time, pub-watchable."
+      "pubNote": "Los Pumas play in the Rugby Championship — evening local = early morning local time. 2026 U20 World Cup in Argentina — afternoon local time, pub-watchable.",
+      "countryCode": "ar"
     },
     "france-mens": {
       "name": "France Men's Senior",
       "short": "France",
       "group": "World National Teams",
       "union": "FFR",
-      "competitions": ["Six Nations", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "competitions": [
+        "Six Nations",
+        "Autumn Internationals",
+        "Summer Tour",
+        "Rugby World Cup"
+      ],
       "homeStadium": "various (Stade de France, etc.)",
       "jersey": "Blue, white, red",
-      "pubNote": "France in Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly). France home games = morning Irish time (1–2 hours ahead) — pub-friendly if up early."
+      "pubNote": "France in Six Nations — away games locally kick off midday–evening local time (pub-friendly). France home games = morning local time (1–2 hours ahead) — pub-friendly if up early.",
+      "countryCode": "fr"
     },
     "england-mens": {
       "name": "England Men's Senior",
       "short": "England",
       "group": "World National Teams",
       "union": "RFU",
-      "competitions": ["Six Nations", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "competitions": [
+        "Six Nations",
+        "Autumn Internationals",
+        "Summer Tour",
+        "Rugby World Cup"
+      ],
       "homeStadium": "various (Twickenham, etc.)",
       "jersey": "White",
-      "pubNote": "England in Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly). England home games = morning Irish time (1 hour ahead) — pub-friendly if up early."
+      "pubNote": "England in Six Nations — away games locally kick off midday–evening local time (pub-friendly). England home games = morning local time (1 hour ahead) — pub-friendly if up early.",
+      "countryCode": "en"
     },
     "scotland-mens": {
       "name": "Scotland Men's Senior",
       "short": "Scotland",
       "group": "World National Teams",
       "union": "SRU",
-      "competitions": ["Six Nations", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "competitions": [
+        "Six Nations",
+        "Autumn Internationals",
+        "Summer Tour",
+        "Rugby World Cup"
+      ],
       "homeStadium": "various (Murrayfield, etc.)",
       "jersey": "Blue",
-      "pubNote": "Scotland in Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly). Scotland home games = morning Irish time (same timezone in winter, 1 hour ahead in summer) — pub-friendly."
+      "pubNote": "Scotland in Six Nations — away games locally kick off midday–evening local time (pub-friendly). Scotland home games = morning local time (same timezone in winter, 1 hour ahead in summer) — pub-friendly.",
+      "countryCode": "sc"
     },
     "wales-mens": {
       "name": "Wales Men's Senior",
       "short": "Wales",
       "group": "World National Teams",
       "union": "WRU",
-      "competitions": ["Six Nations", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "competitions": [
+        "Six Nations",
+        "Autumn Internationals",
+        "Summer Tour",
+        "Rugby World Cup"
+      ],
       "homeStadium": "various (Principality Stadium, etc.)",
       "jersey": "Red",
-      "pubNote": "Wales in Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly). Wales home games = morning Irish time (1 hour ahead in summer, same in winter) — pub-friendly."
+      "pubNote": "Wales in Six Nations — away games locally kick off midday–evening local time (pub-friendly). Wales home games = morning local time (1 hour ahead in summer, same in winter) — pub-friendly.",
+      "countryCode": "wal"
     },
     "italy-mens": {
       "name": "Italy Men's Senior",
       "short": "Italy",
       "group": "World National Teams",
       "union": "FIR",
-      "competitions": ["Six Nations", "Autumn Internationals", "Summer Tour", "Rugby World Cup"],
+      "competitions": [
+        "Six Nations",
+        "Autumn Internationals",
+        "Summer Tour",
+        "Rugby World Cup"
+      ],
       "homeStadium": "various (Stadio Olimpico, etc.)",
       "jersey": "Blue (Azzurri)",
-      "pubNote": "Italy in Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly). Italy home games = morning Irish time (1 hour ahead) — pub-friendly if up early."
+      "pubNote": "Italy in Six Nations — away games locally kick off midday–evening local time (pub-friendly). Italy home games = morning local time (1 hour ahead) — pub-friendly if up early.",
+      "countryCode": "it"
     },
     "japan-mens": {
       "name": "Japan Men's Senior",
       "short": "Japan",
       "group": "World National Teams",
       "union": "Japan rugby-football union",
-      "competitions": ["Japan rugby league", "Autumn Internationals", "Rugby World Cup"],
+      "competitions": [
+        "Japan rugby league",
+        "Autumn Internationals",
+        "Rugby World Cup"
+      ],
       "homeStadium": "various (Tokyo, etc.)",
       "jersey": "Red",
-      "pubNote": "Japan is 8–9 hours ahead of Ireland — morning Irish time for evening local kick-offs. 2019 RWC host. Watch at home, meet later."
+      "pubNote": "Japan is 8–9 hours ahead of Ireland — morning local time for evening local kick-offs. 2019 RWC host. Watch at home, meet later.",
+      "countryCode": "jp"
     },
     "georgia-mens": {
       "name": "Georgia Men's Senior",
       "short": "Georgia",
       "group": "World National Teams",
       "union": "Georgia rugby union",
-      "competitions": ["Rugby Europe Championship", "Autumn Internationals", "Rugby World Cup"],
+      "competitions": [
+        "Rugby Europe Championship",
+        "Autumn Internationals",
+        "Rugby World Cup"
+      ],
       "homeStadium": "various (Tbilisi, etc.)",
       "jersey": "White with red (QarTli Sulakhli)",
-      "pubNote": "Georgia is 2–3 hours ahead of Ireland — morning Irish time for evening local kick-offs. Rugby Europe Championship. Watch at home, meet later."
+      "pubNote": "Georgia is 2–3 hours ahead of Ireland — morning local time for evening local kick-offs. Rugby Europe Championship. Watch at home, meet later.",
+      "countryCode": "ge"
     },
     "fiji-mens": {
       "name": "Fiji Men's Senior",
       "short": "Fiji",
       "group": "World National Teams",
       "union": "RFC",
-      "competitions": ["Pacific Nations Cup", "Autumn Internationals", "Rugby World Cup", "Sevens World Series"],
+      "competitions": [
+        "Pacific Nations Cup",
+        "Autumn Internationals",
+        "Rugby World Cup",
+        "Sevens World Series"
+      ],
       "homeStadium": "various (Suva, etc.)",
       "jersey": "White with black (Bula Buddhas)",
-      "pubNote": "Fiji is 10–12 hours ahead of Ireland — early morning Irish time for evening local kick-offs. Pacific Nations Cup. Watch at home, meet later."
+      "pubNote": "Fiji is 10–12 hours ahead of Ireland — early morning local time for evening local kick-offs. Pacific Nations Cup. Watch at home, meet later.",
+      "countryCode": "fi"
     },
     "samoa-mens": {
       "name": "Samoa Men's Senior",
       "short": "Samoa",
       "group": "World National Teams",
       "union": "SRU",
-      "competitions": ["Pacific Nations Cup", "Autumn Internationals", "Rugby World Cup", "Sevens World Series"],
+      "competitions": [
+        "Pacific Nations Cup",
+        "Autumn Internationals",
+        "Rugby World Cup",
+        "Sevens World Series"
+      ],
       "homeStadium": "various",
       "jersey": "Red with blue (Sea Warriors)",
-      "pubNote": "Samoa is 10–12 hours ahead of Ireland — early morning Irish time for evening local kick-offs. Watch at home, meet later."
+      "pubNote": "Samoa is 10–12 hours ahead of Ireland — early morning local time for evening local kick-offs. Watch at home, meet later.",
+      "countryCode": "sm"
     },
     "tonga-mens": {
       "name": "Tonga Men's Senior",
       "short": "Tonga",
       "group": "World National Teams",
       "union": "Tonga rugby union",
-      "competitions": ["Pacific Nations Cup", "Autumn Internationals", "Rugby World Cup", "Sevens World Series"],
+      "competitions": [
+        "Pacific Nations Cup",
+        "Autumn Internationals",
+        "Rugby World Cup",
+        "Sevens World Series"
+      ],
       "homeStadium": "various",
       "jersey": "Red with white (Ikale Tahi)",
-      "pubNote": "Tonga is 10–12 hours ahead of Ireland — early morning Irish time for evening local kick-offs. Watch at home, meet later."
+      "pubNote": "Tonga is 10–12 hours ahead of Ireland — early morning local time for evening local kick-offs. Watch at home, meet later.",
+      "countryCode": "to"
     },
     "england-womens": {
       "name": "England Women's Senior",
       "short": "England Women",
       "group": "World Women's Teams",
       "union": "RFU",
-      "competitions": ["Women's Six Nations", "Women's Rugby World Cup"],
+      "competitions": [
+        "Women's Six Nations",
+        "Women's Rugby World Cup"
+      ],
       "homeStadium": "various (Twickenham, etc.)",
       "jersey": "White",
-      "pubNote": "England Women in Women's Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly)."
+      "pubNote": "England Women in Women's Six Nations — away games locally kick off midday–evening local time (pub-friendly).",
+      "countryCode": "en"
     },
     "france-womens": {
       "name": "France Women's Senior",
       "short": "France Women",
       "group": "World Women's Teams",
       "union": "FFR",
-      "competitions": ["Women's Six Nations", "Women's Rugby World Cup"],
+      "competitions": [
+        "Women's Six Nations",
+        "Women's Rugby World Cup"
+      ],
       "homeStadium": "various",
       "jersey": "Blue",
-      "pubNote": "France Women in Women's Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly)."
+      "pubNote": "France Women in Women's Six Nations — away games locally kick off midday–evening local time (pub-friendly).",
+      "countryCode": "fr"
     },
     "scotland-womens": {
       "name": "Scotland Women's Senior",
       "short": "Scotland Women",
       "group": "World Women's Teams",
       "union": "SRU",
-      "competitions": ["Women's Six Nations", "Women's Rugby World Cup"],
+      "competitions": [
+        "Women's Six Nations",
+        "Women's Rugby World Cup"
+      ],
       "homeStadium": "various",
       "jersey": "Blue",
-      "pubNote": "Scotland Women in Women's Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly)."
+      "pubNote": "Scotland Women in Women's Six Nations — away games locally kick off midday–evening local time (pub-friendly).",
+      "countryCode": "sc"
     },
     "wales-womens": {
       "name": "Wales Women's Senior",
       "short": "Wales Women",
       "group": "World Women's Teams",
       "union": "WRU",
-      "competitions": ["Women's Six Nations", "Women's Rugby World Cup"],
+      "competitions": [
+        "Women's Six Nations",
+        "Women's Rugby World Cup"
+      ],
       "homeStadium": "various",
       "jersey": "Red",
-      "pubNote": "Wales Women in Women's Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly)."
+      "pubNote": "Wales Women in Women's Six Nations — away games locally kick off midday–evening local time (pub-friendly).",
+      "countryCode": "wal"
     },
     "italy-womens": {
       "name": "Italy Women's Senior",
       "short": "Italy Women",
       "group": "World Women's Teams",
       "union": "FIR",
-      "competitions": ["Women's Six Nations", "Women's Rugby World Cup"],
+      "competitions": [
+        "Women's Six Nations",
+        "Women's Rugby World Cup"
+      ],
       "homeStadium": "various",
       "jersey": "Blue",
-      "pubNote": "Italy Women in Women's Six Nations — away games in Ireland kick off midday–evening Irish time (pub-friendly)."
+      "pubNote": "Italy Women in Women's Six Nations — away games locally kick off midday–evening local time (pub-friendly).",
+      "countryCode": "it"
     },
     "new-zealand-womens": {
       "name": "New Zealand Women's Senior",
       "short": "New Zealand Women",
       "group": "World Women's Teams",
       "union": "NZR",
-      "competitions": ["Women's Rugby World Cup", "Women's Pacific Nations Cup"],
+      "competitions": [
+        "Women's Rugby World Cup",
+        "Women's Pacific Nations Cup"
+      ],
       "homeStadium": "various",
       "jersey": "Black (Black Ferns)",
-      "pubNote": "Black Ferns — evening local kick-offs are morning Irish time. 2027 RWC in Australia likely morning Irish time."
+      "pubNote": "Black Ferns — evening local kick-offs are morning local time. 2027 RWC in Australia likely morning local time.",
+      "countryCode": "nz"
     },
     "australia-womens": {
       "name": "Australia Women's Senior",
       "short": "Australia Women",
       "group": "World Women's Teams",
       "union": "ARU",
-      "competitions": ["Women's Rugby World Cup", "Women's Pacific Nations Cup"],
+      "competitions": [
+        "Women's Rugby World Cup",
+        "Women's Pacific Nations Cup"
+      ],
       "homeStadium": "various",
       "jersey": "Green and Gold (Wallaroos)",
-      "pubNote": "Wallaroos — evening local (east coast) = morning Irish time. 2027 RWC in Australia likely morning Irish time."
+      "pubNote": "Wallaroos — evening local (east coast) = morning local time. 2027 RWC in Australia likely morning local time.",
+      "countryCode": "au"
     },
     "south-africa-womens": {
       "name": "South Africa Women's Senior",
       "short": "South Africa Women",
       "group": "World Women's Teams",
       "union": "SARU",
-      "competitions": ["Women's Rugby World Cup", "Women's Pacific Nations Cup"],
+      "competitions": [
+        "Women's Rugby World Cup",
+        "Women's Pacific Nations Cup"
+      ],
       "homeStadium": "various",
       "jersey": "Green and Gold (Springbok Women)",
-      "pubNote": "Springbok Women — evening local kick-offs are morning Irish time."
+      "pubNote": "Springbok Women — evening local kick-offs are morning local time.",
+      "countryCode": "sa"
     },
     "argentina-womens": {
       "name": "Argentina Women's Senior",
       "short": "Argentina Women",
       "group": "World Women's Teams",
       "union": "UAR",
-      "competitions": ["Women's Rugby World Cup", "Women's South American Championship"],
+      "competitions": [
+        "Women's Rugby World Cup",
+        "Women's South American Championship"
+      ],
       "homeStadium": "various",
       "jersey": "White with blue (Las Pumas)",
-      "pubNote": "Las Pumas — evening local kick-offs are early morning Irish time."
+      "pubNote": "Las Pumas — evening local kick-offs are early morning local time.",
+      "countryCode": "ar"
     }
   },
   "provinces": {
@@ -1093,64 +1237,180 @@
       "short": "Leinster",
       "group": "Provinces",
       "union": "Leinster Rugby",
-      "competitions": ["United Rugby Championship", "European Champions Cup", "European Challenge Cup", "Leinster Senior Cup"],
+      "competitions": [
+        "United Rugby Championship",
+        "European Champions Cup",
+        "European Challenge Cup",
+        "Leinster Senior Cup"
+      ],
       "homeStadium": "Aviva Stadium, Dublin",
-      "pubNote": "Leinster home games at Aviva are pub-friendly. European away games in France/England/Italy/Scotland/Wales kick off in Irish afternoon — pub-friendly. URC away games in South Africa/Argentina are early morning Irish time."
+      "pubNote": "Leinster home games at Aviva are pub-friendly. European away games in France/England/Italy/Scotland/Wales kick off in  afternoon — pub-friendly. URC away games in South Africa/Argentina are early morning local time."
     },
     "munster": {
       "name": "Munster",
       "short": "Munster",
       "group": "Provinces",
       "union": "Munster Rugby",
-      "competitions": ["United Rugby Championship", "European Champions Cup", "European Challenge Cup", "Munster Senior Cup"],
+      "competitions": [
+        "United Rugby Championship",
+        "European Champions Cup",
+        "European Challenge Cup",
+        "Munster Senior Cup"
+      ],
       "homeStadium": "Thomond Park, Limerick (Lngarlach)",
-      "pubNote": "Munster home games at Thomond Park are pub-friendly (Limerick pubs). European away games kick off in Irish afternoon — pub-friendly in Dublin if you're watching remotely."
+      "pubNote": "Munster home games at Thomond Park are pub-friendly (Limerick pubs). European away games kick off in  afternoon — pub-friendly in your city if you're watching remotely."
     },
     "ulster": {
       "name": "Ulster",
       "short": "Ulster",
       "group": "Provinces",
       "union": "Ulster Rugby",
-      "competitions": ["United Rugby Championship", "European Champions Cup", "European Challenge Cup", "Ulster Senior Cup"],
+      "competitions": [
+        "United Rugby Championship",
+        "European Champions Cup",
+        "European Challenge Cup",
+        "Ulster Senior Cup"
+      ],
       "homeStadium": "Kingspan Stadium (Ravenhill), Belfast",
       "jersey": "Red",
-      "pubNote": "Ulster home games at Ravenhill are pub-friendly. Away European games in France/England/Italy/Scotland/Wales kick off in Irish afternoon — pub-friendly in Dublin."
+      "pubNote": "Ulster home games at Ravenhill are pub-friendly. Away European games in France/England/Italy/Scotland/Wales kick off in  afternoon — pub-friendly in your city."
     },
     "connacht": {
       "name": "Connacht",
       "short": "Connacht",
       "group": "Provinces",
       "union": "Connacht Rugby",
-      "competitions": ["United Rugby Championship", "European Champions Cup", "European Challenge Cup", "Connacht Senior Cup"],
+      "competitions": [
+        "United Rugby Championship",
+        "European Champions Cup",
+        "European Challenge Cup",
+        "Connacht Senior Cup"
+      ],
       "homeStadium": "Atlantic Park, Galway",
-      "pubNote": "Connacht home games at Atlantic Park are pub-friendly. Away European games in France/England/Italy/Scotland/Wales kick off in Irish afternoon — pub-friendly in Dublin."
+      "pubNote": "Connacht home games at Atlantic Park are pub-friendly. Away European games in France/England/Italy/Scotland/Wales kick off in  afternoon — pub-friendly in your city."
     }
   },
   "clubs": [
-    { "name": "St Mary's College RFC", "province": "Leinster", "tier": "AIL Tier 1" },
-    { "name": "Blackrock College RFC", "province": "Leinster", "tier": "AIL Tier 1" },
-    { "name": "Terenure College RFC", "province": "Leinster", "tier": "AIL Tier 1" },
-    { "name": "UCD RFC", "province": "Leinster", "tier": "AIL Tier 1" },
-    { "name": "Old Belvedere RFC", "province": "Leinster", "tier": "AIL Tier 1" },
-    { "name": "Clontarf RFC", "province": "Leinster", "tier": "AIL Tier 1" },
-    { "name": "Dublin University RFC (CCI)", "province": "Leinster", "tier": "AIL Tier 1" },
-    { "name": "Blackrock Women's RFC", "province": "Leinster", "tier": "Women's" },
-    { "name": "Garryowen RFC", "province": "Munster", "tier": "AIL Tier 1" },
-    { "name": "Shannon RFC", "province": "Munster", "tier": "AIL Tier 1" },
-    { "name": "UCC RFC", "province": "Munster", "tier": "AIL Tier 1" },
-    { "name": "Young Munster RFC", "province": "Munster", "tier": "AIL Tier 1" },
-    { "name": "Cork Constitution RFC", "province": "Munster", "tier": "AIL Tier 1" },
-    { "name": "Lansdowne RFC", "province": "Munster", "tier": "AIL Tier 1" },
-    { "name": "City of Derry RFC", "province": "Ulster", "tier": "AIL Tier 1" },
-    { "name": "Rainey Old Boys RFC", "province": "Ulster", "tier": "AIL Tier 1" },
-    { "name": "Queen's University RFC", "province": "Ulster", "tier": "AIL Tier 1" },
-    { "name": "Limavady RFC", "province": "Ulster", "tier": "AIL Tier 1" },
-    { "name": "Banbridge RFC", "province": "Ulster", "tier": "AIL Tier 1" },
-    { "name": "Ballymena RFC", "province": "Ulster", "tier": "AIL Tier 1" },
-    { "name": "Galway Corinthians RFC", "province": "Connacht", "tier": "AIL Tier 1" },
-    { "name": "Corrasna RFC", "province": "Connacht", "tier": "AIL Tier 1" },
-    { "name": "Claremorris RFC", "province": "Connacht", "tier": "AIL Tier 1" },
-    { "name": "Ballinasloe RFC", "province": "Connacht", "tier": "AIL Tier 1" }
+    {
+      "name": "St Mary's College RFC",
+      "province": "Leinster",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "Blackrock College RFC",
+      "province": "Leinster",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "Terenure College RFC",
+      "province": "Leinster",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "UCD RFC",
+      "province": "Leinster",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "Old Belvedere RFC",
+      "province": "Leinster",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "Clontarf RFC",
+      "province": "Leinster",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "Dublin University RFC (CCI)",
+      "province": "Leinster",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "Blackrock Women's RFC",
+      "province": "Leinster",
+      "tier": "Women's"
+    },
+    {
+      "name": "Garryowen RFC",
+      "province": "Munster",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "Shannon RFC",
+      "province": "Munster",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "UCC RFC",
+      "province": "Munster",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "Young Munster RFC",
+      "province": "Munster",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "Cork Constitution RFC",
+      "province": "Munster",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "Lansdowne RFC",
+      "province": "Munster",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "City of Derry RFC",
+      "province": "Ulster",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "Rainey Old Boys RFC",
+      "province": "Ulster",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "Queen's University RFC",
+      "province": "Ulster",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "Limavady RFC",
+      "province": "Ulster",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "Banbridge RFC",
+      "province": "Ulster",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "Ballymena RFC",
+      "province": "Ulster",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "Galway Corinthians RFC",
+      "province": "Connacht",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "Corrasna RFC",
+      "province": "Connacht",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "Claremorris RFC",
+      "province": "Connacht",
+      "tier": "AIL Tier 1"
+    },
+    {
+      "name": "Ballinasloe RFC",
+      "province": "Connacht",
+      "tier": "AIL Tier 1"
+    }
   ],
   "tournaments": {
     "six-nations": {
@@ -1158,20 +1418,34 @@
       "short": "Six Nations",
       "group": "Tournaments",
       "organiser": "Six Nations Rugby",
-      "teams": ["Ireland", "England", "France", "Italy", "Scotland", "Wales"],
+      "teams": [
+        "Ireland",
+        "England",
+        "France",
+        "Italy",
+        "Scotland",
+        "Wales"
+      ],
       "format": "Round robin (home and away over two years for full double round robin every two years, single round robin in off years)",
       "season": "Feb–Mar annually",
-      "pubNote": "Away games kick off midday–evening Irish time — pub-friendly. Home games at Aviva are in Dublin pubs."
+      "pubNote": "Away games kick off midday–evening local time — pub-friendly. Home games at home stadium are in Dublin pubs."
     },
     "womens-six-nations": {
       "name": "Women's Six Nations",
       "short": "Women's Six Nations",
       "group": "Tournaments",
       "organiser": "Six Nations Rugby",
-      "teams": ["Ireland Women", "England Women", "France Women", "Italy Women", "Scotland Women", "Wales Women"],
+      "teams": [
+        "Ireland Women",
+        "England Women",
+        "France Women",
+        "Italy Women",
+        "Scotland Women",
+        "Wales Women"
+      ],
       "format": "Round robin",
       "season": "Mar–Apr annually",
-      "pubNote": "Away games kick off midday–evening Irish time — pub-friendly. Ireland home games at Aviva/USW are pub-friendly."
+      "pubNote": "Away games kick off midday–evening local time — pub-friendly. Home games at home stadium/USW are pub-friendly."
     },
     "rugby-world-cup": {
       "name": "Rugby World Cup",
@@ -1180,7 +1454,7 @@
       "organiser": "World Rugby",
       "teams": "20 teams (men's). Expands to 24 in 2027.",
       "season": "Every four years. 2023 in France. 2027 in Australia.",
-      "pubNote": "Pool games against touring sides in Southern Hemisphere = morning Irish time (watch at home, meet later). Ireland home games/pub-friendly. Final 13 Nov 2027 Sydney ~9am Irish time — early morning pub possible."
+      "pubNote": "Pool games against touring sides in Southern Hemisphere = morning local time (watch at home, meet later). Home games/pub-friendly. Final 13 Nov 2027 Sydney ~9am local time — early morning pub possible."
     },
     "womens-rugby-world-cup": {
       "name": "Women's Rugby World Cup",
@@ -1189,17 +1463,36 @@
       "organiser": "World Rugby",
       "teams": "12 teams (expanding to 16 in 2027).",
       "Season": "Every four years. 2025 in England. 2027 in Ireland (hosts: Ireland, together with Scotland, Wales, Northern Ireland).",
-      "pubNote": "If 2027 is hosted in Ireland, all Ireland games are in Irish time and pub-friendly. If elsewhere, depends on timezone."
+      "pubNote": "If 2027 is hosted in Ireland, all Ireland games are in local time and pub-friendly. If elsewhere, depends on timezone."
     },
     "urc": {
       "name": "United Rugby Championship",
       "short": "URC",
       "group": "Tournaments",
       "organiser": "URC Ltd",
-      "teams": ["Leinster", "Munster", "Ulster", "Connacht", "Cardiff", "Ospreys", "Scarlets", "Dragons", "Edinburgh", "Glasgow", "Benetton", "Zebre", "CW", "Lions", "Bulls", "Stormers", "Franchise", "Carey"],
+      "teams": [
+        "Leinster",
+        "Munster",
+        "Ulster",
+        "Connacht",
+        "Cardiff",
+        "Ospreys",
+        "Scarlets",
+        "Dragons",
+        "Edinburgh",
+        "Glasgow",
+        "Benetton",
+        "Zebre",
+        "CW",
+        "Lions",
+        "Bulls",
+        "Stormers",
+        "Franchise",
+        "Carey"
+      ],
       "format": "Regular season + playoffs (URC Final)",
       "season": "Sep–May annually",
-      "pubNote": "Most URC games kick off in Irish time (afternoon/evening). Away games in South Africa/Argentina = early morning Irish time."
+      "pubNote": "Most URC games kick off in local time (afternoon/evening). Away games in South Africa/Argentina = early morning local time."
     },
     "european-champions-cup": {
       "name": "European Champions Cup",
@@ -1209,7 +1502,7 @@
       "teams": "Top URC and other European league teams qualify.",
       "format": "Pool stage + knockout (semi-finals, final)",
       "season": "Oct/Nov–Jan (annual)",
-      "pubNote": "Champions Cup games usually kick off in the afternoon local time = morning Irish time for away games in France/England/Italy/Scotland/Wales — pub-friendly if you're up early. Final usually evening Irish time."
+      "pubNote": "Champions Cup games usually kick off in the afternoon local time = morning local time for away games in France/England/Italy/Scotland/Wales — pub-friendly if you're up early. Final usually evening local time."
     },
     "european-challenge-cup": {
       "name": "European Challenge Cup",
@@ -1219,17 +1512,22 @@
       "teams": "Wider set of teams qualify than Champions Cup.",
       "format": "Pool stage + knockout",
       "season": "Oct/Nov–Jan (annual)",
-      "pubNote": "Similar kick-off pattern to Champions Cup — morning Irish time for away games in Western Europe, pub-friendly if you're up early."
+      "pubNote": "Similar kick-off pattern to Champions Cup — morning local time for away games in Western Europe, pub-friendly if you're up early."
     },
     "rugby-championship": {
       "name": "Rugby Championship",
       "short": "Rugby Championship",
       "group": "World Tournaments",
       "organiser": "SANZAAR",
-      "teams": ["New Zealand", "South Africa", "Australia", "Argentina"],
+      "teams": [
+        "New Zealand",
+        "South Africa",
+        "Australia",
+        "Argentina"
+      ],
       "format": "Round robin (home and away)",
       "season": "Jul–Aug annually (Southern Hemisphere winter)",
-      "pubNote": "Southern Hemisphere tournament — evening local kick-offs are early morning Irish time. Watch at home, meet later. Northern Hemisphere touring sides in Irish summer fall in Irish afternoon/evening — pub-friendly."
+      "pubNote": "Southern Hemisphere tournament — evening local kick-offs are early morning local time. Watch at home, meet later. Northern Hemisphere touring sides in  summer fall in  afternoon/evening — pub-friendly."
     },
     "sevens-world-series": {
       "name": "Sevens World Series",
@@ -1239,7 +1537,7 @@
       "teams": "15 core teams including Ireland Sevens.",
       "format": "Series of 15-a-side sevens tournaments worldwide.",
       "season": "Oct/Nov–May (annual)",
-      "pubNote": "Dublin Sevens stop is pub-friendly. Away stops in Europe (Paris, London, etc.) are morning Irish time — pub-friendly if up early. Stops in Asia/Americas are early morning Irish time."
+      "pubNote": "local Sevens stop is pub-friendly. Away stops in Europe (Paris, London, etc.) are morning local time — pub-friendly if up early. Stops in Asia/Americas are early morning local time."
     },
     "sevens-world-cup": {
       "name": "Rugby World Cup Sevens",
@@ -1248,7 +1546,7 @@
       "organiser": "World Rugby",
       "teams": "16 teams (men's and women's, separate).",
       "season": "Every four years. 2025 in Saudi Arabia.",
-      "pubNote": "Saudi Arabia — evening local time = early morning Irish time."
+      "pubNote": "Saudi Arabia — evening local time = early morning local time."
     },
     "world-cup-sevens-womens": {
       "name": "Women's Sevens World Cup",
@@ -1262,14 +1560,14 @@
       "short": "RWC 2027",
       "group": "Tournaments",
       "season": "1 Oct – 13 Nov 2027, Australia.",
-      "pubNote": "Australia is 11 hours ahead (east coast) — evening Australian kick-off = morning Irish time. Final 13 Nov 2027, 20:00 AEDT = 9:00am Irish time — early morning pub possible."
+      "pubNote": "Australia is 11 hours ahead (east coast) — evening Australian kick-off = morning local time. Final 13 Nov 2027, 20:00 AEDT = 9:00am local time — early morning pub possible."
     },
     "leinsterseniorscup": {
       "name": "Leinster Senior Cup",
       "short": "Leinster Senior Cup",
       "group": "Clubs & Cups",
       "season": "Annual, usually early season.",
-      "pubNote": "League games in Irish time. Cup games at various venues — pub-friendly if in Dublin."
+      "pubNote": "League games in local time. Cup games at various venues — pub-friendly if in Dublin."
     },
     "munsterseniorscup": {
       "name": "Munster Senior Cup",
@@ -1297,39 +1595,107 @@
       "short": "Pacific Nations Cup",
       "group": "World Tournaments",
       "organiser": "Pacific rugby unions",
-      "teams": ["Fiji", "Samoa", "Tonga", "Japan (guest)", "Others"],
+      "teams": [
+        "Fiji",
+        "Samoa",
+        "Tonga",
+        "Japan (guest)",
+        "Others"
+      ],
       "format": "Round robin / knockout",
       "season": "Jul–Aug annually",
-      "pubNote": "Pacific teams — evening local kick-offs are early morning Irish time. Watch at home, meet later."
+      "pubNote": "Pacific teams — evening local kick-offs are early morning local time. Watch at home, meet later."
     },
     "rugby-europe-championship": {
       "name": "Rugby Europe Championship",
       "short": "Rugby Europe Championship",
       "group": "World Tournaments",
       "organiser": "Rugby Europe",
-      "teams": ["Georgia", "Romania", "Spain", "Portugal", "Others"],
+      "teams": [
+        "Georgia",
+        "Romania",
+        "Spain",
+        "Portugal",
+        "Others"
+      ],
       "format": "Round robin / knockouts",
       "season": "Feb–Jun annually",
-      "pubNote": "Eastern European teams — evening local kick-offs are morning Irish time (1–3 hours ahead). Watch at home, meet later, or pub-friendly if up early."
+      "pubNote": "Eastern European teams — evening local kick-offs are morning local time (1–3 hours ahead). Watch at home, meet later, or pub-friendly if up early."
     }
   },
   "worldTimezones": {
-    "description": "Kick-off time reference — how local kick-off times translate to Irish time for pub watchability.",
+    "description": "Kick-off time reference — how local kick-off times translate to your local time for pub watchability.",
     "zones": [
-      { "region": "Ireland / UK (winter)", "offset": "+00:00", "note": "Same as Irish time. Pub-friendly if kick-off is afternoon/evening local." },
-      { "region": "Ireland / UK (summer, DST)", "offset": "+01:00", "note": "1 hour ahead of Irish winter time. Pub-friendly if afternoon/evening local." },
-      { "region": "Western Europe (France, Spain, Italy — winter)", "offset": "+01:00", "note": "1 hour ahead of Irish time. Afternoon/evening local = late afternoon Irish — pub-friendly." },
-      { "region": "Western Europe (France, Spain, Italy — summer, DST)", "offset": "+02:00", "note": "2 hours ahead. Afternoon local = late afternoon Irish — pub-friendly." },
-      { "region": "Central Europe (Germany, Poland, etc. — winter)", "offset": "+01:00", "note": "1 hour ahead. Afternoon local = late afternoon Irish — pub-friendly." },
-      { "region": "Central Europe (Germany, Poland, etc. — summer, DST)", "offset": "+02:00", "note": "2 hours ahead. Afternoon local = late afternoon Irish — pub-friendly." },
-      { "region": "Eastern Europe (Georgia, etc.)", "offset": "+03:00 to +04:00", "note": "2–4 hours ahead. Evening local = late evening Irish — pub-friendly if up late. Morning local = early morning Irish." },
-      { "region": "South Africa", "offset": "+02:00", "note": "2 hours ahead. Afternoon/evening local = late afternoon/evening Irish — pub-friendly." },
-      { "region": "Argentina", "offset": "-03:00", "note": "3 hours behind. Afternoon/evening local = morning Irish — pub-friendly if early. Morning local = very early Irish." },
-      { "region": "New Zealand (standard)", "offset": "+12:00 to +13:00", "note": "12–13 hours ahead. Evening local = morning Irish — watch at home, meet later." },
-      { "region": "Australia (east coast, standard)", "offset": "+10:00", "note": "10 hours ahead. Evening local = morning Irish — watch at home, meet later. 2027 RWC final 20:00 AEDT = 9:00am Irish." },
-      { "region": "Australia (west coast)", "offset": "+08:00", "note": "8 hours ahead. Evening local = early morning Irish — watch at home, meet later." },
-      { "region": "Japan", "offset": "+09:00", "note": "9 hours ahead. Evening local = early morning Irish — watch at home, meet later." },
-      { "region": "Fiji / Samoa / Tonga", "offset": "+12:00 to +14:00", "note": "12–14 hours ahead. Evening local = early morning Irish — watch at home, meet later." }
+      {
+        "region": "Ireland / UK (winter)",
+        "offset": "+00:00",
+        "note": "Same as your local time. Pub-friendly if kick-off is afternoon/evening local."
+      },
+      {
+        "region": "Ireland / UK (summer, DST)",
+        "offset": "+01:00",
+        "note": "1 hour ahead of  winter time. Pub-friendly if afternoon/evening local."
+      },
+      {
+        "region": "Western Europe (France, Spain, Italy — winter)",
+        "offset": "+01:00",
+        "note": "1 hour ahead of your local time. Afternoon/evening local = late afternoon  — pub-friendly."
+      },
+      {
+        "region": "Western Europe (France, Spain, Italy — summer, DST)",
+        "offset": "+02:00",
+        "note": "2 hours ahead. Afternoon local = late afternoon  — pub-friendly."
+      },
+      {
+        "region": "Central Europe (Germany, Poland, etc. — winter)",
+        "offset": "+01:00",
+        "note": "1 hour ahead. Afternoon local = late afternoon  — pub-friendly."
+      },
+      {
+        "region": "Central Europe (Germany, Poland, etc. — summer, DST)",
+        "offset": "+02:00",
+        "note": "2 hours ahead. Afternoon local = late afternoon  — pub-friendly."
+      },
+      {
+        "region": "Eastern Europe (Georgia, etc.)",
+        "offset": "+03:00 to +04:00",
+        "note": "2–4 hours ahead. Evening local = late evening  — pub-friendly if up late. Morning local = early morning ."
+      },
+      {
+        "region": "South Africa",
+        "offset": "+02:00",
+        "note": "2 hours ahead. Afternoon/evening local = late afternoon/evening  — pub-friendly."
+      },
+      {
+        "region": "Argentina",
+        "offset": "-03:00",
+        "note": "3 hours behind. Afternoon/evening local = morning  — pub-friendly if early. Morning local = very early ."
+      },
+      {
+        "region": "New Zealand (standard)",
+        "offset": "+12:00 to +13:00",
+        "note": "12–13 hours ahead. Evening local = morning  — watch at home, meet later."
+      },
+      {
+        "region": "Australia (east coast, standard)",
+        "offset": "+10:00",
+        "note": "10 hours ahead. Evening local = morning  — watch at home, meet later. 2027 RWC final 20:00 AEDT = 9:00am ."
+      },
+      {
+        "region": "Australia (west coast)",
+        "offset": "+08:00",
+        "note": "8 hours ahead. Evening local = early morning  — watch at home, meet later."
+      },
+      {
+        "region": "Japan",
+        "offset": "+09:00",
+        "note": "9 hours ahead. Evening local = early morning  — watch at home, meet later."
+      },
+      {
+        "region": "Fiji / Samoa / Tonga",
+        "offset": "+12:00 to +14:00",
+        "note": "12–14 hours ahead. Evening local = early morning  — watch at home, meet later."
+      }
     ]
   }
 }

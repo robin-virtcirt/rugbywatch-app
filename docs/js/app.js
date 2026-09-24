@@ -1,7 +1,7 @@
 /**
- * Rugby Watch — www/js/app.js
+ * WatchRugby — www/js/app.js
  *
- * Cross-platform rugby watch app (iOS + Android). Ireland featured alongside
+ * Cross-platform WatchRugby app (iOS + Android). All national teams, worldwide.
  * worldwide content. Locale-aware timezone conversion with pub watchability
  * relative to user's clock. Language selector drives all UI strings via the
  * locales block in data.json. Includes Flappy Rugby mini-game.
@@ -17,8 +17,8 @@
   'use strict';
 
   // ── Globals ────────────────────────────────────────────────────────
-  var APP_NAME = 'Rugby Watch';
-  var DATA_PATH = '/www/js/data.json';
+  var APP_NAME = 'WatchRugby';
+  var DATA_PATH = '/js/data.json';
   var data = null;
   var currentLocale = 'en';
   var isBeingDestroyed = false;
@@ -28,6 +28,7 @@
   var $$ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
 
   var localeSelector = $('#locale-selector');
+  var countrySelector = $('#country-selector');
   var localeIndicator = $('#locale-indicator');
   var tabButtons = $$('.tab');
   var sections = $$('.section');
@@ -38,7 +39,9 @@
   // ── Init ───────────────────────────────────────────────────────────
   loadData(function () {
     bindLocaleSelector();
+    bindCountrySelector();
     restoreLocale();
+    restoreCountry();
     bindTabs();
     renderAllTabs();
     bindSearch();
@@ -70,6 +73,58 @@
       }
     };
     xhr.send();
+  }
+
+  // ── Country selector ────────────────────────────────────────────────
+  var currentCountry = 'all';
+  var countryTeamMap = {
+    'all':        null,            // show all teams
+    'ie':        'National Team',
+    'nz':        'New Zealand',
+    'sa':        'South Africa',
+    'au':        'Australia',
+    'ar':        'Argentina',
+    'fr':        'France',
+    'en':        'England',
+    'sc':        'Scotland',
+    'wal':       'Wales',
+    'it':        'Italy',
+    'jp':        'Japan',
+    'ge':        'Georgia',
+    'fi':        'Fiji',
+    'sm':        'Samoa',
+    'to':        'Tonga'
+  };
+
+  function bindCountrySelector() {
+    if (!countrySelector) return;
+    countrySelector.addEventListener('change', onCountryChange);
+    Array.prototype.forEach.call(countrySelector.options, function (opt) {
+      opt.addEventListener('click', onCountryChange);
+    });
+  }
+
+  function onCountryChange() {
+    var checked = countrySelector.querySelector('option:checked');
+    if (!checked) return;
+    currentCountry = checked.value || checked.getAttribute('data-country') || 'all';
+    if (data) renderAllTabs();
+    persistCountry();
+  }
+
+  function restoreCountry() {
+    var saved = localStorage.getItem('watchrugby-country');
+    if (saved && countrySelector) {
+      for (var i = 0; i < countrySelector.options.length; i++) {
+        var opt = countrySelector.options[i];
+        if (opt.value === saved) { opt.selected = true; break; }
+      }
+      currentCountry = saved;
+    }
+  }
+
+  function persistCountry() {
+    try { localStorage.setItem('watchrugby-country', currentCountry); } catch (e) {}
   }
 
   // ── Locale ─────────────────────────────────────────────────────────
@@ -107,7 +162,7 @@
   }
 
   function restoreLocale() {
-    var saved = localStorage.getItem('rugbywatch-locale');
+    var saved = localStorage.getItem('watchrugby-locale');
     if (saved && data && data.locales && data.locales[saved]) {
       currentLocale = saved;
     }
@@ -170,6 +225,7 @@
     return dict && dict[dictKey] ? dict[dictKey] : dictKey;
   }
 
+  
   // ── Tabs ───────────────────────────────────────────────────────────
   function bindTabs() {
     Array.prototype.forEach.call(tabButtons, function (btn) {
@@ -191,7 +247,7 @@
     });
 
     // Re-render that tab's dynamic content if needed
-    if (id === 'ireland') renderIrelandTeams();
+    if (id === 'nations') renderNations();
     if (id === 'provinces') renderProvinces();
     if (id === 'clubs') renderClubs();
     if (id === 'tournaments') renderTournaments();
@@ -791,14 +847,30 @@
   }
   cacheFlappyRefs();
 
-  // ── Ireland Teams ────────────────────────────────────────────────────
-  function renderIrelandTeams() {
-    var container = $('#irish-team-list');
+  // ── Nations ──────────────────────────────────────────────────────
+  function renderNations() {
+    var container = $('#national-team-list');
     if (!container || !data) return;
     container.innerHTML = '';
-    var teams = data.teams && data.teams.ireland ? data.teams.ireland : [];
+    var allTeams = data.teams || {};
+    var teams = [];
+    for (var tk in allTeams) {
+      var t = allTeams[tk];
+      if (!t) continue;
+      // Show all national teams (men's, women's, U20, sevens — all groups)
+      if (t.group && t.group.indexOf('National') !== -1) {
+        if (currentCountry === 'all') {
+          teams.push(t);
+        } else {
+          // Filter by countryCode
+          if (t.countryCode && t.countryCode === currentCountry) {
+            teams.push(t);
+          }
+        }
+      }
+    }
     if (!teams.length) {
-      container.innerHTML = '<p class="small">No teams loaded.</p>';
+      container.innerHTML = '<p class="small">No teams found for this country.</p>';
       return;
     }
     teams.forEach(function (team) {
@@ -807,16 +879,48 @@
       card.setAttribute('data-name', team.name || '');
       var badgeHtml = '';
       if (team.badge) {
-        badgeHtml = '<span class="badge important">' + escapeHtml(team.badge) + '</span>';
+        badgeHtml = '<span class="team-badge">' + escapeHtml(team.badge) + '</span>';
       }
-      var pubStr = team.pubMatch ? '🟢 ' + (team.pubMatch === true ? getText(currentLocale, 'pubGood') || 'Great pub pick' : escapeHtml(team.pubMatch)) : '';
+
+      // Build competition chips
+      var compHtml = '';
+      if (team.competitions && team.competitions.length) {
+        var comps = team.competitions;
+        // highlight featured ones
+        var featuredComps = ['Six Nations', 'Rugby World Cup', 'Rugby Championship', 'Sevens World Series'];
+        compHtml = '<div class="team-comps">' + comps.map(function(c) {
+          var isFeat = featuredComps.indexOf(c) !== -1;
+          return '<span class="comp-chip' + (isFeat ? ' featured-chip' : '') + '">' + escapeHtml(c) + '</span>';
+        }).join('') + '</div>';
+      }
+
+      // Affils line
+      var affilHtml = '';
+      if (team.union) {
+        affilHtml = '<div class="team-affils">' +
+          '<span class="affil"><span class="affil-label">Union:</span> <span class="affil-val">' + escapeHtml(team.union) + '</span></span>' +
+          (team.homeStadium ? '<span class="affil"><span class="affil-label">Home:</span> <span class="affil-val">' + escapeHtml(team.homeStadium) + '</span></span>' : '') +
+          (team.jersey ? '<span class="affil"><span class="afill-label">Jersey:</span> <span class="affil-val">' + escapeHtml(team.jersey) + '</span></span>' : '') +
+        '</div>';
+      }
+
+      var pubHtml = '';
+      if (team.pubNote) {
+        var note = team.pubNote;
+        var cls = 'team-pub';
+        if (note.indexOf('morning') !== -1 || note.indexOf('early') !== -1) cls += ' early';
+        if (note.indexOf('too early') !== -1 || note.indexOf('watch at home') !== -1) cls += ' late';
+        pubHtml = '<div class="' + cls + '">' + escapeHtml(note) + '</div>';
+      }
+
       card.innerHTML =
-        '<div style="display:flex; justify-content:space-between; align-items:start;">' +
-          '<h3 style="margin:0; font-size:15px;">' + escapeHtml(team.name) + badgeHtml + '</h3>' +
-          '<span class="badge">' + escapeHtml(team.code || '') + '</span>' +
+        '<div class="team-head">' +
+          '<h3 class="team-name">' + escapeHtml(team.name) + badgeHtml + '</h3>' +
         '</div>' +
-        '<div style="font-size:13px; color:#555;">' + (team.desc ? escapeHtml(team.desc) : '') + '</div>' +
-        (pubStr ? '<p style="font-size:12.5px; margin-top:6px;">' + pubStr + '</p>' : '');
+        affilHtml +
+        compHtml +
+        (team.desc ? '<div class="team-desc">' + escapeHtml(team.desc) + '</div>' : '') +
+        pubHtml;
       container.appendChild(card);
     });
   }
@@ -833,12 +937,19 @@
     }
     provs.forEach(function (p) {
       var el = document.createElement('div');
-      el.className = 'card';
+      el.className = 'province-card';
       el.setAttribute('data-name', p.name || '');
+      var compHtml = '';
+      if (p.competitions && p.competitions.length) {
+        compHtml = '<div class="province-comps">' + p.competitions.map(function(c) {
+          return '<span class="chip">' + escapeHtml(c) + '</span>';
+        }).join('') + '</div>';
+      }
       el.innerHTML =
         '<h3>' + escapeHtml(p.name) + '</h3>' +
         '<p>' + (p.desc ? escapeHtml(p.desc) : '') + '</p>' +
-        '<p class="small">Arena: ' + (p.arena ? escapeHtml(p.arena) : '') + '</p>';
+        (p.arena ? '<div class="province-meta">🏟️ ' + escapeHtml(p.arena) + '</div>' : '') +
+        compHtml;
       container.appendChild(el);
     });
   }
@@ -858,10 +969,8 @@
       var li = document.createElement('li');
       li.className = 'club-row';
       li.setAttribute('data-name', c.name || '');
-      li.innerHTML =
-        '<strong>' + escapeHtml(c.name) + '</strong>' +
-        (c.city ? ' · ' + escapeHtml(c.city) : '') +
-        '<br><span class="small">' + (c.division ? escapeHtml(c.division) : '') + '</span>';
+      '<div class="club-name">' + escapeHtml(c.name) + '</div>' +
+      '<div class="club-meta">' + (c.division ? escapeHtml(c.division) : '') + '</div>' +
       container.appendChild(li);
     });
   }
@@ -886,16 +995,33 @@
     }
     turs.forEach(function (t) {
       var row = document.createElement('div');
-      row.className = 'card blue tournament-row';
+      row.className = 'tournament-card';
       row.setAttribute('data-name', t.name || '');
-      var pubStr = t.pubMatch ? '🟢 ' + (t.pubMatch === true ? getText(currentLocale, 'pubGood') || 'Great pub pick' : escapeHtml(t.pubMatch)) : '';
+
+      var featuredComps = ['Six Nations', 'Rugby World Cup', 'Rugby Championship', 'Sevens World Series', 'World Cup'];
+      var featuredTeamChips = '';
+      if (t.teams && Array.isArray(t.teams) && t.teams.length) {
+        featuredTeamChips = '<div class="team-comps" style="margin-bottom:8px;">' + t.teams.map(function(c) {
+          var isFeat = featuredComps.indexOf(c) !== -1 || featuredTeamChips.indexOf(c) !== -1;
+          return '<span class="chip' + (isFeat ? ' featured-chip' : '') + '">' + escapeHtml(c) + '</span>';
+        }).join('') + '</div>';
+      }
+
+      var pubHtml = '';
+      if (t.pubNote) {
+        var note = t.pubNote;
+        var cls = 'tournament-card-pub';
+        if (note.indexOf('morning') !== -1 || note.indexOf('early') !== -1) cls += ' early';
+        if (note.indexOf('too early') !== -1 || note.indexOf('watch at home') !== -1) cls += ' late';
+        pubHtml = '<div class="' + cls + '">' + escapeHtml(note) + '</div>';
+      }
+
       row.innerHTML =
-        '<div style="display:flex; justify-content:space-between; align-items:start;">' +
-          '<h3 style="margin:0; font-size:15px;">' + escapeHtml(t.name) + '</h3>' +
-        '</div>' +
-        '<p class="small">' + (t.desc ? escapeHtml(t.desc) : '') + '</p>' +
-        '<p class="small" style="margin-top:4px;">' + (t.season ? escapeHtml(t.season) : '') + '</p>' +
-        (pubStr ? '<p style="font-size:12.5px; margin-top:4px;">' + pubStr + '</p>' : '');
+        '<h3>' + escapeHtml(t.name) + '</h3>' +
+        featuredTeamChips +
+        (t.desc ? '<div class="tc-desc">' + escapeHtml(t.desc) + '</div>' : '') +
+        (t.season ? '<div class="tc-season">' + escapeHtml(t.season) + '</div>' : '') +
+        pubHtml;
       activeWrap.appendChild(row);
     });
   }
@@ -973,15 +1099,15 @@
     grid.innerHTML = '';
     planningData.forEach(function (row, i) {
       var div = document.createElement('div');
-      div.className = 'card';
-      div.style.marginBottom = '8px';
+      div.className = 'plan-row';
+      div.style.marginBottom = '10px';
       div.innerHTML =
-        '<div style="display:flex; justify-content:space-between; align-items:center;">' +
-          '<strong>' + escapeHtml(row.name || '') + '</strong>' +
-          '<button class="btn btn-secondary" style="padding:6px 12px; font-size:12px; margin:0;" data-plan-remove="' + i + '">Remove</button>' +
+        '<div class="plan-row-head">' +
+          '<span class="plan-row-name">' + escapeHtml(row.name || '') + '</span>' +
+          '<button class="plan-row-remove" data-plan-remove="' + i + '">Remove</button>' +
         '</div>' +
-        '<p class="small">Watching: ' + (row.watching ? escapeHtml(row.watching) : '') + '</p>' +
-        '<p class="small">Notes: ' + (row.notes ? escapeHtml(row.notes) : '') + '</p>';
+        '<p class="plan-row-detail"><strong>Watching:</strong> ' + (row.watching ? escapeHtml(row.watching) : '—') + '</p>' +
+        '<p class="plan-row-detail"><strong>Notes:</strong> ' + (row.notes ? escapeHtml(row.notes) : '—') + '</p>';
       grid.appendChild(div);
     });
     // bind remove buttons
@@ -1005,7 +1131,7 @@
 
   function loadPlanning() {
     try {
-      var s = localStorage.getItem('rugbywatch-planning');
+      var s = localStorage.getItem('watchrugby-planning');
       if (s) planningData = JSON.parse(s);
     } catch (e) {
       planningData = [];
@@ -1018,6 +1144,11 @@
   }
 
   // ── Helpers ──────────────────────────────────────────────────────────
+  function getSelectedCountry() {
+    if (countrySelector) return countrySelector.value || 'ie';
+    return 'ie';
+  }
+
   function escapeHtml(s) {
     if (typeof s !== 'string') return '';
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -1034,7 +1165,7 @@
   function renderAllTabs() {
     if (!data) return;
     // Re-render content for each visible/active tab
-    if (data.teams && data.teams.ireland) renderIrelandTeams();
+    renderNations();
     if (data.provinces) renderProvinces();
     if (data.clubs) renderClubs();
     if (data.tournaments) renderTournaments();
@@ -1057,6 +1188,33 @@
     if (searchInput) {
       var ph = textFor(currentLocale, 'searchTeams');
       if (ph) searchInput.setAttribute('placeholder', ph);
+    }
+    // Update country label
+    if (countrySelector) {
+      var opt = countrySelector.options[countrySelector.selectedIndex];
+      if (opt) {
+        var countryNames = {
+          'all': 'All countries',
+          'ie': 'Ireland (your country)', 'nz': 'New Zealand', 'sa': 'South Africa',
+          'au': 'Australia', 'ar': 'Argentina', 'fr': 'France',
+          'en': 'England', 'sc': 'Scotland', 'wal': 'Wales',
+          'it': 'Italy', 'jp': 'Japan', 'ge': 'Georgia',
+          'fi': 'Fiji', 'sm': 'Samoa', 'to': 'Tonga'
+        };
+        if (countryNames[currentCountry]) {
+          // Just update the indicator area with country info
+          var indicator = document.querySelector('.locale-indicator-wrap');
+          if (indicator) {
+            var existing = indicator.querySelector('.country-label');
+            if (existing) existing.remove();
+            var span = document.createElement('span');
+            span.className = 'country-label';
+            span.style.cssText = 'margin-left:8px; font-size:12.5px; color:var(--muted);';
+            span.textContent = '🇨: ' + countryNames[currentCountry];
+            indicator.appendChild(span);
+          }
+        }
+      }
     }
   }
 

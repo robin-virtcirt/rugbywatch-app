@@ -6,7 +6,7 @@
       "dict": {
         "app.description": "Rugby fixtures, kick-off times, and pub watchability — every team, every tournament, worldwide. Free, no login.",
         "home.title": "Home",
-        "home.intro": "<p><strong>WatchRugby</strong> covers all the rugby teams and tournaments — national teams, provinces/franchises, clubs, the big cups, and European competition — with kick-off times shown in your local timezone and notes on whether a match is watchable from a pub near you.</p><p>This is the free app version of the site at <strong>watchrugby.ie</strong> (once the domain is live). It installs on your phone like an app — no login, no account, no subscription to use the fixture lists.</p>",
+        "home.intro": "<p><strong>WatchRugby</strong> covers all the rugby national teams and tournaments — national teams, provinces/franchises, clubs, the big cups, and European competition — with kick-off times shown in your local timezone and notes on whether a match is watchable from a pub near you.</p><p>This is the free app version of the site at <strong>WatchRugby.app</strong>. It installs on your phone like an app — no login, no account, no subscription to use the fixture lists.</p>",
         "tab.home": "Home",
         "tab.ireland": "National Teams",
         "tab.provinces": "Provinces",
@@ -105,7 +105,7 @@
       "dict": {
         "app.description": "Ragbi pellanolfannau, amseroedd dechrau, a chydweddiad pub — pob tîm, pob troeon, ledled y byd. Free, dim coffnôs.",
         "home.title": "Dyddiol",
-        "home.intro": "<p><strong>WatchRugby</strong> yn gorchuddio pob tîm ragbi a throeon — tîm cenedlaethol, sêr/provenecs, clubiau, y cups mawr, a chydweithrediad Ewropeaidd — gyda amseroedd dechrau yn dyddiol eich cyfnod amser eich hun a nodi a yw pêl galluadwy o pub gennych.</p><p>Dyffmed y fersiwn ap rhydd y gweithdy yma ar <strong>watchrugby.ie</strong> (pan fydd y domain yn byw). Mae'n myned ar eich ffôn fel ap — dim mewngofnod, dim cyfrif, dim tocynnau.</p>",
+        "home.intro": "<p><strong>WatchRugby</strong> yn gorchuddio pob tîm ragbi a throeon — tîm cenedlaethol, sêr/provenecs, clubiau, y cups mawr, a chydweithrediad Ewropeaidd — gyda amseroedd dechrau yn dyddiol eich cyfnod amser eich hun a nodi a yw pêl galluadwy o pub gennych.</p><p>Dyffmed y fersiwn ap rhydd y gweithdy yma ar <strong>WatchRugby.app</strong> . Mae'n myned ar eich ffôn fel ap — dim mewngofnod, dim cyfrif, dim tocynnau.</p>",
         "tab.home": "Dyddiol",
         "tab.ireland": "Tîm Cenedlaethol",
         "tab.provinces": "Provenecs",
@@ -204,7 +204,7 @@
       "dict": {
         "app.description": "Rugbymatchs, heures de coup d'envoi et regardabilité pub — toutes les équipes, tous les tournois, dans le monde. Gratuit, pas de connexion.",
         "home.title": "Accueil",
-        "home.intro": "<p><strong>WatchRugby</strong> couvre toutes les équipes et tournois de rugby — équipes nationales, provinces/franchises, clubs, les grands cups et la compétition européenne — avec les heures de coup d'envoi affichées dans votre fuseau horaire local et des notes sur la possibilité de regarder un match dans un pub près de vous.</p><p>Ceci est la version application gratuite du site <strong>watchrugby.ie</strong> (une fois le domaine actif). Elle s'installe sur votre téléphone comme une application — pas de connexion, pas de compte, pas d'abonnement pour utiliser les listes de matchs.</p>",
+        "home.intro": "<p><strong>WatchRugby</strong> couvre toutes les équipes et tournois de rugby — équipes nationales, provinces/franchises, clubs, les grands cups et la compétition européenne — avec les heures de coup d'envoi affichées dans votre fuseau horaire local et des notes sur la possibilité de regarder un match dans un pub près de vous.</p><p>Ceci est la version application gratuite du site <strong>WatchRugby.app</strong> (une fois le domaine actif). Elle s'installe sur votre téléphone comme une application — pas de connexion, pas de compte, pas d'abonnement pour utiliser les listes de matchs.</p>",
         "tab.home": "Accueil",
         "tab.ireland": "Equipes nationales",
         "tab.provinces": "Provinces",
@@ -303,7 +303,7 @@
       "dict": {
         "app.description": "Partidos de rugby, horas de desempate y visibilidad en pub — todos los equipos, todos los torneos, en todo el mundo. Gratuito, sin acceso.",
         "home.title": "Inicio",
-        "home.intro": "<p><strong>WatchRugby</strong> cubre todos los equipos y torneos de rugby — equipos nacionales, provincias/franchises, clubes, los grandes cups y la competición europea — con las horas de desempate mostradas en tu zona horaria local y notas sobre si un encuentro se puede ver desde un pub cerca de ti.</p><p>Esta es la versión de app gratuita del sitio <strong>watchrugby.ie</strong> (una vez que el dominio esté activo). Se instala en tu teléfono como una app — sin acceso, sin cuenta, sin suscripción para usar las listas de partidos.</p>",
+        "home.intro": "<p><strong>WatchRugby</strong> cubre todos los equipos y torneos de rugby — equipos nacionales, provincias/franchises, clubes, los grandes cups y la competición europea — con las horas de desempate mostradas en tu zona horaria local y notas sobre si un encuentro se puede ver desde un pub cerca de ti.</p><p>Esta es la versión de app gratuita del sitio <strong>WatchRugby.app</strong> . Se instala en tu teléfono como una app — sin acceso, sin cuenta, sin suscripción para usar las listas de partidos.</p>",
         "tab.home": "Inicio",
         "tab.ireland": "Equipos nacionales",
         "tab.provinces": "Provincias",
@@ -402,7 +402,7 @@
       "dict": {
         "app.description": "Partiti di rugby, orari di kick-off e guardabilità in pub — tutte le squadre, tutti i tornei, in tutto il mondo. Gratuito, senza accesso.",
         "home.title": "Home",
-        "home.intro": "<p><strong>WatchRugby</strong> copre tutte le squadre e i tornei di rugby — squadre nazionali, province/franchises, club, i grandi cups e la competizione europea — con gli orari di kick-off mostrati nel tuo fuso orario locale e note su se una partita è guardabile da un pub vicino a te.</p><p>Questa è la versione app gratuita del sito <strong>watchrugby.ie</strong> (quando il dominio sarà attivo). Si installa sul telefono come un'app — nessun accesso, nessun account, nessuna subscription per usare le liste dei partiti.</p>",
+        "home.intro": "<p><strong>WatchRugby</strong> copre tutte le squadre e i tornei di rugby — squadre nazionali, province/franchises, club, i grandi cups e la competizione europea — con gli orari di kick-off mostrati nel tuo fuso orario locale e note su se una partita è guardabile da un pub vicino a te.</p><p>Questa è la versione app gratuita del sito <strong>WatchRugby.app</strong> . Si installa sul telefono come un'app — nessun accesso, nessun account, nessuna subscription per usare le liste dei partiti.</p>",
         "tab.home": "Home",
         "tab.ireland": "Squadre nazionali",
         "tab.provinces": "Province",
@@ -501,7 +501,7 @@
       "dict": {
         "app.description": "Rugby-Spiele, Abstoßzeiten und Pub-Tauglichkeit — alle Teams, alle Turniere, weltweit. Kostenlos, ohne Anmeldung.",
         "home.title": "Startseite",
-        "home.intro": "<p><strong>WatchRugby</strong> deckt alle Rugby-Teams und Turniere ab — Nationalteams, Provinzen/Franchises, Vereine, die großen Cups und die europäische Konkurrenz — mit Abstoßzeiten in deiner lokalen Zeitzone und Hinweisen, ob ein Spiel in einer nahen Kneipe guckbar ist.</p><p>Dies ist die kostenlose App-Version der Seite <strong>watchrugby.ie</strong> (sobald die Domain freigeschaltet ist). Sie installiert sich auf dem Telefon wie eine App — keine Anmeldung, kein Konto, kein Abo, um die Spielpläne zu nutzen.</p>",
+        "home.intro": "<p><strong>WatchRugby</strong> deckt alle Rugby-Teams und Turniere ab — Nationalteams, Provinzen/Franchises, Vereine, die großen Cups und die europäische Konkurrenz — mit Abstoßzeiten in deiner lokalen Zeitzone und Hinweisen, ob ein Spiel in einer nahen Kneipe guckbar ist.</p><p>Dies ist die kostenlose App-Version der Seite <strong>WatchRugby.app</strong> . Sie installiert sich auf dem Telefon wie eine App — keine Anmeldung, kein Konto, kein Abo, um die Spielpläne zu nutzen.</p>",
         "tab.home": "Startseite",
         "tab.ireland": "Nationale Teams",
         "tab.provinces": "Provinzen",
@@ -600,7 +600,7 @@
       "dict": {
         "app.description": "Partidos de rugby, horários de kick-off e watchability em pub — todas as equipas, todos os torneios, em todo o mundo. Gratuito, sem login.",
         "home.title": "Início",
-        "home.intro": "<p><strong>WatchRugby</strong> cobre todas as equipas e torneios de rugby — equipas nacionais, províncias/franchises, clubes, os grandes cups e a competição europeia — com horários de kick-off mostrados no teu fuso horário local e notas sobre se um jogo é watchable num pub perto de ti.</p><p>Esta é a versão de app gratuita do site <strong>watchrugby.ie</strong> (quando o domínio estiver ativo). Instala-te no telemóvel como uma app — sem login, sem conta, sem subscrição para usares as listas de jogos.",
+        "home.intro": "<p><strong>WatchRugby</strong> cobre todas as equipas e torneios de rugby — equipas nacionais, províncias/franchises, clubes, os grandes cups e a competição europeia — com horários de kick-off mostrados no teu fuso horário local e notas sobre se um jogo é watchable num pub perto de ti.</p><p>Esta é a versão de app gratuita do site <strong>WatchRugby.app</strong> . Instala-te no telemóvel como uma app — sem login, sem conta, sem subscrição para usares as listas de jogos.",
         "tab.home": "Início",
         "tab.ireland": "Equipas nacionais",
         "tab.provinces": "Províncias",
@@ -699,7 +699,7 @@
       "dict": {
         "app.description": "ラグビーの試合、キックオフ時刻、パブ視聴可否 — すべてのチーム、すべての大会、世界中。無料、ログイン不要。",
         "home.title": "ホーム",
-        "home.intro": "<p><strong>WatchRugby</strong>は、すべてのラグビーチームと大会 — 代表チーム、州／フランチャイズ、クラブ、ビッグカップ、欧州大会 — をカバーし、キックオフ時刻をあなたのタイムゾーンで表示し、その試合が地元のパブで観戦可能かどうかのメモを提供します。</p><p>この無料アプリ版は、<strong>watchrugby.ie</strong>サイトのアプリ版です（ドメインが利用可能になり次第）。スマホにアプリのようにインストールでき、ログイン・アカウント・サブスクリプションなしで試合一覧を利用できます。</p>",
+        "home.intro": "<p><strong>WatchRugby</strong>は、すべてのラグビーチームと大会 — 代表チーム、州／フランチャイズ、クラブ、ビッグカップ、欧州大会 — をカバーし、キックオフ時刻をあなたのタイムゾーンで表示し、その試合が地元のパブで観戦可能かどうかのメモを提供します。</p><p>この無料アプリ版は、<strong>WatchRugby.app</strong>サイトのアプリ版です。スマホにアプリのようにインストールでき、ログイン・アカウント・サブスクリプションなしで試合一覧を利用できます。</p>",
         "tab.home": "ホーム",
         "tab.ireland": "Daihyo chamu",
         "tab.provinces": "州",
@@ -793,11 +793,7 @@
       }
     }
   },
-  "domains": {
-    "watchrugby.ie": {
-      "description": "Plan your next rugby trip..."
-    }
-  },
+  "domains": {},
   "teams": {
     "ireland-mens": {
       "name": "Men's Senior National Team",

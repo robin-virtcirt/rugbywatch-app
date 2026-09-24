@@ -274,47 +274,47 @@
 
 <!-- Header -->
 <div class="header">
-  <h1>🏉⚽ WatchRugby</h1>
+  <h1><span class="flag">🏉</span> WatchRugby</h1>
   <p>Rugby fixtures, kick-off times, and pub watchability — for all the national teams and tournaments, including European competition.</p>
 </div>
 
-<!-- Locale indicator -->
-<div class="locale-indicator-wrap" id="locale-indicator-wrap">
-  <div class="locale-indicator">
-    <span class="locale-flag" id="locale-flag">🏉</span>
-    <span class="locale-code" id="locale-code">EN</span>
-    <span class="locale-sep">·</span>
-    <span class="locale-tz" id="locale-tz">Europe/Dublin</span>
+<!-- Top bar: locale + country selectors -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div class="locale-indicator">
+      <span class="locale-flag" id="locale-flag">🏉</span>
+      <span class="locale-code" id="locale-code">EN</span>
+      <span class="locale-sep">·</span>
+      <span class="locale-tz" id="locale-tz">Europe/Dublin</span>
+    </div>
+    <select id="locale-selector" aria-label="Language">
+      <option value="en">English</option>
+      <option value="cy">Cymraeg</option>
+      <option value="fr">Français</option>
+      <option value="es">Español</option>
+      <option value="it">Italiano</option>
+      <option value="de">Deutsch</option>
+      <option value="pt">Português</option>
+      <option value="ja">日本語</option>
+    </select>
+    <select id="country-selector" aria-label="Country">
+      <option value="ie">Ireland</option>
+      <option value="nz">New Zealand</option>
+      <option value="sa">South Africa</option>
+      <option value="au">Australia</option>
+      <option value="ar">Argentina</option>
+      <option value="fr">France</option>
+      <option value="en">England</option>
+      <option value="sc">Scotland</option>
+      <option value="wal">Wales</option>
+      <option value="it">Italy</option>
+      <option value="jp">Japan</option>
+      <option value="ge">Georgia</option>
+      <option value="fi">Fiji</option>
+      <option value="sm">Samoa</option>
+      <option value="to">Tonga</option>
+    </select>
   </div>
-  <select id="locale-selector" aria-label="Language">
-    <option value="en">English</option>
-    <option value="cy">Cymraeg</option>
-    <option value="fr">Français</option>
-    <option value="es">Español</option>
-    <option value="it">Italiano</option>
-    <option value="de">Deutsch</option>
-    <option value="pt">Português</option>
-    <option value="ja">日本語</option>
-  </select>
-
-<!-- Country selector -->
-<select id="country-selector" aria-label="Country" style="margin-left:8px; padding:4px 8px; border-radius:6px; border:1px solid var(--border); background:white; font-size:13px; cursor:pointer;">
-  <option value="ie">Ireland</option>
-  <option value="nz">New Zealand</option>
-  <option value="sa">South Africa</option>
-  <option value="au">Australia</option>
-  <option value="ar">Argentina</option>
-  <option value="fr">France</option>
-  <option value="en">England</option>
-  <option value="sc">Scotland</option>
-  <option value="wal">Wales</option>
-  <option value="it">Italy</option>
-  <option value="jp">Japan</option>
-  <option value="ge">Georgia</option>
-  <option value="fi">Fiji</option>
-  <option value="sm">Samoa</option>
-  <option value="to">Tonga</option>
-</select>
 </div>
 
 <!-- Tabs -->
